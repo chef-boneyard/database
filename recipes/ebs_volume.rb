@@ -54,10 +54,10 @@ if node[:ec2]
 
       if (master_role & node.run_list.roles).length == 1
         db_type = "master"
-        db_role = master_role
+        db_role = RUBY_VERSION.to_f <= 1.8 ? master_role : master_role.join
       elsif (slave_role & node.run_list.roles).length == 1
         db_type = "slave"
-        db_role = slave_role
+        db_role = RUBY_VERSION.to_f <= 1.8 ? slave_role : slave_role.join
       end
 
       Chef::Log.info "database::ebs_volume - db_role: #{db_role} db_type: #{db_type}"
