@@ -1,3 +1,9 @@
+## v1.2.0:
+
+* [COOK-970] - workaround for disk [re]naming on ubuntu 11.04+
+* [COOK-1085] - check RUBY_VERSION and act accordingly for role
+* [COOK-749] - localhost should be a string in snapshot recipe
+
 ## v1.1.4:
 
 * [COOK-1062] - Databases: Postgres exists should close connection

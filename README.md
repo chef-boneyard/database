@@ -246,6 +246,8 @@ Recipes
 ebs\_volume
 -----------
 
+*Note*: This recipe does not currently work on RHEL platforms due to the xfs cookbook not supporting RHEL yet.
+
 Loads the aws information from the data bag. Searches the applications data bag for the database master or slave role and checks that role is applied to the node. Loads the EBS information and the master information from data bags. Uses the aws cookbook LWRP, `aws_ebs_volume` to manage the volume.
 
 On a master node:
