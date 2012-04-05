@@ -32,9 +32,10 @@ if node[:ec2]
   end
 
   ebs_vol_dev = node['mysql']['ebs_vol_dev']
-  ebs_vol_dev_mount = ebs_vol_dev
-  if (platform?(%w{debian ubuntu}) and platform_version.to_f >= 10.04)
-    ebs_vol_dev_mount = ebs_vol_dev.sub("/dev/sd", "/dev/xvd")
+  if (platform?("ubuntu") && node['platform_version'].to_f >= 11.04)
+    ebs_vol_dev_mount =  ebs_vol_dev.sub(/^\/dev\/sd/, "/dev/xvd")
+  else
+    ebs_vol_dev_mount = ebs_vol_dev
   end
   ebs_vol_id = String.new
   db_type = String.new
