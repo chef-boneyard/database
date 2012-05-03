@@ -44,6 +44,20 @@ class Chef
             ensure
               close
             end
+          else
+            # check if password needs to be updated
+            begin
+              conn = PGconn.connect(:host => @new_resource.connection[:host],
+                                    :port => @new_resource.connection[:port] || 5432,
+                                    :dbname => "template1",
+                                    :user => @new_resource.username,
+                                    :password => @new_resource.password )
+              conn.close
+            rescue
+              Chef::Log.info("User #{@new_resource.username} already exists. Updating password.")
+              db("template1").query("ALTER USER #{@new_resource.username} PASSWORD '#{@new_resource.password}'")
+              @new_resource.updated_by_last_action(true)
+            end
           end
         end
 
