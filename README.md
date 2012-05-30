@@ -50,7 +50,7 @@ Manage databases in a RDBMS.  Use the proper shortcut resource depending on your
 
 - database_name: name attribute. Name of the database to interact with
 - connection: hash of connection info. valid keys include :host, :port, :username, :password
-- sql: string of sql to execute against the database.  used by :query action only
+- sql: string of sql or a block that executes to a string of sql, which will be executed against the database.  used by :query action only
 
 ### Providers
 
@@ -135,6 +135,13 @@ Manage databases in a RDBMS.  Use the proper shortcut resource depending on your
     mysql_database "flush the privileges" do
       connection mysql_connection_info
       sql "flush privileges"
+      action :query
+    end
+
+    # query a database from a sql script on disk
+    mysql_database "run script" do
+      connection mysql_connection_info
+      sql { ::File.open("/path/to/sql_script.sql").read }
       action :query
     end
 
