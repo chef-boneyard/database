@@ -139,7 +139,7 @@ Manage databases in a RDBMS.  Use the proper shortcut resource depending on your
     end
 
     # vacuum a postgres database
-    postgres_database "vacuum databases" do
+    postgresql_database "vacuum databases" do
       connection postgresql_connection_info
       database_table "template1"
       sql "VACUUM FULL VERBOSE ANALYZE"
