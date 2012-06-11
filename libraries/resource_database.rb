@@ -54,14 +54,6 @@ class Chef
         )
       end
 
-      def sql(arg=nil)
-        set_or_return(
-          :sql,
-          arg,
-          :kind_of => String
-        )
-      end
-
       # 
       def template(arg=nil)
         set_or_return(
