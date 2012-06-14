@@ -47,8 +47,8 @@ if node[:ec2]
 
   search(:apps) do |app|
     if (app["database_master_role"] & node.run_list.roles).length == 1 || (app["database_slave_role"] & node.run_list.roles).length == 1
-      master_role = app["database_master_role"]
-      slave_role = app["database_slave_role"]
+      master_role = app["database_master_role"] & node.run_list.roles
+      slave_role = app["database_slave_role"] & node.run_list.roles
       root_pw = app["mysql_root_password"][node.chef_environment]
       snapshots_to_keep = app["snapshots_to_keep"][node.chef_environment]
 
