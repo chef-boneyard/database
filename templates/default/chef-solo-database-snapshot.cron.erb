@@ -3,4 +3,4 @@
 # Keep 1 day of hourly snapshots
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 <% cs = "chef-solo -j #{@json_attribs} -c #{@config_file}" %>
-00 * * * * root <%= cs %>
+<%= @schedule %> root <%= cs %>
