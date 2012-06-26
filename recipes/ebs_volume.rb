@@ -44,6 +44,7 @@ if node[:ec2]
   slave_role = String.new
   root_pw = String.new
   snapshots_to_keep = String.new
+  snapshot_cron_schedule = "00 * * * *" # default to hourly snapshots
 
   search(:apps) do |app|
     if (app["database_master_role"] & node.run_list.roles).length == 1 || (app["database_slave_role"] & node.run_list.roles).length == 1
@@ -51,6 +52,7 @@ if node[:ec2]
       slave_role = app["database_slave_role"] & node.run_list.roles
       root_pw = app["mysql_root_password"][node.chef_environment]
       snapshots_to_keep = app["snapshots_to_keep"][node.chef_environment]
+      snapshot_cron_schedule = app["snapshot_cron_schedule"][node.chef_environment] if app["snapshot_cron_schedule"] && app["snapshot_cron_schedule"][node.chef_environment]
 
       if (master_role & node.run_list.roles).length == 1
         db_type = "master"
@@ -168,7 +170,8 @@ if node[:ec2]
       source "chef-solo-database-snapshot.cron.erb"
       variables(
         :json_attribs => "/etc/chef/chef-solo-database-snapshot.json",
-        :config_file => "/etc/chef/chef-solo-database-snapshot.rb"
+        :config_file => "/etc/chef/chef-solo-database-snapshot.rb",
+        :schedule => snapshot_cron_schedule
       )
       owner "root"
       group "root"
