@@ -36,7 +36,11 @@ class Chef
           unless exists?
             begin
               Chef::Log.debug("#{@new_resource}: Creating database #{new_resource.database_name}")
-              db.query("create database #{new_resource.database_name}")
+              create_sql = "CREATE DATABASE #{new_resource.database_name}"
+              create_sql += " CHARACTER SET = #{new_resource.encoding}" if new_resource.encoding
+              create_sql += " COLLATE = #{new_resource.collation}" if new_resource.collation
+              Chef::Log.debug("#{@new_resource}: Performing query [#{create_sql}]")
+              db.query(create_sql)
               @new_resource.updated_by_last_action(true)
             ensure
               close
