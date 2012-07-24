@@ -72,6 +72,14 @@ class Chef
         )
       end
 
+      def collation(arg=nil)
+        set_or_return(
+          :collation,
+          arg,
+          :kind_of => String
+        )
+      end
+
       def encoding(arg=nil)
         set_or_return(
           :encoding,
