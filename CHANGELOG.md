@@ -1,3 +1,8 @@
+## v1.3.4:
+
+* [COOK-1561] - depend on mysql 1.3.0+ explicitly
+* depend on postgresql 1.0.0 explicitly
+
 ## v1.3.2:
 
 * Update the version for release (oops)
