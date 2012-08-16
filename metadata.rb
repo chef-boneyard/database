@@ -13,7 +13,7 @@ recipe "database::master", "Creates application specific user and database"
 recipe "database::snapshot", "Locks tables and freezes XFS filesystem for replication, assumes EC2 + EBS"
 
 depends "mysql", ">= 1.3.0"
-depends "postgresql"
+depends "postgresql", ">= 1.0.0"
 depends "aws"
 depends "xfs"
 
