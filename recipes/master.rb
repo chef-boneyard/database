@@ -34,7 +34,7 @@ search(:apps) do |app|
       if !user_pw.nil? and user_pw[node.chef_environment]
         Chef::Log.debug("Saving password for #{user} as node attribute node['mysql']['server_#{user}_password'")
         node.set['mysql']["server_#{user}_password"] = user_pw[node.chef_environment]
-        node.save
+        node.save unless Chef::Config[:solo]
       else
         log "A password for MySQL user #{user} was not found in DataBag 'apps' item '#{app["id"]}' for environment ' for #{node.chef_environment}'." do
           level :warn
