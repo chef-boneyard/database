@@ -1,3 +1,11 @@
+## v1.3.0:
+
+* [COOK-932] - Add mysql recipe to conveniently include mysql::ruby
+* [COOK-1228] - database resource should be able to execute scripts on disk
+* [COOK-1291] - make the snapshot retention policy less confusing
+* [COOK-1401] - Allow to specify the collation of new databases
+* [COOK-1534] - Add postgresql recipe to conveniently include postgresql::ruby
+
 ## v1.2.0:
 
 * [COOK-970] - workaround for disk [re]naming on ubuntu 11.04+
