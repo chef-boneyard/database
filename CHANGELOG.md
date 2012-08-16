@@ -1,3 +1,7 @@
+## v1.3.2:
+
+* Update the version for release (oops)
+
 ## v1.3.0:
 
 * [COOK-932] - Add mysql recipe to conveniently include mysql::ruby
