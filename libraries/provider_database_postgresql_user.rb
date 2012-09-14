@@ -56,6 +56,14 @@ class Chef
               close
             end
           end
+
+          # Allow role attributes to be specified 
+          #
+          # role_attributes :superuser => true, :createdb => true
+          unless @new_resource.role_attributes.empty?
+            role_attributes_sql = @new_resource.role_attributes.to_a.map! { |a, b| (b ? "" : "NO") + a.to_s.upcase }.join(" ")
+            db("postgres").query("ALTER ROLE #{@new_resource.username} #{role_attributes_sql}") 
+          end
         end
 
         def action_drop
