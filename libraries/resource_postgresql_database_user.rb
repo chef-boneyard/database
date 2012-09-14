@@ -39,6 +39,14 @@ class Chef
           :kind_of => String
         )
       end
+
+      def role_attributes(arg=nil)
+        set_or_return(
+          :role_attributes,
+          arg,
+          :kind_of => Hash
+        )
+      end
     end
   end
 end
