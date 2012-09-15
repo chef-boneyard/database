@@ -30,7 +30,7 @@ class Chef
         @provider = Chef::Provider::Database::PostgresqlUser
       end
 
-      def role_attributes(arg={})
+      def role_attributes(arg=nil)
         set_or_return(
           :role_attributes,
           arg,
