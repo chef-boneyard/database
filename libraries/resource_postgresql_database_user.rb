@@ -40,7 +40,7 @@ class Chef
         )
       end
 
-      def role_attributes(arg=nil)
+      def role_attributes(arg={})
         set_or_return(
           :role_attributes,
           arg,
