@@ -23,7 +23,7 @@ Platform
 --------
 
 * Debian, Ubuntu
-* Red Hat, CentOS, Scientific, Fedora
+* Red Hat, CentOS, Scientific, Fedora, Amazon
 
 Cookbooks
 ---------
