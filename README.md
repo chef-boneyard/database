@@ -23,7 +23,7 @@ Platform
 --------
 
 * Debian, Ubuntu
-* Red Hat, CentOS, Scientific, Fedora
+* Red Hat, CentOS, Scientific, Fedora, Amazon
 
 Cookbooks
 ---------
@@ -246,7 +246,7 @@ resource depending on your RDBMS: `mysql_database_user` or
     mysql_database_user "foo_user" do
       connection mysql_connection_info
       action :drop
-    ends
+    end
 
     # bulk drop sql server users
     %w{ disenfranchised foo_user }.each do |user|
