@@ -17,6 +17,6 @@ depends "postgresql", ">= 1.0.0"
 depends "aws"
 depends "xfs"
 
-%w{ debian ubuntu centos suse fedora redhat scientific }.each do |os|
+%w{ debian ubuntu centos suse fedora redhat scientific amazon }.each do |os|
   supports os
 end
