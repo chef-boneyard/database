@@ -85,6 +85,14 @@ class Chef
         )
       end
 
+     def grant_option(arg=nil)
+        set_or_return(
+          :grant_option,
+          arg,
+          :kind_of => [ TrueClass, FalseClass ], :default => false
+        )
+      end
+
     end
   end
 end

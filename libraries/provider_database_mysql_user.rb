@@ -57,6 +57,7 @@ class Chef
         def action_grant
           begin
             grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON #{@new_resource.database_name || "*"}.#{@new_resource.table || "*"} TO '#{@new_resource.username}'@'#{@new_resource.host}' IDENTIFIED BY '#{@new_resource.password}'"
+            grant_statement += " WITH GRANT OPTION" if @new_resource.grant_option == true
             Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}]")
             db.query(grant_statement)
             @new_resource.updated_by_last_action(true)
