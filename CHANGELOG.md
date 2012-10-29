@@ -1,3 +1,8 @@
+## v1.3.6:
+
+* [COOK-1688] - fix typo in readme and add amazon linux to supported
+  platforms
+
 ## v1.3.4:
 
 * [COOK-1561] - depend on mysql 1.3.0+ explicitly
