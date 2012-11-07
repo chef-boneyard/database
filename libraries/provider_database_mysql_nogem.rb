@@ -26,10 +26,8 @@ class Chef
         include Chef::Mixin::ShellOut
 
         def load_current_resource
-          gem_package = Chef::Resource::GemPackage.new('mysql')
-          gem_package.action(:nothing)
-          gem_package.run_action(:install)
           Gem.clear_paths
+          require 'rubygems'
           require 'mysql'
           @current_resource = Chef::Resource::Database.new(@new_resource.name)
           @current_resource.database_name(@new_resource.database_name)
@@ -105,3 +103,4 @@ class Chef
     end
   end
 end
+
