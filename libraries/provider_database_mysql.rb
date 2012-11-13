@@ -6,9 +6,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,8 +35,8 @@ class Chef
         def action_create
           unless exists?
             begin
-              Chef::Log.debug("#{@new_resource}: Creating database #{new_resource.database_name}")
-              create_sql = "CREATE DATABASE #{new_resource.database_name}"
+              Chef::Log.debug("#{@new_resource}: Creating database `#{new_resource.database_name}`")
+              create_sql = "CREATE DATABASE `#{new_resource.database_name}`"
               create_sql += " CHARACTER SET = #{new_resource.encoding}" if new_resource.encoding
               create_sql += " COLLATE = #{new_resource.collation}" if new_resource.collation
               Chef::Log.debug("#{@new_resource}: Performing query [#{create_sql}]")
@@ -52,7 +52,7 @@ class Chef
           if exists?
             begin
               Chef::Log.debug("#{@new_resource}: Dropping database #{new_resource.database_name}")
-              db.query("drop database #{new_resource.database_name}")
+              db.query("DROP DATABASE `#{new_resource.database_name}`")
               @new_resource.updated_by_last_action(true)
             ensure
               close
