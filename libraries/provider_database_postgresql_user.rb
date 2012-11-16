@@ -36,7 +36,7 @@ class Chef
         def action_create
           unless exists?
             begin
-              db("template1").query("CREATE USER #{@new_resource.username} WITH PASSWORD '#{@new_resource.password}'")
+              db("postgres").query("CREATE USER #{@new_resource.username} WITH PASSWORD '#{@new_resource.password}'")
               @new_resource.updated_by_last_action(true)
             ensure
               close
@@ -47,7 +47,7 @@ class Chef
         def action_drop
           if exists?
             begin
-              db("template1").query("DROP USER #{@new_resource.username}")
+              db("postgres").query("DROP USER #{@new_resource.username}")
               @new_resource.updated_by_last_action(true)
             ensure
               close
@@ -70,7 +70,7 @@ class Chef
         private
         def exists?
           begin
-            exists = db("template1").query("select * from pg_user where usename='#{@new_resource.username}'").num_tuples != 0
+            exists = db("postgres").query("select * from pg_user where usename='#{@new_resource.username}'").num_tuples != 0
           ensure
             close
           end
