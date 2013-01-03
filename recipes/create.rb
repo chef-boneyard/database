@@ -14,7 +14,7 @@ begin
   if node['databases']['use_internal'] then
     host = "#{node['databases']['master']}.#{node['internal_dns_code']}.#{root_domain}"
   else
-    host = "#{node['databases']}.#{root_domain}"
+    host = "#{node['databases']["master"]}.#{root_domain}"
   end
 
   query = "chef_environment:#{node.chef_environment} AND name:#{master}"
