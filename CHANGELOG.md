@@ -1,3 +1,8 @@
+## v1.3.10:
+
+* [COOK-2117] - undefined variable `grant_statement` in mysql user
+  provider
+
 ## v1.3.8:
 
 * [COOK-1896] - Escape command
