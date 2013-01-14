@@ -117,9 +117,17 @@ depending on your RDBMS: `mysql_database`, `postgresql_database` or
     end
 
     # externalize conection info in a ruby hash
-    mysql_connection_info = {:host => "localhost", :username => 'root', :password => node['mysql']['server_root_password']}
-    sql_server_connection_info = {:host => "localhost", :port => node['sql_server']['port'], :username => 'sa', :password => node['sql_server']['server_sa_password']}
-    postgresql_connection_info = {:host => "127.0.0.1", :port => 5432, :username => 'postgres', :password => node['postgresql']['password']['postgres']}
+    mysql_connection_info = {:host => "localhost",
+                             :username => 'root',
+                             :password => node['mysql']['server_root_password']}
+    sql_server_connection_info = {:host => "localhost",
+                                  :port => node['sql_server']['port'],
+                                  :username => 'sa',
+                                  :password => node['sql_server']['server_sa_password']}
+    postgresql_connection_info = {:host => "127.0.0.1",
+                                  :port => node['postgresql']['config']['port'],
+                                  :username => 'postgres',
+                                  :password => node['postgresql']['password']['postgres']}
 
     # same create commands, connection info as an external hash
     mysql_database 'foo' do
@@ -219,9 +227,17 @@ resource depending on your RDBMS: `mysql_database_user`,
 ### Examples
 
     # create connection info as an external ruby hash
-    mysql_connection_info = {:host => "localhost", :username => 'root', :password => node['mysql']['server_root_password']}
-    postgresql_connection_info = {:host => "127.0.0.1", :port => node['postgresql']['config']['port'], :username => 'postgres', :password => node['postgresql']['password']['postgres']}
-    sql_server_connection_info = {:host => "localhost", :port => node['sql_server']['port'], :username => 'sa', :password => node['sql_server']['server_sa_password']}
+    mysql_connection_info = {:host => "localhost",
+                             :username => 'root',
+                             :password => node['mysql']['server_root_password']}
+    postgresql_connection_info = {:host => "localhost",
+                                  :port => node['postgresql']['config']['port'],
+                                  :username => 'postgres',
+                                  :password => node['postgresql']['password']['postgres']}
+    sql_server_connection_info = {:host => "localhost",
+                                  :port => node['sql_server']['port'],
+                                  :username => 'sa',
+                                  :password => node['sql_server']['server_sa_password']}
 
     # create a mysql user but grant no privileges
     mysql_database_user 'disenfranchised' do
