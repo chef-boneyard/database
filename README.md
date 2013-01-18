@@ -117,9 +117,17 @@ depending on your RDBMS: `mysql_database`, `postgresql_database` or
     end
 
     # externalize conection info in a ruby hash
-    mysql_connection_info = {:host => "localhost", :username => 'root', :password => node['mysql']['server_root_password']}
-    sql_server_connection_info = {:host => "localhost", :port => node['sql_server']['port'], :username => 'sa', :password => node['sql_server']['server_sa_password']}
-    postgresql_connection_info = {:host => "127.0.0.1", :port => 5432, :username => 'postgres', :password => node['postgresql']['password']['postgres']}
+    mysql_connection_info = {:host => "localhost",
+                             :username => 'root',
+                             :password => node['mysql']['server_root_password']}
+    sql_server_connection_info = {:host => "localhost",
+                                  :port => node['sql_server']['port'],
+                                  :username => 'sa',
+                                  :password => node['sql_server']['server_sa_password']}
+    postgresql_connection_info = {:host => "127.0.0.1",
+                                  :port => node['postgresql']['config']['port'],
+                                  :username => 'postgres',
+                                  :password => node['postgresql']['password']['postgres']}
 
     # same create commands, connection info as an external hash
     mysql_database 'foo' do
@@ -184,8 +192,8 @@ depending on your RDBMS: `mysql_database`, `postgresql_database` or
 ---------------
 
 Manage users and user privileges in a RDBMS. Use the proper shortcut
-resource depending on your RDBMS: `mysql_database_user` or
-`sql_server_database_user`.
+resource depending on your RDBMS: `mysql_database_user`,
+`postgresql_database_user`, or `sql_server_database_user`.
 
 ### Actions
 
@@ -211,16 +219,27 @@ resource depending on your RDBMS: `mysql_database_user` or
 
 - **Chef::Provider::Database::MysqlUser**: shortcut resource
     `mysql_database_user`
+- **Chef::Provider::Database::PostgresqlUser**: shortcut
+    resource `postgresql_database_user`
 - **Chef::Provider::Database::SqlServerUser**: shortcut resource
     `sql_server_database_user`
 
 ### Examples
 
     # create connection info as an external ruby hash
-    mysql_connection_info = {:host => "localhost", :username => 'root', :password => node['mysql']['server_root_password']}
-    sql_server_connection_info = {:host => "localhost", :port => node['sql_server']['port'], :username => 'sa', :password => node['sql_server']['server_sa_password']}
+    mysql_connection_info = {:host => "localhost",
+                             :username => 'root',
+                             :password => node['mysql']['server_root_password']}
+    postgresql_connection_info = {:host => "localhost",
+                                  :port => node['postgresql']['config']['port'],
+                                  :username => 'postgres',
+                                  :password => node['postgresql']['password']['postgres']}
+    sql_server_connection_info = {:host => "localhost",
+                                  :port => node['sql_server']['port'],
+                                  :username => 'sa',
+                                  :password => node['sql_server']['server_sa_password']}
 
-    # create a mysql user but grant no priveleges
+    # create a mysql user but grant no privileges
     mysql_database_user 'disenfranchised' do
       connection mysql_connection_info
       password 'super_secret'
@@ -235,7 +254,22 @@ resource depending on your RDBMS: `mysql_database_user` or
       action :create
     end
 
-    # create a sql server user but grant no priveleges
+    # create a postgresql user but grant no privileges
+    postgresql_database_user 'disenfranchised' do
+      connection postgresql_connection_info
+      password 'super_secret'
+      action :create
+    end
+
+    # do the same but pass the provider to the database resource
+    database_user 'disenfranchised' do
+      connection postgresql_connection_info
+      password 'super_secret'
+      provider Chef::Provider::Database::PostgresqlUser
+      action :create
+    end
+
+    # create a sql server user but grant no privileges
     sql_server_database_user 'disenfranchised' do
       connection sql_server_connection_info
       password 'super_secret'
@@ -266,10 +300,18 @@ resource depending on your RDBMS: `mysql_database_user` or
       action :grant
     end
 
-    # grant all privelages on all databases/tables from localhost
+    # grant all privileges on all databases/tables from localhost
     mysql_database_user 'super_user' do
       connection mysql_connection_info
       password 'super_secret'
+      action :grant
+    end
+
+    # grant all privileges on all tables in foo db
+    postgresql_database_user 'foo_user' do
+      connection postgresql_connection_info
+      database_name 'foo'
+      privileges [:all]
       action :grant
     end
 
