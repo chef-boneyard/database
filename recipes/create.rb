@@ -22,7 +22,7 @@ begin
 
   pg_server = search(:node, query).first
   if not pg_server then
-    Chef::Log.error "Could not find postgresq databaase!"
+    throw "Could not find postgresql database!"
   end
    
   connection_info = {:host => "#{host}", 
