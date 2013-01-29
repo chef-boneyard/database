@@ -1,3 +1,7 @@
+## v1.3.12:
+
+* [COOK-850] - `postgresql_database_user` doesn't have example
+
 ## v1.3.10:
 
 * [COOK-2117] - undefined variable `grant_statement` in mysql user
