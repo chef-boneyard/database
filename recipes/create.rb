@@ -35,13 +35,32 @@ end
 
 # we create a user with the same name aas the db and set a random password
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
-node["postgresql"] = {} if node["postgresql"].nil?
-node["postgresql"]["users"] = {} if node["postgresql"]["users"].nil?
-node.set_unless["postgresql"]["users"][database] = secure_password
+
+node.postgresql = {} unless node.has_key? 'postgresql'
+
+# Chef::Log.info "node.postgresql: #{node.postgresql.inspect}"
+# Chef::Log.info "node.postgresql.users exist? #{node.postgresql.has_key? 'users'}"
+# node.postgresql.users exist
+# type is array
+
+node.postgresql.users = [] unless node.postgresql.has_key? 'users'
+
+Chef::Log.info "Node.Postgresql.Users: #{node.postgresql.users.to_s}"
+# BUG the node attribute is always an empty array on chef-client run
+# does not retain the old data
+
+key_pair = node.postgresql.users.detect {|u| u.has_key? database} || {}
+
+node.postgresql.users << key_pair = { database => secure_password } if not key_pair.has_key? database
+
+# Chef::Log.info "node.postgresql.users: #{node.postgresql.users.to_s}"
+Chef::Log.info "Database: #{database}"
+Chef::Log.info "Password: #{node.postgresql.users.detect {|u| u.has_key? database}}"
+Chef::Log.info "Node.Postgresql.Users: #{node.postgresql.users.to_s}"
 
 postgresql_database_user node.name.gsub(/[.]/, "_") do
   connection connection_info
-  password node["postgresql"]["users"][database]
+  password key_pair[database]
   action :create
 end
 
