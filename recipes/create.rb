@@ -6,7 +6,6 @@
 #
 # All rights reserved
 
-
 begin
   database = node.name.gsub(/[.]/, "_")
   root_domain = "#{node['environment_code']}.#{node['zone_code']}.#{node['base_domain']}"
@@ -36,36 +35,41 @@ end
 # we create a user with the same name aas the db and set a random password
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
-node.postgresql = {} unless node.has_key? 'postgresql'
+Chef::Log.info "Node.Postgresql value #{node.postgresql.current_normal.to_s}"
+Chef::Log.info "Node.Postgresql exists? #{node.has_key? 'postgresql'}"
+node.set['postgresql'] = {} unless node.has_key? 'postgresql'
 
-# Chef::Log.info "node.postgresql: #{node.postgresql.inspect}"
-# Chef::Log.info "node.postgresql.users exist? #{node.postgresql.has_key? 'users'}"
-# node.postgresql.users exist
-# type is array
+Chef::Log.info "Node.Postgresql.User exist? #{node.postgresql.has_key? 'users'}"
+node.set['postgresql']['users'] = [] unless node.postgresql.has_key? 'users'
 
-node.postgresql.users = [] unless node.postgresql.has_key? 'users'
-
-Chef::Log.info "Node.Postgresql.Users: #{node.postgresql.users.to_s}"
-# BUG the node attribute is always an empty array on chef-client run
-# does not retain the old data
-
+Chef::Log.info "Node.Postgresql.User: #{node.postgresql.users.to_s}"
+db_password = secure_password
 key_pair = node.postgresql.users.detect {|u| u.has_key? database} || {}
 
-node.postgresql.users << key_pair = { database => secure_password } if not key_pair.has_key? database
+Chef::Log.info "Key Pair: #{key_pair}"
 
-# Chef::Log.info "node.postgresql.users: #{node.postgresql.users.to_s}"
+node.postgresql.users << key_pair = {database => db_password} unless key_pair.has_key? database
+
+Chef::Log.info "Generated Password: #{db_password} Key Pair: #{key_pair}"
+
 Chef::Log.info "Database: #{database}"
 Chef::Log.info "Password: #{node.postgresql.users.detect {|u| u.has_key? database}}"
-Chef::Log.info "Node.Postgresql.Users: #{node.postgresql.users.to_s}"
+Chef::Log.info "Node.Postgresql.Users: #{node.postgresql.current_normal.to_s}"
 
-postgresql_database_user node.name.gsub(/[.]/, "_") do
+pg_user = postgresql_database_user node.name.gsub(/[.]/, "_") do
   connection connection_info
-  password key_pair[database]
-  action :create
+  password db_password
+  action :create # unless exists?
 end
 
-postgresql_database node.name.gsub(/[.]/, "_") do
+pg_db = postgresql_database node.name.gsub(/[.]/, "_") do
   connection connection_info
   owner database
-  action :create
+  action :create # unless exists?
 end
+
+# PUCK-99 in-progress
+# resources has an updated_by_last_action that might be useful
+# Chef::Log.info "PG_USER #{database} (re)created? #{pg_user.inspect}"
+# key_pair[database] = db_password if pg_user.exists?
+# Chef::Log.info "Node.Postgresql.Users: #{node.postgresql.current_normal.to_s}"
