@@ -80,7 +80,9 @@ class Chef
 
         def db
           @db ||= begin
-            connection = ::Mysql.new(
+            connection = ::Mysql.init
+            connection.options(::Mysql::READ_DEFAULT_GROUP, "client")
+            connection.real_connect(
               @new_resource.connection[:host],
               @new_resource.connection[:username],
               @new_resource.connection[:password],
