@@ -35,25 +35,25 @@ end
 # we create a user with the same name aas the db and set a random password
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
-Chef::Log.info "Node.Postgresql value #{node.postgresql.current_normal.to_s}"
-Chef::Log.info "Node.Postgresql exists? #{node.has_key? 'postgresql'}"
+#Chef::Log.info "Node.Postgresql value #{node.postgresql.current_normal.to_s}"
+#Chef::Log.info "Node.Postgresql exists? #{node.has_key? 'postgresql'}"
 node.set['postgresql'] = {} unless node.has_key? 'postgresql'
 
-Chef::Log.info "Node.Postgresql.User exist? #{node.postgresql.has_key? 'users'}"
+#Chef::Log.info "Node.Postgresql.User exist? #{node.postgresql.has_key? 'users'}"
 node.set['postgresql']['users'] = [] unless node.postgresql.has_key? 'users'
 
-Chef::Log.info "Node.Postgresql.User: #{node.postgresql.users.to_s}"
+#Chef::Log.info "Node.Postgresql.User: #{node.postgresql.users.to_s}"
 db_password = secure_password
 key_pair = node.postgresql.users.detect {|u| u.has_key? database} || {}
 
-Chef::Log.info "Key Pair: #{key_pair}"
+#Chef::Log.info "Key Pair: #{key_pair}"
 
 node.postgresql.users << key_pair = {database => db_password} unless key_pair.has_key? database
 
-Chef::Log.info "Generated Password: #{db_password} Key Pair: #{key_pair}"
+#Chef::Log.info "Generated Password: #{db_password} Key Pair: #{key_pair}"
 
-Chef::Log.info "Database: #{database}"
-Chef::Log.info "Password: #{node.postgresql.users.detect {|u| u.has_key? database}}"
+#Chef::Log.info "Database: #{database}"
+#Chef::Log.info "Password: #{node.postgresql.users.detect {|u| u.has_key? database}}"
 Chef::Log.info "Node.Postgresql.Users: #{node.postgresql.current_normal.to_s}"
 
 pg_user = postgresql_database_user node.name.gsub(/[.]/, "_") do
