@@ -1,3 +1,16 @@
+## v1.4.0:
+
+### Bug
+
+- [COOK-2074]: Regex in exists? check in `sql_server_database` resource
+  should match for start and end of line
+- [COOK-2561]: `mysql_database_user` can't set global grants
+
+### Improvement
+
+- [COOK-2075]: Support the collation attribute in the
+  `database_sql_server` provider
+
 ## v1.3.12:
 
 * [COOK-850] - `postgresql_database_user` doesn't have example
