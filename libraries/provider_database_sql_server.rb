@@ -96,7 +96,8 @@ class Chef
               :username => @new_resource.connection[:username],
               :password => @new_resource.connection[:password],
               :port => @new_resource.connection[:port] || 1433,
-              :database => @new_resource.database_name
+              :database => @new_resource.database_name,
+              :timeout => 120
             )
           end
         end
