@@ -95,7 +95,8 @@ class Chef
               :host => @new_resource.connection[:host],
               :username => @new_resource.connection[:username],
               :password => @new_resource.connection[:password],
-              :port => @new_resource.connection[:port] || 1433
+              :port => @new_resource.connection[:port] || 1433,
+              :database => @new_resource.database_name
             )
           end
         end
