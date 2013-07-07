@@ -35,6 +35,13 @@ The following Opscode cookbooks are dependencies:
 * xfs
 * aws
 
+Usage
+===================
+
+Add the following to **site-cookbooks/main/metadata.rb**:  
+    
+    depends 'database' 
+
 Resources/Providers
 ===================
 
