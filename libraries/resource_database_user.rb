@@ -56,8 +56,7 @@ class Chef
         set_or_return(
           :password,
           arg,
-          :kind_of => String,
-          :required => true
+          :kind_of => String
         )
       end
 
