@@ -215,6 +215,27 @@ resource depending on your RDBMS: `mysql_database_user`,
 - table: table to grant privileges on. used by :grant action and MySQL
   provider only. default is '*' (all tables)
 
+### Attribute Parameters (MySQL specific attributes - http://dev.mysql.com/doc/refman/5.6/en/grant.html)
+- require_ssl: requires the client to connect using ssl. default is false
+- require_x509: requires the client to connect using a valid certificate,
+  but the exact certificate does not matter. default is false
+- ssl_cipher: specify the cipher method to use for the connection
+- ssl_issuer: places the restriction on connection attempts that the
+  client must present a valid X509 certificate issued by CA 'issuer'
+- ssl_subject: places the restriction on connection attempts that the
+  client must present a valid X509 certificate containing the subject subject.
+- grant_option: privilege enables you to give to other users or remove from
+  other users those privileges that you yourself possess. default false
+- max_queries_per_hour: restrict the number of queries to the server permitted
+  to this account during any given one-hour period
+- max_updates_per_hour: restrict the number of updates to the server permitted
+  to this account during any given one-hour period
+- max_connections_per_hour: restrict the number of connections to the server permitted
+  to this account during any given one-hour period
+- max_user_connections: restricts the maximum number of simultaneous connections
+  to the server by the account
+
+
 ### Providers
 
 - **Chef::Provider::Database::MysqlUser**: shortcut resource
@@ -304,6 +325,22 @@ resource depending on your RDBMS: `mysql_database_user`,
     mysql_database_user 'super_user' do
       connection mysql_connection_info
       password 'super_secret'
+      action :grant
+    end
+
+    # require a ssl connection
+    mysql_database_user 'super_user' do
+      connection mysql_connection_info
+      password 'super_secret'
+      require_ssl true
+      action :grant
+    end
+
+    # enable GRANT OPTION for a user
+    mysql_database_user 'super_user' do
+      connection mysql_connection_info
+      password 'super_secret'
+      grant_option true
       action :grant
     end
 
