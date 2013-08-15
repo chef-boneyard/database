@@ -27,7 +27,52 @@ class Chef
         super
         @resource_name = :mysql_database_user
         @provider = Chef::Provider::Database::MysqlUser
+
+        @require_ssl = false
+        @require_x509 = false
+        @grant_option = false
       end
+
+      def require_ssl(arg=nil)
+        set_or_return(:require_ssl, arg, :kind_of => [TrueClass, FalseClass])
+      end
+
+      def require_x509(arg=nil)
+        set_or_return(:require_x509, arg, :kind_of => [TrueClass, FalseClass])
+      end
+
+      def ssl_cipher(arg=nil)
+        set_or_return(:ssl_cipher, arg, :kind_of => String)
+      end
+
+      def ssl_issuer(arg=nil)
+        set_or_return(:ssl_issuer, arg, :kind_of => String)
+      end
+
+      def ssl_subject(arg=nil)
+        set_or_return(:ssl_subject, arg, :kind_of => String)
+      end
+
+      def grant_option(arg=nil)
+        set_or_return(:grant_option, arg, :kind_of => [TrueClass, FalseClass])
+      end
+
+      def max_queries_per_hour(arg=nil)
+        set_or_return(:max_queries_per_hour, arg, :kind_of => Integer)
+      end
+
+      def max_updates_per_hour(arg=nil)
+        set_or_return(:max_updates_per_hour, arg, :kind_of => Integer)
+      end
+
+      def max_connections_per_hour(arg=nil)
+        set_or_return(:max_connections_per_hour, arg, :kind_of => Integer)
+      end
+
+      def max_user_connections(arg=nil)
+        set_or_return(:max_user_connections, arg, :kind_of => Integer)
+      end
+
 
     end
   end

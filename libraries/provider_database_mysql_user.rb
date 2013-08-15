@@ -65,8 +65,31 @@ class Chef
               filtered = '[FILTERED]'
             end
             grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON #{@new_resource.database_name && @new_resource.database_name != '*' ? "`#{@new_resource.database_name}`" : '*'}.#{@new_resource.table && @new_resource.table != '*' ? "`#{@new_resource.table}`" : '*'} TO `#{@new_resource.username}`@`#{@new_resource.host}` IDENTIFIED BY "
-            Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}#{filtered}]")
-            db.query(grant_statement + password)
+
+            require_options = ""
+            if @new_resource.require_ssl || @new_resource.require_x509 || @new_resource.ssl_cipher || @new_resource.ssl_issuer || @new_resource.ssl_subject then
+              require_options += "REQUIRE "
+            end
+
+            require_options += "#{@new_resource.require_ssl ? "SSL " : ""}"
+            require_options += "#{@new_resource.require_x509 ? "X509 " : ""}"
+            require_options += "#{@new_resource.ssl_cipher ? "CIPHER '#{@new_resource.ssl_cipher}' " : ""}"
+            require_options += "#{@new_resource.ssl_issuer ? "ISSUER '#{@new_resource.ssl_issuer}' " : ""}"
+            require_options += "#{@new_resource.ssl_subject ? "SUBJECT '#{@new_resource.ssl_subject}' " : ""}"
+
+            with_options = ""
+            if @new_resource.grant_option || @new_resource.max_queries_per_hour || @new_resource.max_updates_per_hour || @new_resource.max_connections_per_hour || @new_resource.max_user_connections then
+              with_options += "WITH "
+            end
+
+            with_options += "#{@new_resource.grant_option ? "GRANT OPTION " : ""}"
+            with_options += "#{@new_resource.max_queries_per_hour ? "MAX_QUERIES_PER_HOUR #{@new_resource.max_queries_per_hour} " : ""}"
+            with_options += "#{@new_resource.max_updates_per_hour ? "MAX_UPDATES_PER_HOUR #{@new_resource.max_updates_per_hour} " : ""}"
+            with_options += "#{@new_resource.max_connections_per_hour ? "MAX_CONNECTIONS_PER_HOUR #{@new_resource.max_connections_per_hour} " : ""}"
+            with_options += "#{@new_resource.max_user_connections ? "MAX_USER_CONNECTIONS #{@new_resource.max_user_connections} " : ""}"
+
+            Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}#{filtered}#{require_options}#{with_options}]")
+            db.query(grant_statement + password + " " + require_options + " " + with_options)
             @new_resource.updated_by_last_action(true)
           ensure
             close
