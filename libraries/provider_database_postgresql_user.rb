@@ -1,3 +1,4 @@
+## encoding: utf-8
 #
 # Author:: Seth Chisamore (<schisamo@opscode.com>)
 # Author:: Lamont Granquist (<lamont@opscode.com>)
@@ -58,7 +59,17 @@ class Chef
         def action_grant
           begin
             # FIXME: grants on individual tables
-            grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON DATABASE \"#{@new_resource.database_name}\" TO \"#{@new_resource.username}\""
+            if @new_resource.table.nil?
+              grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON DATABASE \"#{@new_resource.database_name}\" TO \"#{@new_resource.username}\""
+            else
+              # grant privileges for specific table
+              # user became readonly
+              user_ro = "ALTER USER \"#{@new_resource.username}\" set default_transaction_read_only = on"
+              db(@new_resource.database_name).query(user_ro)
+              db_usage = "GRANT CONNECT ON DATABASE \"#{@new_resource.database_name}\" TO \"#{@new_resource.username}\""
+              db(@new_resource.database_name).query(db_usage)
+              grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON TABLE \"#{@new_resource.table}\" TO \"#{@new_resource.username}\""
+            end
             Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}]")
             db(@new_resource.database_name).query(grant_statement)
             @new_resource.updated_by_last_action(true)
