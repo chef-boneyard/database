@@ -210,6 +210,8 @@ resource depending on your RDBMS: `mysql_database_user`,
   :port, :username, :password
 - privileges: array of database privileges to grant user. used by the
   :grant action. default is :all
+- grant_option: appends 'WITH GRANT OPTION' to grant statement. used by MySQL
+  provider only. default is 'false'
 - host: host where user connections are allowed from. used by MySQL
   provider only. default is 'localhost'
 - table: table to grant privileges on. used by :grant action and MySQL
