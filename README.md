@@ -74,10 +74,23 @@ depending on your RDBMS: `mysql_database`, `postgresql_database` or
 
 - database_name: name attribute. Name of the database to interact with
 - connection: hash of connection info. valid keys include :host,
-  :port, :username, :password
+  :port, :username, :password and :socket (only for mysql DB)
 - sql: string of sql or a block that executes to a string of sql,
   which will be executed against the database. used by :query action
   only
+
+#### :socket parameter deeper explanation
+
+* database cookbook use mysql gem.
+* mysql gem use real_connect() function from mysql API to connect to mysql server.
+
+This is a cite from http://dev.mysql.com/doc/refman/5.5/en/mysql-real-connect.html:
+
+"The value of host may be either a host name or an IP address. If host is NULL or the string "localhost", a connection to the local host is assumed. For Windows, the client connects using a shared-memory connection, if the server has shared-memory connections enabled. Otherwise, TCP/IP is used. For Unix, the client connects using a Unix socket file. For local connections, you can also influence the type of connection to use with the MYSQL_OPT_PROTOCOL or MYSQL_OPT_NAMED_PIPE options to mysql_options(). The type of connection must be supported by the server. For a host value of "." on Windows, the client connects using a named pipe, if the server has named-pipe connections enabled. If named-pipe connections are not enabled, an error occurs."
+
+* So if you set :host key to "localhost" or you don't set it at all - connection to mysql with socket will be used.
+* By default real_connect() function will look for socket in `/var/lib/mysql/mysql.sock`
+* if your socket file in non-default location - you can use :socket key to specify that location.
 
 ### Providers
 
@@ -128,6 +141,20 @@ depending on your RDBMS: `mysql_database`, `postgresql_database` or
                                   :port => node['postgresql']['config']['port'],
                                   :username => 'postgres',
                                   :password => node['postgresql']['password']['postgres']}
+
+    # Use mysql :socket key in connection info
+    mysql_connection_info = {
+      :host => "localhost",
+      :username => 'root',
+      :password => node['mysql']['server_root_password'],
+      :socket => '/db/mysql.sock'
+    }
+
+    mysql_database_user 'newrelic' do
+      connection mysql_connection_info
+      password newrelic_pass
+      action :create
+    end
 
     # same create commands, connection info as an external hash
     mysql_database 'foo' do
