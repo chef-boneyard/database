@@ -3,6 +3,12 @@ database Cookbook CHANGELOG
 This file is used to list changes made in each version of the database cookbook.
 
 
+v1.5.0
+------
+### Improvement
+- **[COOK-3546](https://tickets.opscode.com/browse/COOK-3546)** - Add connection parameters `:socket`
+- **[COOK-1709](https://tickets.opscode.com/browse/COOK-1709)** - Add 'grant_option' parameter
+
 v1.4.0
 -------
 ### Bug
