@@ -60,9 +60,9 @@ If you set the `:host` key to "localhost" or if you leave it blank, a socket wil
 # Create a mysql database
 mysql_database 'oracle_rules' do
   connection(
-    host:     'localhost',
-    username: 'root',
-    password: node['mysql']['server_root_password']
+    :host     => 'localhost',
+    :username => 'root',
+    :password => node['mysql']['server_root_password']
   )
   action :create
 end
@@ -72,10 +72,10 @@ end
 # Create a sql server database
 sql_server_database 'mr_softie' do
   connection(
-    host:     '127.0.0.1',
-    port:     node['sql_server']['port'],
-    username: 'sa',
-    password: node['sql_server']['server_sa_password']
+    :host     => '127.0.0.1',
+    :port     => node['sql_server']['port'],
+    :username => 'sa',
+    :password => node['sql_server']['server_sa_password']
   )
   action :create
 end
@@ -85,10 +85,10 @@ end
 # create a postgresql database
 postgresql_database 'mr_softie' do
   connection(
-    host:     '127.0.0.1'
-    port:     5432,
-    username: 'postgres',
-    password: node['postgresql']['password']['postgres']
+    :host      => '127.0.0.1'
+    :port      => 5432,
+    :username  => 'postgres',
+    :password  => node['postgresql']['password']['postgres']
   )
   action :create
 end
@@ -98,10 +98,10 @@ end
 # create a postgresql database with additional parameters
 postgresql_database 'mr_softie' do
   connection(
-    host:     '127.0.0.1',
-    port:     5432,
-    username: 'postgres',
-    password: node['postgresql']['password']['postgres']
+    :host     => '127.0.0.1',
+    :port     => 5432,
+    :username => 'postgres',
+    :password => node['postgresql']['password']['postgres']
   )
   template 'DEFAULT'
   encoding 'DEFAULT'
@@ -134,42 +134,54 @@ postgresql_connection_info = {
   :password => node['postgresql']['password']['postgres']
 }
 
+
+
 # Same create commands, connection info as an external hash
 mysql_database 'foo' do
   connection mysql_connection_info
   action :create
 end
+
 sql_server_database 'foo' do
   connection sql_server_connection_info
   action     :create
 end
+
 postgresql_database 'foo' do
   connection postgresql_connection_info
   action     :create
 end
 
+
+
 # Create database, set provider in resource parameter
 database 'bar' do
-   connection mysql_connection_info
-   provider   Chef::Provider::Database::Mysql
-   action     :create
+  connection mysql_connection_info
+  provider   Chef::Provider::Database::Mysql
+  action     :create
 end
+
 database 'bar' do
   connection sql_server_connection_info
   provider   Chef::Provider::Database::SqlServer
   action     :create
 end
+
 database 'bar' do
   connection postgresql_connection_info
   provider   Chef::Provider::Database::Postgresql
   action     :create
 end
 
-#Drop a database
+
+
+# Drop a database
 mysql_database 'baz' do
   connection mysql_connection_info
   action    :drop
 end
+
+
 
 # Query a database
 mysl_database 'flush the privileges' do
@@ -178,12 +190,16 @@ mysl_database 'flush the privileges' do
   action     :query
 end
 
+
+
 # Query a database from a sql script on disk
 mysql_database 'run script' do
   connection mysql_connection_info
   sql { ::File.open('/path/to/sql_script.sql').read }
   action :query
 end
+
+
 
 # Vacuum a postgres database
 postgres_database 'vacuum databases' do
@@ -241,12 +257,16 @@ sql_server_connection_info = {
   :password => node['sql_server']['server_sa_password']
 }
 
+
+
 # Create a mysql user but grant no privileges
 mysql_database_user 'disenfranchised' do
   connection mysql_connection_info
   password   'super_secret'
   action     :create
 end
+
+
 
 # Do the same but pass the provider to the database resource
 database_user 'disenfranchised' do
@@ -256,12 +276,16 @@ database_user 'disenfranchised' do
   action     :create
 end
 
+
+
 # Create a postgresql user but grant no privileges
 postgresql_database_user 'disenfranchised' do
   connection postgresql_connection_info
   password   'super_secret'
   action     :create
 end
+
+
 
 # Do the same but pass the provider to the database resource
 database_user 'disenfranchised' do
@@ -271,6 +295,8 @@ database_user 'disenfranchised' do
   action     :create
 end
 
+
+
 # Create a sql server user but grant no privileges
 sql_server_database_user 'disenfranchised' do
   connection sql_server_connection_info
@@ -278,19 +304,25 @@ sql_server_database_user 'disenfranchised' do
   action     :create
 end
 
+
+
 # Drop a mysql user
 mysql_database_user 'foo_user' do
   connection mysql_connection_info
   action     :drop
 end
 
-# bulk drop sql server users
+
+
+# Bulk drop sql server users
 %w(disenfranchised foo_user).each do |user|
   sql_server_database_user user do
     connection sql_server_connection_info
     action     :drop
   end
 end
+
+
 
 # Grant SELECT, UPDATE, and INSERT privileges to all tables in foo db from all hosts
 mysql_database_user 'foo_user' do
@@ -302,12 +334,16 @@ mysql_database_user 'foo_user' do
   action        :grant
 end
 
+
+
 # Grant all privileges on all databases/tables from localhost
 mysql_database_user 'super_user' do
   connection mysql_connection_info
   password   'super_secret'
   action     :grant
 end
+
+
 
 # Grant all privileges on all tables in foo db
 postgresql_database_user 'foo_user' do
