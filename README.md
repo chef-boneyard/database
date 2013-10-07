@@ -184,7 +184,7 @@ end
 
 
 # Query a database
-mysl_database 'flush the privileges' do
+mysql_database 'flush the privileges' do
   connection mysql_connection_info
   sql        'flush privileges'
   action     :query
