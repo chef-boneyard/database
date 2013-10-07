@@ -84,6 +84,24 @@ class Chef
           end
         end
 
+        def action_alter_roles
+          begin
+            if @new_resource.password
+              action_create
+            end
+            Chef::Application.fatal!('Please provide a database_name, SQL Server does not support global GRANT statements.') unless @new_resource.database_name
+            db.execute("USE [#{@new_resource.database_name}]").do
+            @new_resource.sql_roles.each do | sql_role, role_action |
+              alter_statement = "ALTER ROLE [#{sql_role}] #{role_action} MEMBER [#{@new_resource.username}]"
+              Chef::Log.info("#{@new_resource} granting access with statement [#{alter_statement}]")
+              db.execute(alter_statement).do
+            end
+            @new_resource.updated_by_last_action(true)
+          ensure
+            close
+          end
+        end
+
         private
         def exists?(type=:users)
           case type

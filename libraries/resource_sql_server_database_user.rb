@@ -25,10 +25,20 @@ class Chef
 
       def initialize(name, run_context=nil)
         super
+        @sql_roles = {}
         @resource_name = :sql_server_database_user
         @provider = Chef::Provider::Database::SqlServerUser
+        @allowed_actions.push(:alter_roles)
       end
+    end
 
+    def sql_roles(arg=nil)
+      Chef::Log.debug("Received roles: #{arg.inspect}")
+      set_or_return(
+          :sql_roles,
+          arg,
+          :kind_of => Hash
+      )
     end
   end
 end
