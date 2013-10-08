@@ -62,8 +62,7 @@ class Chef
 
         def action_grant
           begin
-            # FIXME: grants on individual tables
-            grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON DATABASE \"#{@new_resource.database_name}\" TO \"#{@new_resource.username}\""
+            grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON #{@new_resource.on} TO \"#{@new_resource.username}\""
             Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}]")
             db(@new_resource.database_name).query(grant_statement)
             @new_resource.updated_by_last_action(true)

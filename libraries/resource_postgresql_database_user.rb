@@ -59,6 +59,14 @@ class Chef
           :kind_of => [ Array, String]
         )
       end
+
+      def on(arg=nil)
+        set_or_return(
+          :on,
+          arg,
+          :kind_of => String
+        )
+      end
     end
   end
 end
