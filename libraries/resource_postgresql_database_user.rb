@@ -28,6 +28,7 @@ class Chef
         super
         @resource_name = :postgresql_database_user
         @provider = Chef::Provider::Database::PostgresqlUser
+        @password = nil
         @schema_name = nil
         @allowed_actions.push(:create, :drop, :grant, :grant_schema)
       end
@@ -35,6 +36,16 @@ class Chef
       def schema_name(arg = nil)
         set_or_return(
           :schema_name,
+          arg,
+          :kind_of => String
+        )
+      end
+
+      # Overwrite inherited password attribute,
+      # as passwords are not required in postgersql
+      def password(arg=nil)
+        set_or_return(
+          :password,
           arg,
           :kind_of => String
         )
