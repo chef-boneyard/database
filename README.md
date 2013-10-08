@@ -288,6 +288,16 @@ end
 
 
 
+# Create a postgresql user for replication
+postgresql_database_user 'replicant' do
+  connection postgresql_connection_info
+  options    'REPLICATION'
+  password   'replication_password'
+  action     :create
+end
+
+
+
 # Do the same but pass the provider to the database resource
 database_user 'disenfranchised' do
   connection postgresql_connection_info
@@ -349,10 +359,22 @@ end
 # Grant all privileges on all tables in foo db
 postgresql_database_user 'foo_user' do
   connection    postgresql_connection_info
-  database_name 'foo'
+  on            'DATABASE foo'
   privileges    [:all]
   action        :grant
 end
+
+
+
+# Grant all privileges on a specific table
+postgresql_database_user 'monitoring_user' do
+  connection    postgresql_connection_info
+  on            'TABLE pg_stat_database'
+  privileges    [:all]
+  action        :grant
+end
+
+
 
 # grant select,update,insert privileges to all tables in foo db
 sql_server_database_user 'foo_user' do
