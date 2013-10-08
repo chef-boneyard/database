@@ -29,6 +29,7 @@ class Chef
         @resource_name = :postgresql_database_user
         @provider = Chef::Provider::Database::PostgresqlUser
         @password = nil
+        @options = [ 'LOGIN' ]
         @schema_name = nil
         @allowed_actions.push(:create, :drop, :grant, :grant_schema)
       end
@@ -48,6 +49,14 @@ class Chef
           :password,
           arg,
           :kind_of => String
+        )
+      end
+
+      def options(arg=nil)
+        set_or_return(
+          :options,
+          arg,
+          :kind_of => [ Array, String]
         )
       end
     end
