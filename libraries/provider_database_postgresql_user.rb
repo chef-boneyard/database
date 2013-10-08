@@ -38,7 +38,9 @@ class Chef
           unless exists?
             begin
               statement = "CREATE ROLE \"#{@new_resource.username}\""
-              statement += " WITH LOGIN PASSWORD '#{@new_resource.password}'" if @new_resource.password
+              statement += " WITH #{Array(@new_resource.options).join(' ')}" if @new_resource.options
+              statement += " PASSWORD '#{@new_resource.password}'" if @new_resource.password
+
               db("template1").query(statement)
               @new_resource.updated_by_last_action(true)
             ensure
