@@ -84,7 +84,7 @@ class Chef
         private
         def exists?
           begin
-            exists = db("template1").query("SELECT * FROM pg_roles WHERE rolname='#{@new_resource.username}'").num_tuples != 0
+            exists = db("template1").query("SELECT 1 FROM pg_roles WHERE rolname='#{@new_resource.username}'").num_tuples != 0
           ensure
             close
           end
