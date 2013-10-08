@@ -3,6 +3,12 @@ database Cookbook CHANGELOG
 This file is used to list changes made in each version of the database cookbook.
 
 
+v1.5.2
+------
+### Improvement
+- **[COOK-3716](https://tickets.opscode.com/browse/COOK-3716)** - Add ALTER SQL Server user roles
+
+
 v1.5.0
 ------
 ### Improvement
