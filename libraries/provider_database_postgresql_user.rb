@@ -54,7 +54,7 @@ class Chef
               options += " #{Chef::Resource::PostgresqlDatabaseUser::REPLICATION_DEFAULT ? 'REPLICATION' : 'NOREPLICATION'}" unless @new_resource.respond_to?(:replication) || !version_greater_than?(90_100)
               options += " #{Chef::Resource::PostgresqlDatabaseUser::SUPERUSER_DEFAULT ? 'SUPERUSER' : 'NOSUPERUSER'}" unless @new_resource.respond_to?(:superuser)
 
-              statement = "CREATE USER \"#{@new_resource.username}\""
+              statement = "CREATE ROLE \"#{@new_resource.username}\""
               statement += " WITH #{options}" unless options.empty?
 
               db('template1').query(statement)
@@ -68,7 +68,7 @@ class Chef
         def action_drop
           if exists?
             begin
-              db('template1').query("DROP USER \"#{@new_resource.username}\"")
+              db('template1').query("DROP ROLE \"#{@new_resource.username}\"")
               @new_resource.updated_by_last_action(true)
             ensure
               close
@@ -98,7 +98,7 @@ class Chef
 
         def exists?
           begin
-            exists = db('template1').query("SELECT * FROM pg_user WHERE usename='#{@new_resource.username}'").num_tuples != 0
+            exists = db('template1').query("SELECT * FROM pg_roles WHERE rolname='#{@new_resource.username}'").num_tuples != 0
           ensure
             close
           end
