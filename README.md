@@ -202,7 +202,7 @@ end
 
 
 # Vacuum a postgres database
-postgres_database 'vacuum databases' do
+postgresql_database 'vacuum databases' do
   connection      postgresql_connection_info
   database_table 'template1'
   sql 'VACUUM FULL VERBOSE ANALYZE'
