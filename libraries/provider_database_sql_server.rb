@@ -91,12 +91,14 @@ class Chef
 
         def db
           @db ||= begin
-            ::TinyTds::Client.new(
-              :host => @new_resource.connection[:host],
+            opts = { :host => @new_resource.connection[:host],
               :username => @new_resource.connection[:username],
               :password => @new_resource.connection[:password],
-              :port => @new_resource.connection[:port] || 1433
-            )
+              :port => @new_resource.connection[:port] || 1433,
+              :timeout => 120 }
+            opts[:database] = @new_resource.database_name if action == :query
+            
+            ::TinyTds::Client.new(opts)
           end
         end
 
