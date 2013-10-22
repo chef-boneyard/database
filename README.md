@@ -30,7 +30,7 @@ These resources aim to expose an abstraction layer for interacting with differen
 - PostgreSQL: leverages the `pg` gem which is installed as part of the `postgresql::ruby` recipe. You must declare `include_recipe "database::postgresql"` to include this. Currently does not work in Chef "omnibus" full stack installs, see COOK-1406.
 - SQL Server: leverages the `tiny_tds` gem which is installed as part of the `sql_server::client` recipe.
 
-This cookbook is not in charge of installing the SGBD itself. Therefore, if you want to install MySQL, for instance, you should add `include_recipe "mysql::server"` in your recipe, or include `mysql::server` in the node run_list.
+This cookbook is not in charge of installing the Database Management System itself. Therefore, if you want to install MySQL, for instance, you should add `include_recipe "mysql::server"` in your recipe, or include `mysql::server` in the node run_list.
 
 ### database
 Manage databases in a RDBMS. Use the proper shortcut resource depending on your RDBMS: `mysql_database`, `postgresql_database` or `sql_server_database`.
