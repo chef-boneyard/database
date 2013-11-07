@@ -25,6 +25,8 @@ class Chef
       class Postgresql < Chef::Provider
         include Chef::Mixin::ShellOut
 
+        class RoleNotFoundError < StandardError; end
+
         def load_current_resource
           Gem.clear_paths
           require 'pg'
@@ -105,6 +107,30 @@ class Chef
         #
         def db(dbname = nil)
           close if @db
+          if @new_resource.connection && @new_resource.connection[:host]
+            connect_tcp(dbname)
+          else
+            connect_peer(dbname)
+          end
+        end
+
+        def connect_peer(dbname)
+          if @new_resource.connection && @new_resource.connection[:database]
+            dbname = @new_resource.connection[:database]
+          end
+
+          Chef::Log.debug("#{@new_resource}: connecting to database #{dbname} using peer authentication")
+          @db = ::PGconn.new(:dbname => dbname)
+        rescue PG::ConnectionBad => e
+          if e.message =~ /role "(.*)" does not exist/
+            raise RoleNotFoundError, "Database role '#{$1}' does not exist.\n" +
+              "Try adding `postgresql_database_user '#{$1}'` to your recipe."
+          else
+            Chef::Application.fatal! "Peer authentication unsuccessful (#{e.message})."
+          end
+        end
+
+        def connect_tcp(dbname)
           dbname = @new_resource.connection[:database] if @new_resource.connection[:database]
           host = @new_resource.connection[:host]
           port = @new_resource.connection[:port] || 5432
