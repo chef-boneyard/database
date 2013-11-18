@@ -1,8 +1,6 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Author:: Lamont Granquist (<lamont@opscode.com>)
 # Author:: Marco Betti (<m.betti@gmail.com>)
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Copyright:: Copyright (c) 2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,19 +16,20 @@
 # limitations under the License.
 #
 
-require File.join(File.dirname(__FILE__), 'resource_database_user')
-require File.join(File.dirname(__FILE__), 'provider_database_postgresql_user')
+require File.join(File.dirname(__FILE__), 'resource_database')
+require File.join(File.dirname(__FILE__), 'provider_database_postgresql_schema')
 
 class Chef
   class Resource
-    class PostgresqlDatabaseUser < Chef::Resource::DatabaseUser
+    class PostgresqlDatabaseSchema < Chef::Resource::Database
 
       def initialize(name, run_context=nil)
         super
-        @resource_name = :postgresql_database_user
-        @provider = Chef::Provider::Database::PostgresqlUser
-        @schema_name = nil
-        @allowed_actions.push(:create, :drop, :grant, :grant_schema)
+        @resource_name = :postgresql_database_schema
+        @schema_name = name
+        @allowed_actions.push(:create, :drop)
+        @action = :create
+        @provider = Chef::Provider::Database::PostgresqlSchema
       end
 
       def schema_name(arg=nil)
@@ -40,7 +39,6 @@ class Chef
           :kind_of => String
         )
       end
-
     end
   end
 end
