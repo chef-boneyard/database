@@ -41,8 +41,16 @@ class Chef
         set_or_return(
             :read_only,
             arg,
-            :kind_of => Boolean,
-            :default => false
+            :kind_of => Integer,
+            :default => 0
+        )
+      end
+
+      def options(arg=nil)
+        set_or_return(
+            :options,
+            arg,
+            :default => {}
         )
       end
 
