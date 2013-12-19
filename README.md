@@ -27,7 +27,7 @@ Resources/Providers
 These resources aim to expose an abstraction layer for interacting with different RDBMS in a general way. Currently the cookbook ships with providers for MySQL, PostgreSQL and SQL Server. Please see specific usage in the __Example__ sections below. The providers use specific Ruby gems installed under Chef's Ruby environment to execute commands and carry out actions. These gems will need to be installed before the providers can operate correctly. Specific notes for each RDBS flavor:
 
 - MySQL: leverages the `mysql` gem which is installed as part of the `mysql::ruby` recipe. You can use `database::mysql` to include this, too.
-- PostgreSQL: leverages the `pg` gem which is installed as part of the `postgresql::ruby` recipe. You can use `database::postgresql` to include this, too. Currently does not work in Chef "omnibus" full stack installs, see COOK-1406.
+- PostgreSQL: leverages the `pg` gem which is installed as part of the `postgresql::ruby` recipe. You can use `database::postgresql` to include this, too.
 - SQL Server: leverages the `tiny_tds` gem which is installed as part of the `sql_server::client` recipe.
 
 
