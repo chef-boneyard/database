@@ -2,6 +2,11 @@ database Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the database cookbook.
 
+v1.6.2
+------
+### Improvement
+- - Fixing foodcritic warnings
+- - Adding testkitchen support
 
 v1.6.0
 ------
