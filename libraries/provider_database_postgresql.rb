@@ -105,12 +105,12 @@ class Chef
         #
         def db(dbname = nil)
           close if @db
-          dbname = @new_resource.connection[:database] if @new_resource.connection[:database]
-          host = @new_resource.connection[:host]
-          port = @new_resource.connection[:port] || 5432
-          user = @new_resource.connection[:username] || "postgres"
+          dbname = @new_resource.connection['database'] if @new_resource.connection['database']
+          host = @new_resource.connection['host']
+          port = @new_resource.connection['port'] || 5432
+          user = @new_resource.connection['username'] || "postgres"
           Chef::Log.debug("#{@new_resource}: connecting to database #{dbname} on #{host}:#{port} as #{user}")
-          password = @new_resource.connection[:password] || node[:postgresql][:password][:postgres]
+          password = @new_resource.connection['password'] || node['postgresql']['password']['postgres']
           @db = ::PGconn.new(
             :host => host,
             :port => port,
