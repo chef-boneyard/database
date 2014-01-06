@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 
-if node[:ec2]
+if node['ec2']
   include_recipe "aws"
   include_recipe "xfs"
 
@@ -46,6 +46,9 @@ if node[:ec2]
   snapshots_to_keep = String.new
   snapshot_cron_schedule = "00 * * * *" # default to hourly snapshots
 
+if Chef::Config[:solo]
+    Chef::Log.warn('This recipe uses search. Chef Solo does not support search.')
+else
   search(:apps) do |app|
     if (app["database_master_role"] & node.run_list.roles).length == 1 || (app["database_slave_role"] & node.run_list.roles).length == 1
       master_role = app["database_master_role"] & node.run_list.roles
@@ -65,6 +68,7 @@ if node[:ec2]
       Chef::Log.info "database::ebs_volume - db_role: #{db_role} db_type: #{db_type}"
     end
   end
+end
 
   begin
     ebs_info = Chef::DataBagItem.load(:aws, "ebs_#{db_role}_#{node.chef_environment}")
@@ -83,7 +87,7 @@ if node[:ec2]
 
   ruby_block "store_#{db_role}_#{node.chef_environment}_volid" do
     block do
-      ebs_vol_id = node[:aws][:ebs_volume]["#{db_role}_#{node.chef_environment}"][:volume_id]
+      ebs_vol_id = node['aws']['ebs_volume']["#{db_role}_#{node.chef_environment}"]['volume_id']
 
       unless ebs_info['volume_id']
         item = {
@@ -118,7 +122,7 @@ if node[:ec2]
       else
         action [ :create, :attach ]
       end
-      notifies :create, resources(:ruby_block => "store_#{db_role}_#{node.chef_environment}_volid")
+      notifies :create, "ruby_block['store_#{db_role}_#{node.chef_environment}_volid']"
     when "slave"
       if master_info['volume_id']
         snapshot_id master_info['volume_id']
@@ -146,7 +150,7 @@ if node[:ec2]
       variables(
         :output => {
           'db_snapshot' => {
-            'ebs_vol_dev' => node.mysql.ec2_path,
+            'ebs_vol_dev' => node['mysql']['ec2_path'],
             'db_role' => db_role,
             'app_environment' => node.chef_environment,
             'username' => 'root',

@@ -28,11 +28,15 @@ end
 
 db_role = String.new
 db_master_role = String.new
-db_type = node[:database][:type]
+db_type = node['database']['type']
 
+if Chef::Config[:solo]
+    Chef::Log.warn('This recipe uses search. Chef Solo does not support search.')
+else
 search(:apps) do |app|
   db_role = app["database_#{db_type}_role"] & node.run_list.roles
   db_master_role = app["database_master_role"]
+  end
 end
 
 ebs_info = Chef::DataBagItem.load(:aws, "ebs_#{db_master_role}_#{node.chef_environment}")
@@ -78,12 +82,12 @@ end
   end
 end
 
-if db_type == "master" && node.chef_environment == "production"
-  template "/etc/cron.d/db-backup" do
-    source "ebs-backup-cron.erb"
-    owner "root"
-    group "root"
-    mode 0644
-    backup false
+template "/etc/cron.d/db-backup" do
+  source "ebs-backup-cron.erb"
+  owner "root"
+  group "root"
+  mode 0644
+  backup false
+  not_if db_type != "master" && node.chef_environment != "production"
   end
-end
+
