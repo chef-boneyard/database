@@ -1,0 +1,5 @@
+cookbook 'aws'
+cookbook 'mysql'
+cookbook 'postgresql'
+cookbook 'xfs'
+cookbook 'database', git: 'git@github.com:chrispernicano/database.git', branch: 'master'
