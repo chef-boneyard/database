@@ -31,6 +31,7 @@ class Chef
         @table = nil
         @host = 'localhost'
         @privileges = [:all]
+        @with_option = []
 
         @allowed_actions.push(:create, :drop, :grant)
         @action = :create
@@ -80,6 +81,14 @@ class Chef
       def privileges(arg=nil)
         set_or_return(
           :privileges,
+          arg,
+          :kind_of => Array
+        )
+      end
+      
+      def with_option(arg=nil)
+        set_or_return(
+          :with_option,
           arg,
           :kind_of => Array
         )
