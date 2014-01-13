@@ -41,6 +41,14 @@ class Chef
         )
       end
 
+      def password(arg=nil)
+        set_or_return(
+          :password,
+          arg,
+          :kind_of => String,
+          :required => false
+        )
+      end
     end
   end
 end
