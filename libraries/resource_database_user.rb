@@ -32,8 +32,9 @@ class Chef
         @host = 'localhost'
         @privileges = [:all]
         @grant_option = false
+        @roles = ['superuser']
 
-        @allowed_actions.push(:create, :drop, :grant)
+        @allowed_actions.push(:create, :drop, :grant, :alter_user)
         @action = :create
       end
 
@@ -75,6 +76,14 @@ class Chef
           :host,
           arg,
           :kind_of => String
+        )
+      end
+
+      def roles(arg=nil)
+        set_or_return(
+          :roles,
+          arg,
+          :kind_of => Array
         )
       end
 
