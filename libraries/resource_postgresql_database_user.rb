@@ -41,6 +41,23 @@ class Chef
         )
       end
 
+      def connection(arg=nil)
+        set_or_return(
+          :connection,
+          arg,
+          :required => false
+        )
+      end
+
+      def password(arg=nil)
+        set_or_return(
+          :password,
+          arg,
+          :kind_of => String,
+          :required => false
+        )
+      end
+
     end
   end
 end

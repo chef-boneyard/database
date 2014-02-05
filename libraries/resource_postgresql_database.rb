@@ -30,6 +30,14 @@ class Chef
         @provider = Chef::Provider::Database::Postgresql
       end
 
+      def connection(arg=nil)
+        set_or_return(
+          :connection,
+          arg,
+          :required => false
+        )
+      end
+
     end
   end
 end

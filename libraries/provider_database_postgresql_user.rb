@@ -43,6 +43,8 @@ class Chef
               close
             end
           end
+        rescue Chef::Provider::Database::Postgresql::RoleNotFoundError
+          create_with_command
         end
 
         def action_drop
@@ -87,6 +89,21 @@ class Chef
             close
           end
           exists
+        end
+
+        def create_with_command
+          Chef::Application.fatal! "setting password not supported when creating user with command" if @new_resource.password
+
+          username = @new_resource.username
+          command = "!(createuser -s \"#{username}\" 2>&1 | grep -v 'already exists')"
+
+          Chef::Log.info("#{@new_resource}: creating user with command [#{command}]")
+          bash "create postgres user #{username}" do
+            user 'postgres'
+            code command
+          end
+
+          @new_resource.updated_by_last_action(true)
         end
 
       end
