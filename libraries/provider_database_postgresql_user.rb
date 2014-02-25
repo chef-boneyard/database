@@ -37,7 +37,9 @@ class Chef
         def action_create
           unless exists?
             begin
-              db("template1").query("CREATE USER \"#{@new_resource.username}\" WITH PASSWORD '#{@new_resource.password}'")
+              statement = "CREATE USER \"#{@new_resource.username}\""
+              statement += " WITH PASSWORD '#{@new_resource.password}'" if @new_resource.password
+              db("template1").query(statement)
               @new_resource.updated_by_last_action(true)
             ensure
               close
