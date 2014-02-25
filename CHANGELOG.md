@@ -3,6 +3,11 @@ database Cookbook CHANGELOG
 This file is used to list changes made in each version of the database cookbook.
 
 
+v2.0.0 (2014-02-25)
+-------------------
+[COOK-3441] database_user password argument should not be required
+
+
 v1.6.0
 ------
 ### New Feature
