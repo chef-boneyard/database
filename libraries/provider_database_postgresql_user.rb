@@ -81,6 +81,17 @@ class Chef
           end
         end
 
+        def action_alter_user
+          begin
+            alter_statement = "ALTER USER \"#{@new_resource.username}\" WITH #{@new_resource.roles.join(', ')}"
+            Chef::Log.info("#{@new_resource}: altering #{@new_resource.username} with statement [#{alter_statement}]")
+            db(@new_resource.database_name).query(alter_statement)
+            @new_resource.updated_by_last_action(true)
+          ensure
+            close
+          end
+        end
+
         private
         def exists?
           begin
