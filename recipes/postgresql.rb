@@ -17,4 +17,4 @@
 # limitations under the License.
 #
 
-include_recipe "postgresql::ruby"
+include_recipe 'postgresql::ruby'

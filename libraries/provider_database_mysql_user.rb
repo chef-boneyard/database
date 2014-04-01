@@ -61,7 +61,7 @@ class Chef
             # does password look like MySQL hex digest?
             # (begins with *, followed by 40 hexadecimal characters)
             if (/(\A\*[0-9A-F]{40}\z)/i).match(@new_resource.password) then
-              password = filtered = "PASSWORD '#{$1}'"
+              password = filtered = "PASSWORD '#{Regexp.last_match[1]}'"
             else
               password = "'#{@new_resource.password}'"
               filtered = '[FILTERED]'
@@ -80,7 +80,6 @@ class Chef
         def exists?
           db.query("SELECT User,host from mysql.user WHERE User = '#{@new_resource.username}' AND host = '#{@new_resource.host}'").num_rows != 0
         end
-
       end
     end
   end

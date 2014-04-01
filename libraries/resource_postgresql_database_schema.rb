@@ -22,8 +22,7 @@ require File.join(File.dirname(__FILE__), 'provider_database_postgresql_schema')
 class Chef
   class Resource
     class PostgresqlDatabaseSchema < Chef::Resource::Database
-
-      def initialize(name, run_context=nil)
+      def initialize(name, run_context = nil)
         super
         @resource_name = :postgresql_database_schema
         @schema_name = name
@@ -32,7 +31,7 @@ class Chef
         @provider = Chef::Provider::Database::PostgresqlSchema
       end
 
-      def schema_name(arg=nil)
+      def schema_name(arg = nil)
         set_or_return(
           :schema_name,
           arg,

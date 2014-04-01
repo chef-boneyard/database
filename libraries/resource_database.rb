@@ -21,8 +21,7 @@ require 'chef/resource'
 class Chef
   class Resource
     class Database < Chef::Resource
-
-      def initialize(name, run_context=nil)
+      def initialize(name, run_context = nil)
         super
         @resource_name = :database
         @database_name = name
@@ -30,7 +29,7 @@ class Chef
         @action = :create
       end
 
-      def database_name(arg=nil)
+      def database_name(arg = nil)
         set_or_return(
           :database_name,
           arg,
@@ -38,7 +37,7 @@ class Chef
         )
       end
 
-      def connection(arg=nil)
+      def connection(arg = nil)
         set_or_return(
           :connection,
           arg,
@@ -46,7 +45,7 @@ class Chef
         )
       end
 
-      def sql(arg=nil, &block)
+      def sql(arg = nil, &block)
         arg ||= block
         set_or_return(
           :sql,
@@ -63,7 +62,7 @@ class Chef
         end
       end
 
-      def template(arg=nil)
+      def template(arg = nil)
         set_or_return(
           :template,
           arg,
@@ -72,7 +71,7 @@ class Chef
         )
       end
 
-      def collation(arg=nil)
+      def collation(arg = nil)
         set_or_return(
           :collation,
           arg,
@@ -80,7 +79,7 @@ class Chef
         )
       end
 
-      def encoding(arg=nil)
+      def encoding(arg = nil)
         set_or_return(
           :encoding,
           arg,
@@ -89,7 +88,7 @@ class Chef
         )
       end
 
-      def tablespace(arg=nil)
+      def tablespace(arg = nil)
         set_or_return(
           :tablespace,
           arg,
@@ -98,7 +97,7 @@ class Chef
         )
       end
 
-      def connection_limit(arg=nil)
+      def connection_limit(arg = nil)
         set_or_return(
           :connection_limit,
           arg,
@@ -107,7 +106,7 @@ class Chef
         )
       end
 
-      def owner(arg=nil)
+      def owner(arg = nil)
         set_or_return(
           :owner,
           arg,

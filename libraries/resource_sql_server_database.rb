@@ -22,13 +22,11 @@ require File.join(File.dirname(__FILE__), 'provider_database_sql_server')
 class Chef
   class Resource
     class SqlServerDatabase < Chef::Resource::Database
-
-      def initialize(name, run_context=nil)
+      def initialize(name, run_context = nil)
         super
         @resource_name = :sql_server_database
         @provider = Chef::Provider::Database::SqlServer
       end
-
     end
   end
 end

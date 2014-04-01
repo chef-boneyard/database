@@ -22,8 +22,7 @@ require File.join(File.dirname(__FILE__), 'provider_database_sql_server_user')
 class Chef
   class Resource
     class SqlServerDatabaseUser < Chef::Resource::DatabaseUser
-
-      def initialize(name, run_context=nil)
+      def initialize(name, run_context = nil)
         super
         @sql_roles = {}
         @resource_name = :sql_server_database_user
@@ -32,7 +31,7 @@ class Chef
       end
     end
 
-    def sql_roles(arg=nil)
+    def sql_roles(arg = nil)
       Chef::Log.debug("Received roles: #{arg.inspect}")
       set_or_return(
           :sql_roles,

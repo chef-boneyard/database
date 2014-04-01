@@ -74,6 +74,7 @@ class Chef
         end
 
         private
+        
         def exists?
           db.list_dbs.include?(@new_resource.database_name)
         end
@@ -97,7 +98,6 @@ class Chef
           @db.close rescue nil
           @db = nil
         end
-
       end
     end
   end

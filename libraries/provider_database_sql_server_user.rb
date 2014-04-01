@@ -103,16 +103,16 @@ class Chef
         end
 
         private
-        def exists?(type=:users)
+        def exists?(type = :users)
           case type
           when :users
-            table = "database_principals"
+            table = 'database_principals'
             if @new_resource.database_name
               Chef::Log.debug("#{@new_resource} searching for existing user in '#{@new_resource.database_name}' database context.")
               db.execute("USE [#{@new_resource.database_name}]").do
             end
           when :logins
-            table = "server_principals"
+            table = 'server_principals'
           end
 
           result = db.execute("SELECT name FROM sys.#{table} WHERE name='#{@new_resource.username}'")

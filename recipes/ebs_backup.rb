@@ -26,49 +26,49 @@ rescue
   raise
 end
 
-db_role = String.new
-db_master_role = String.new
+db_role = ''
+db_master_role = ''
 db_type = node[:database][:type]
 
 search(:apps) do |app|
   db_role = app["database_#{db_type}_role"] & node.run_list.roles
-  db_master_role = app["database_master_role"]
+  db_master_role = app['database_master_role']
 end
 
 ebs_info = Chef::DataBagItem.load(:aws, "ebs_#{db_master_role}_#{node.chef_environment}")
 
-gem_package "dbi"
-gem_package "dbd-mysql"
+gem_package 'dbi'
+gem_package 'dbd-mysql'
 
-directory "/mnt/aws-config" do
+directory '/mnt/aws-config' do
   mode 0700
-  owner "root"
-  group "root"
+  owner 'root'
+  group 'root'
 end
 
-template "/mnt/aws-config/config" do
-  source "aws_config.erb"
+template '/mnt/aws-config/config' do
+  source 'aws_config.erb'
   variables(
     :access_key => aws['aws_access_key_id'],
     :secret_key => aws['aws_secret_access_key']
   )
-  owner "root"
-  group "root"
+  owner 'root'
+  group 'root'
   mode 0600
 end
 
-git "/opt/ec2_mysql" do
-  repository "git://github.com/jtimberman/ec2_mysql.git"
-  reference "HEAD"
+git '/opt/ec2_mysql' do
+  repository 'git://github.com/jtimberman/ec2_mysql.git'
+  reference 'HEAD'
   action :sync
-  not_if { ::FileTest.directory?("/opt/ec2_mysql/.git") }
+  not_if { ::FileTest.directory?('/opt/ec2_mysql/.git') }
 end
 
-%w{backup restore}.each do |file|
+%w(backup restore).each do |file|
   template "/usr/local/bin/db-#{file}.sh" do
     source "ebs-db-#{file}.sh.erb"
-    owner "root"
-    group "root"
+    owner 'root'
+    group 'root'
     mode 0700
     variables(
       :mysql_root_passwd => node['mysql']['server_root_password'],
@@ -78,11 +78,11 @@ end
   end
 end
 
-if db_type == "master" && node.chef_environment == "production"
-  template "/etc/cron.d/db-backup" do
-    source "ebs-backup-cron.erb"
-    owner "root"
-    group "root"
+if db_type == 'master' && node.chef_environment == 'production'
+  template '/etc/cron.d/db-backup' do
+    source 'ebs-backup-cron.erb'
+    owner 'root'
+    group 'root'
     mode 0644
     backup false
   end

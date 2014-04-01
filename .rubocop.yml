@@ -1,0 +1,65 @@
+AlignParameters:
+  Enabled: false
+
+Encoding:
+  Enabled: false
+
+ClassLength:
+  Enabled: false
+
+MethodLength:
+  Enabled: false
+
+LineLength:
+  Max: 200
+
+HashSyntax:
+  EnforcedStyle: hash_rockets
+
+Documentation:
+  Enabled: false
+
+CyclomaticComplexity:
+  Max: 9
+
+# Offense count: 2
+BlockNesting:
+  Max: 4
+
+# Offense count: 5
+EmptyLinesAroundAccessModifier:
+  Enabled: false
+
+# Offense count: 3
+# Configuration parameters: MaxLineLength.
+IfUnlessModifier:
+  Enabled: false
+
+# Offense count: 1
+LineLength:
+  Max: 349
+
+# Offense count: 1
+MultilineIfThen:
+  Enabled: false
+
+# Offense count: 7
+RedundantBegin:
+  Enabled: false
+
+# Offense count: 1
+RegexpLiteral:
+  MaxSlashes: 2
+
+# Offense count: 3
+RescueModifier:
+  Enabled: false
+
+# Offense count: 1
+# Cop supports --auto-correct.
+TrailingWhitespace:
+  Enabled: false
+
+# Offense count: 1
+UselessAssignment:
+  Enabled: false

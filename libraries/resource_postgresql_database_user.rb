@@ -24,8 +24,7 @@ require File.join(File.dirname(__FILE__), 'provider_database_postgresql_user')
 class Chef
   class Resource
     class PostgresqlDatabaseUser < Chef::Resource::DatabaseUser
-
-      def initialize(name, run_context=nil)
+      def initialize(name, run_context = nil)
         super
         @resource_name = :postgresql_database_user
         @provider = Chef::Provider::Database::PostgresqlUser
@@ -33,14 +32,13 @@ class Chef
         @allowed_actions.push(:create, :drop, :grant, :grant_schema)
       end
 
-      def schema_name(arg=nil)
+      def schema_name(arg = nil)
         set_or_return(
           :schema_name,
           arg,
           :kind_of => String
         )
       end
-
     end
   end
 end

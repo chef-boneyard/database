@@ -61,7 +61,7 @@ class Chef
         def action_query
           if exists?
             begin
-              #db.select_db(@new_resource.database_name) if @new_resource.database_name
+              # db.select_db(@new_resource.database_name) if @new_resource.database_name
               Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
               db.execute(@new_resource.sql_query).do
               @new_resource.updated_by_last_action(true)
@@ -75,7 +75,7 @@ class Chef
         def exists?
           exists = false
           begin
-            result = db.execute("SELECT name FROM sys.databases")
+            result = db.execute('SELECT name FROM sys.databases')
             result.each do |row|
               if row['name'] == @new_resource.database_name
                 exists = true
@@ -104,7 +104,6 @@ class Chef
           @db.close rescue nil
           @db = nil
         end
-
       end
     end
   end
