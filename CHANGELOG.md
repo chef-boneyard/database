@@ -3,6 +3,12 @@ database Cookbook CHANGELOG
 This file is used to list changes made in each version of the database cookbook.
 
 
+v2.1.0 (2014-03-31)
+-------------------
+- Updating mysql cookbook dependency
+- Enforcing rubocops
+
+
 v2.0.0 (2014-02-25)
 -------------------
 [COOK-3441] database_user password argument should not be required
