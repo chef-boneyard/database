@@ -3,6 +3,11 @@ database Cookbook CHANGELOG
 This file is used to list changes made in each version of the database cookbook.
 
 
+v2.1.2 (2014-04-01)
+-------------------
+- Depending on mysql-chef_gem cookbook
+
+
 v2.1.0 (2014-03-31)
 -------------------
 - Updating mysql cookbook dependency
