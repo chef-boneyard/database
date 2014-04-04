@@ -31,6 +31,7 @@ class Chef
         @table = nil
         @host = 'localhost'
         @privileges = [:all]
+        @require_ssl = false      
 
         @allowed_actions.push(:create, :drop, :grant)
         @action = :create
@@ -49,6 +50,14 @@ class Chef
           :username,
           arg,
           :kind_of => String
+        )
+      end
+
+      def require_ssl(arg=nil)
+        set_or_return(
+          :require_ssl,
+          arg,
+          :kind_of => [ TrueClass, FalseClass ]
         )
       end
 

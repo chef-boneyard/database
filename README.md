@@ -214,6 +214,7 @@ resource depending on your RDBMS: `mysql_database_user`,
   provider only. default is 'localhost'
 - table: table to grant privileges on. used by :grant action and MySQL
   provider only. default is '*' (all tables)
+- require_ssl: true or false to force SSL connections to be used for user
 
 ### Providers
 
@@ -290,13 +291,14 @@ resource depending on your RDBMS: `mysql_database_user`,
       end
     end
 
-    # grant select,update,insert privileges to all tables in foo db from all hosts
+    # grant select,update,insert privileges to all tables in foo db from all hosts, requiring connections over SSL
     mysql_database_user 'foo_user' do
       connection mysql_connection_info
       password 'super_secret'
       database_name 'foo'
       host '%'
       privileges [:select,:update,:insert]
+      require_ssl true
       action :grant
     end
 

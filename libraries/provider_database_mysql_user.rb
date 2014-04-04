@@ -65,14 +65,13 @@ class Chef
               filtered = '[FILTERED]'
             end
             grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON #{@new_resource.database_name ? "`#{@new_resource.database_name}`" : '*'}.#{@new_resource.table ? "`#{@new_resource.table}`" : '*'} TO `#{@new_resource.username}`@`#{@new_resource.host}` IDENTIFIED BY "
+            grant_statement += password
+          
             if (@new_resource.require_ssl) then
-              reqssl = "REQUIRE SSL"
-              Chef::Log.info("#{@new_resource}: granting access with statement With SSL [#{grant_statement}#{filtered}]")
-              db.query(grant_statement + password + reqssl)
-            else  
-              Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}#{filtered}]")
-              db.query(grant_statement + password)
+              grant_statement += " REQUIRE SSL"
             end
+            Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}#{filtered}]")
+            db.query(grant_statement)
             @new_resource.updated_by_last_action(true)
           ensure
             close
