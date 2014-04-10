@@ -66,6 +66,7 @@ class Chef
               db.select_db(@new_resource.database_name) if @new_resource.database_name
               Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
               db.query(@new_resource.sql_query)
+              db.next_result while db.next_result
               @new_resource.updated_by_last_action(true)
             ensure
               close
