@@ -7,7 +7,7 @@ This cookbook also contains recipes to configure mysql database masters and slav
 
 Requirements
 ------------
-Chef version 0.10.10+.
+Chef version 0.11+
 
 ### Platforms
 * Debian, Ubuntu
