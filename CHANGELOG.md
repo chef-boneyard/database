@@ -3,6 +3,11 @@ database Cookbook CHANGELOG
 This file is used to list changes made in each version of the database cookbook.
 
 
+v2.1.6 (2014-04-10)
+-------------------
+- [COOK-4538] Bump supported Chef version
+
+
 v2.1.4 (2014-04-09)
 -------------------
 [COOK-4529] Query action ignores MySQL errors
