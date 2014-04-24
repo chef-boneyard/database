@@ -3,6 +3,11 @@ database Cookbook CHANGELOG
 This file is used to list changes made in each version of the database cookbook.
 
 
+v2.1.8 (2014-04-23)
+-------------------
+- [COOK-4583] - Add ChefSpec matchers
+
+
 v2.1.6 (2014-04-10)
 -------------------
 - [COOK-4538] Bump supported Chef version
