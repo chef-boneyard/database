@@ -35,7 +35,11 @@ class Chef
         def action_create
           begin
             unless exists?(:logins)
-              db.execute("CREATE LOGIN [#{@new_resource.username}] WITH PASSWORD = '#{@new_resource.password}', CHECK_POLICY = OFF").do
+              if @new_resource.windows_user
+                db.execute("CREATE LOGIN [#{@new_resource.username}] FROM WINDOWS").do
+              else
+                db.execute("CREATE LOGIN [#{@new_resource.username}] WITH PASSWORD = '#{@new_resource.password}', CHECK_POLICY = OFF").do
+              end
               @new_resource.updated_by_last_action(true)
             end
             unless exists?(:users)
@@ -70,7 +74,7 @@ class Chef
 
         def action_grant
           begin
-            if @new_resource.password
+            if @new_resource.password || (@new_resource.windows_user && !exists?(:logins))
               action_create
             end
             Chef::Application.fatal!('Please provide a database_name, SQL Server does not support global GRANT statements.') unless @new_resource.database_name
@@ -86,7 +90,7 @@ class Chef
 
         def action_alter_roles
           begin
-            if @new_resource.password
+            if @new_resource.password || (@new_resource.windows_user && !exists?(:logins))
               action_create
             end
             Chef::Application.fatal!('Please provide a database_name, SQL Server does not support global GRANT statements.') unless @new_resource.database_name
