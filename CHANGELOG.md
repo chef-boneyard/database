@@ -3,6 +3,12 @@ database Cookbook CHANGELOG
 This file is used to list changes made in each version of the database cookbook.
 
 
+v2.2.0 (2014-05-07)
+-------------------
+- [COOK-4626] Add windows users for SQL Server
+- [COOK-4627] Assigning sys_roles in SQL Server
+
+
 v2.1.10 (2014-05-07)
 --------------------
 - [COOK-4614] - Update README to reflect gem installation via mysql-chef_gem
