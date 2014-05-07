@@ -29,7 +29,17 @@ class Chef
         @resource_name = :sql_server_database_user
         @provider = Chef::Provider::Database::SqlServerUser
         @allowed_actions.push(:alter_roles, :alter_sys_roles)
+        @windows_user = false
       end
+    end
+
+    def windows_user(arg = nil)
+      set_or_return(
+          :windows_user,
+          arg,
+          :kind_of => [TrueClass, FalseClass],
+          :default => false
+      )
     end
 
     def sql_roles(arg = nil)
