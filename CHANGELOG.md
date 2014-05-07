@@ -3,6 +3,11 @@ database Cookbook CHANGELOG
 This file is used to list changes made in each version of the database cookbook.
 
 
+v2.1.10 (2014-05-07)
+--------------------
+- [COOK-4614] - Update README to reflect gem installation via mysql-chef_gem
+
+
 v2.1.8 (2014-04-23)
 -------------------
 - [COOK-4583] - Add ChefSpec matchers
