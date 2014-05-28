@@ -37,7 +37,7 @@ class Chef
           unless exists?
             begin
               encoding = @new_resource.encoding
-              if encoding != "DEFAULT"
+              if encoding != 'DEFAULT'
                 encoding = "'#{@new_resource.encoding}'"
               end
               Chef::Log.debug("#{@new_resource}: Creating database #{new_resource.database_name}")
@@ -49,7 +49,7 @@ class Chef
               create_sql += " CONNECTION LIMIT = #{new_resource.connection_limit}" if new_resource.connection_limit
               create_sql += " OWNER = \"#{new_resource.owner}\"" if new_resource.owner
               Chef::Log.debug("#{@new_resource}: Performing query [#{create_sql}]")
-              db("template1").query(create_sql)
+              db('template1').query(create_sql)
               @new_resource.updated_by_last_action(true)
             ensure
               close
@@ -61,7 +61,7 @@ class Chef
           if exists?
             begin
               Chef::Log.debug("#{@new_resource}: Dropping database #{new_resource.database_name}")
-              db("template1").query("DROP DATABASE \"#{new_resource.database_name}\"")
+              db('template1').query("DROP DATABASE \"#{new_resource.database_name}\"")
               @new_resource.updated_by_last_action(true)
             ensure
               close
@@ -87,7 +87,7 @@ class Chef
         def exists?
           begin
             Chef::Log.debug("#{@new_resource}: checking if database #{@new_resource.database_name} exists")
-            ret = db("template1").query("SELECT * FROM pg_database where datname = '#{@new_resource.database_name}'").num_tuples != 0
+            ret = db('template1').query("SELECT * FROM pg_database where datname = '#{@new_resource.database_name}'").num_tuples != 0
             ret ? Chef::Log.debug("#{@new_resource}: database #{@new_resource.database_name} exists") :
                   Chef::Log.debug("#{@new_resource}: database #{@new_resource.database_name} does not exist")
           ensure
@@ -108,7 +108,7 @@ class Chef
           dbname = @new_resource.connection[:database] if @new_resource.connection[:database]
           host = @new_resource.connection[:host]
           port = @new_resource.connection[:port] || 5432
-          user = @new_resource.connection[:username] || "postgres"
+          user = @new_resource.connection[:username] || 'postgres'
           Chef::Log.debug("#{@new_resource}: connecting to database #{dbname} on #{host}:#{port} as #{user}")
           password = @new_resource.connection[:password] || node[:postgresql][:password][:postgres]
           @db = ::PGconn.new(
@@ -124,7 +124,6 @@ class Chef
           @db.close rescue nil
           @db = nil
         end
-
       end
     end
   end

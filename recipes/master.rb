@@ -24,14 +24,14 @@
 # the root, repl, and debian-sys-maint users.
 #
 
-db_info = Hash.new
-root_pw = String.new
+db_info = {}
+root_pw = ''
 
 search(:apps) do |app|
   (app['database_master_role'] & node.run_list.roles).each do |dbm_role|
-    %w{ root repl debian }.each do |user|
+    %w(root repl debian).each do |user|
       user_pw = app["mysql_#{user}_password"]
-      if !user_pw.nil? and user_pw[node.chef_environment]
+      if !user_pw.nil? && user_pw[node.chef_environment]
         Chef::Log.debug("Saving password for #{user} as node attribute node['mysql']['server_#{user}_password'")
         node.set['mysql']["server_#{user}_password"] = user_pw[node.chef_environment]
         node.save
@@ -44,26 +44,26 @@ search(:apps) do |app|
         end
       end
     end
-    app['databases'].each do |env,db|
+    app['databases'].each do |env, db|
       db_info[env] = db
     end
   end
 end
 
-include_recipe "mysql::server"
+include_recipe 'mysql::server'
 
-connection_info = {:host => "localhost", :username => 'root', :password => node['mysql']['server_root_password']}
+connection_info = { :host => 'localhost', :username => 'root', :password => node['mysql']['server_root_password'] }
 
 search(:apps) do |app|
   (app['database_master_role'] & node.run_list.roles).each do |dbm_role|
-    app['databases'].each do |env,db|
+    app['databases'].each do |env, db|
       if env =~ /#{node.chef_environment}/
         mysql_database "create #{db['database']}" do
           database_name db['database']
           connection connection_info
           action :create
         end
-        %W{ % #{node['fqdn']} localhost }.each do |h|
+        %W(% #{node['fqdn']} localhost).each do |h|
           mysql_database_user db['username'] do
             connection connection_info
             password db['password']

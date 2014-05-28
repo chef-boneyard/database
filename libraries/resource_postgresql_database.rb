@@ -23,13 +23,11 @@ require File.join(File.dirname(__FILE__), 'provider_database_postgresql')
 class Chef
   class Resource
     class PostgresqlDatabase < Chef::Resource::Database
-
-      def initialize(name, run_context=nil)
+      def initialize(name, run_context = nil)
         super
         @resource_name = :postgresql_database
         @provider = Chef::Provider::Database::Postgresql
       end
-
     end
   end
 end

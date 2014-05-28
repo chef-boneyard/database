@@ -22,20 +22,39 @@ require File.join(File.dirname(__FILE__), 'provider_database_sql_server_user')
 class Chef
   class Resource
     class SqlServerDatabaseUser < Chef::Resource::DatabaseUser
-
-      def initialize(name, run_context=nil)
+      def initialize(name, run_context = nil)
         super
         @sql_roles = {}
+        @sql_sys_roles = {}
         @resource_name = :sql_server_database_user
         @provider = Chef::Provider::Database::SqlServerUser
-        @allowed_actions.push(:alter_roles)
+        @allowed_actions.push(:alter_roles, :alter_sys_roles)
+        @windows_user = false
       end
     end
 
-    def sql_roles(arg=nil)
+    def windows_user(arg = nil)
+      set_or_return(
+          :windows_user,
+          arg,
+          :kind_of => [TrueClass, FalseClass],
+          :default => false
+      )
+    end
+
+    def sql_roles(arg = nil)
       Chef::Log.debug("Received roles: #{arg.inspect}")
       set_or_return(
           :sql_roles,
+          arg,
+          :kind_of => Hash
+      )
+    end
+
+    def sql_sys_roles(arg = nil)
+      Chef::Log.debug("Received Server roles: #{arg.inspect}")
+      set_or_return(
+          :sql_sys_roles,
           arg,
           :kind_of => Hash
       )

@@ -35,7 +35,11 @@ class Chef
         def action_create
           begin
             unless exists?(:logins)
-              db.execute("CREATE LOGIN [#{@new_resource.username}] WITH PASSWORD = '#{@new_resource.password}', CHECK_POLICY = OFF").do
+              if @new_resource.windows_user
+                db.execute("CREATE LOGIN [#{@new_resource.username}] FROM WINDOWS").do
+              else
+                db.execute("CREATE LOGIN [#{@new_resource.username}] WITH PASSWORD = '#{@new_resource.password}', CHECK_POLICY = OFF").do
+              end
               @new_resource.updated_by_last_action(true)
             end
             unless exists?(:users)
@@ -70,7 +74,7 @@ class Chef
 
         def action_grant
           begin
-            if @new_resource.password
+            if @new_resource.password || (@new_resource.windows_user && !exists?(:logins))
               action_create
             end
             Chef::Application.fatal!('Please provide a database_name, SQL Server does not support global GRANT statements.') unless @new_resource.database_name
@@ -86,7 +90,7 @@ class Chef
 
         def action_alter_roles
           begin
-            if @new_resource.password
+            if @new_resource.password || (@new_resource.windows_user && !exists?(:logins))
               action_create
             end
             Chef::Application.fatal!('Please provide a database_name, SQL Server does not support global GRANT statements.') unless @new_resource.database_name
@@ -102,17 +106,51 @@ class Chef
           end
         end
 
+        def action_alter_sys_roles
+          begin
+            if @new_resource.password || (@new_resource.windows_user && !exists?(:logins))
+              action_create
+            end
+            server_version = db.execute("SELECT SERVERPROPERTY('productversion')").each.first.values.first
+            Chef::Log.info("SQL Server Version: #{server_version.inspect}")
+
+            db.execute('USE [master]').do
+            @new_resource.sql_sys_roles.each do | sql_sys_role, role_action |
+              case role_action
+              when 'ADD'
+                if server_version < '11.00.0000.00'
+                  alter_statement = "EXEC sp_addsrvrolemember '#{@new_resource.username}', '#{sql_sys_role}'"
+                else
+                  alter_statement = "ALTER SERVER ROLE #{sql_role} #{role_action} MEMBER [#{@new_resource.username}]"
+                end
+                Chef::Log.info("#{@new_resource} granting server role membership with statement [#{alter_statement}]")
+              when 'DROP'
+                if server_version < '11.00.0000.00'
+                  alter_statement = "EXEC sp_dropsrvrolemember '#{@new_resource.username}', '#{sql_sys_role}'"
+                else
+                  alter_statement = "ALTER SERVER ROLE #{sql_role} #{role_action} MEMBER [#{@new_resource.username}]"
+                end
+                Chef::Log.info("#{@new_resource} revoking server role membership with statement [#{alter_statement}]")
+              end
+              db.execute(alter_statement).do
+            end
+            @new_resource.updated_by_last_action(true)
+          ensure
+            close
+          end
+        end
+
         private
-        def exists?(type=:users)
+        def exists?(type = :users)
           case type
           when :users
-            table = "database_principals"
+            table = 'database_principals'
             if @new_resource.database_name
               Chef::Log.debug("#{@new_resource} searching for existing user in '#{@new_resource.database_name}' database context.")
               db.execute("USE [#{@new_resource.database_name}]").do
             end
           when :logins
-            table = "server_principals"
+            table = 'server_principals'
           end
 
           result = db.execute("SELECT name FROM sys.#{table} WHERE name='#{@new_resource.username}'")
