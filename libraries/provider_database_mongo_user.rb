@@ -1,7 +1,7 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Author:: Drew J. Sonne (<drew.sonne@gmail.com>)
 # License:: Apache License, Version 2.0
+#
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
