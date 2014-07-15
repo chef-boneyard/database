@@ -66,9 +66,16 @@ class Chef
               password = "'#{@new_resource.password}'"
               filtered = '[FILTERED]'
             end
-            grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON #{@new_resource.database_name && @new_resource.database_name != '*' ? "`#{@new_resource.database_name}`" : '*'}.#{@new_resource.table && @new_resource.table != '*' ? "`#{@new_resource.table}`" : '*'} TO `#{@new_resource.username}`@`#{@new_resource.host}` IDENTIFIED BY "
+            privileges_to_grant = @new_resource.privileges.join(', ')
+            database_name = @new_resource.database_name && @new_resource.database_name != '*' ? "`#{@new_resource.database_name}`" : '*'
+            table_name = @new_resource.table && @new_resource.table != '*' ? "`#{@new_resource.table}`" : '*'
+            user_name = @new_resource.username
+            host = @new_resource.host
+
+            revoke_statement = "REVOKE ALL PRIVILEGES, GRANT OPTION FROM `#{user_name}`@`#{host}`;"
+            grant_statement = "GRANT #{privileges_to_grant} ON #{database_name}.#{table_name} TO `#{user_name}`@`#{host}` IDENTIFIED BY "
             with_grant_option = @new_resource.grant_option == true ? ' WITH GRANT OPTION ' : ''
-            Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}#{filtered}]")
+            Chef::Log.info("#{@new_resource}: granting access with statement [#{revoke_statement}#{grant_statement}#{filtered}]")
             db.query(grant_statement + password + with_grant_option)
             @new_resource.updated_by_last_action(true)
           ensure
