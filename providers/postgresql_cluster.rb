@@ -63,15 +63,15 @@ action :init do
 
     new_resource.databases.each do |db, item|
     
-      postgresql_database_user db.item.user do
+      postgresql_database_user item["user"] do
         connection postgresql_connection_info
-        password node.postgresql.password[db.item.user]
+        password node.postgresql.password[item["user"]]
         action :create
       end
 
       postgresql_database db do
         connection postgresql_connection_info
-        owner db.item.user
+        owner item["user"]
         action :create
       end
 
