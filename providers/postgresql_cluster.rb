@@ -15,8 +15,9 @@ action :init do
     cluster_version = node.postgresql.version
     cluster_name = "main"
     cluster_port = 5432
-    config_path = "#{node[:postgresql][:config_dir]}/#{cluster_version}/#{cluster_name}"
+    config_path = "/etc/postgresql/#{cluster_version}/#{cluster_name}"
     config_file = "#{config_path}/postgresql.conf" 
+    hba_file = "#{config_path}/pg_hba.conf" 
 
     cluster_options = []
     #cluster_options << "--locale #{params[:locale]}" if params[:locale]
@@ -37,6 +38,23 @@ action :init do
         ::File.exist?("#{config_file}")
       end
     end
+
+    template config_file do
+      source "postgresql.conf.erb"
+      cookbook "postgresql"
+      user "postgres"
+      group "postgres"
+      mode 0600
+    end
+
+    template hba_file do
+      source "pg_hba.conf.erb"
+      cookbook "postgresql"
+      user "postgres"
+      group "postgres"
+      mode 0600
+    end
+
 
     service "postgresql" do
       action [:start]
@@ -63,15 +81,15 @@ action :init do
 
     new_resource.databases.each do |db, item|
     
-      postgresql_database_user db.item.user do
+      postgresql_database_user item["user"] do
         connection postgresql_connection_info
-        password node.postgresql.password[db.item.user]
+        password node.postgresql.password[item["user"]]
         action :create
       end
 
       postgresql_database db do
         connection postgresql_connection_info
-        owner db.item.user
+        owner item["user"]
         action :create
       end
 
