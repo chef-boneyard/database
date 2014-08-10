@@ -15,8 +15,9 @@ action :init do
     cluster_version = node.postgresql.version
     cluster_name = "main"
     cluster_port = 5432
-    config_path = "#{node[:postgresql][:config_dir]}/#{cluster_version}/#{cluster_name}"
+    config_path = "/etc/postgresql/#{cluster_version}/#{cluster_name}"
     config_file = "#{config_path}/postgresql.conf" 
+    hba_file = "#{config_path}/pg_hba.conf" 
 
     cluster_options = []
     #cluster_options << "--locale #{params[:locale]}" if params[:locale]
@@ -37,6 +38,23 @@ action :init do
         ::File.exist?("#{config_file}")
       end
     end
+
+    template config_file do
+      source "postgresql.conf.erb"
+      cookbook "postgresql"
+      user "postgres"
+      group "postgres"
+      mode 0600
+    end
+
+    template hba_file do
+      source "pg_hba.conf.erb"
+      cookbook "postgresql"
+      user "postgres"
+      group "postgres"
+      mode 0600
+    end
+
 
     service "postgresql" do
       action [:start]
