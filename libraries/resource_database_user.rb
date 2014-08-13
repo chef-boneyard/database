@@ -31,6 +31,7 @@ class Chef
         @host = 'localhost'
         @privileges = [:all]
         @grant_option = false
+        @require_ssl = false
 
         @allowed_actions.push(:create, :drop, :grant)
         @action = :create
@@ -52,7 +53,15 @@ class Chef
         )
       end
 
-      def password(arg = nil)
+      def require_ssl(arg=nil)
+        set_or_return(
+          :require_ssl,
+          arg,
+          :kind_of => [ TrueClass, FalseClass ]
+        )
+      end
+
+      def password(arg=nil)
         set_or_return(
           :password,
           arg,
