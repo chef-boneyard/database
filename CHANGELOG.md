@@ -1,7 +1,3 @@
-database Cookbook CHANGELOG
-=======================
-This file is used to list changes made in each version of the database cookbook.
-
 v2.3.0 (2014-08-13)
 -------------------
 - [#62] Allow requiring SSL
