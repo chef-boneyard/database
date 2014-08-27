@@ -20,6 +20,6 @@
 include_recipe 'build-essential::default'
 include_recipe 'mysql::client'
 
-chef_gem 'mysql' do
+chef_gem 'mysql2' do
   action :install
 end
