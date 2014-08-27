@@ -25,8 +25,6 @@ class Chef
         include Chef::Mixin::ShellOut
 
         def load_current_resource
-          Gem.clear_paths
-          require 'mysql'
           @current_resource = Chef::Resource::Database.new(@new_resource.name)
           @current_resource.database_name(@new_resource.database_name)
           @current_resource
@@ -75,24 +73,25 @@ class Chef
         end
 
         private
-        
+
         def exists?
           db.list_dbs.include?(@new_resource.database_name)
         end
 
         def db
-          @db ||= begin
-            connection = ::Mysql.new(
-              @new_resource.connection[:host],
-              @new_resource.connection[:username],
-              @new_resource.connection[:password],
-              nil,
-              @new_resource.connection[:port] || 3306,
-              @new_resource.connection[:socket] || nil
+          unless @db
+            Gem.clear_paths
+            require 'mysql2'
+            @db = Mysql2::Client.new(
+              host: @new_resource.connection[:host],
+              username: @new_resource.connection[:username],
+              password: @new_resource.connection[:password],
+              port: @new_resource.connection[:port] || 3306,
+              database: @new_resource.connection[:socket] || nil,
+              flags: Mysql2::Client::MULTI_STATEMENTS
             )
-            connection.set_server_option ::Mysql::OPTION_MULTI_STATEMENTS_ON
-            connection
           end
+          @db
         end
 
         def close

@@ -17,4 +17,9 @@
 # limitations under the License.
 #
 
-include_recipe 'mysql-chef_gem'
+include_recipe 'build-essential::default'
+include_recipe 'mysql::client'
+
+chef_gem 'mysql' do
+  action :install
+end
