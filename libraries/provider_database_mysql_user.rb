@@ -74,6 +74,7 @@ class Chef
             db.query(grant_statement)
             @new_resource.updated_by_last_action(true)
           ensure
+
             close
           end
         end

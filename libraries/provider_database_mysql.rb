@@ -75,7 +75,7 @@ class Chef
         private
 
         def exists?
-          db.list_dbs.include?(@new_resource.database_name)
+          db.query("SHOW DATABASES LIKE '#{@new_resource.database_name}';").count > 0
         end
 
         def db
