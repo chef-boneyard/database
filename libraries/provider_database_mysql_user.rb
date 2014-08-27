@@ -80,7 +80,7 @@ class Chef
 
         private
         def exists?
-          db.query("SELECT User,host from mysql.user WHERE User = '#{@new_resource.username}' AND host = '#{@new_resource.host}'").counts > 0
+          db.query("SELECT User,host from mysql.user WHERE User = '#{@new_resource.username}' AND host = '#{@new_resource.host}'").count > 0
         end
       end
     end
