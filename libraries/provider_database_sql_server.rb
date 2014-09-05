@@ -40,7 +40,7 @@ class Chef
               create_sql += " COLLATE #{new_resource.collation}" if new_resource.collation
               db.execute(create_sql).do
               db.execute("ALTER DATABASE [#{new_resource.database_name}] SET ANSI_NULL_DEFAULT ON").do if new_resource.ansi_null
-              db.execute("ALTER DATABASE [#{new_resource.database_name}] SET ANSI_NULL ON").do if new_resource.ansi_null
+              db.execute("ALTER DATABASE [#{new_resource.database_name}] SET ANSI_NULLS ON").do if new_resource.ansi_null
               @new_resource.updated_by_last_action(true)
             ensure
               close
