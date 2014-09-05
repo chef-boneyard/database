@@ -79,6 +79,15 @@ class Chef
         )
       end
 
+      def ansi_null(arg = nil)
+        set_or_return(
+          :ansi_null,
+          arg,
+          :kind_of => [TrueClass, FalseClass], 
+          :default => false
+        )
+      end
+
       def encoding(arg = nil)
         set_or_return(
           :encoding,

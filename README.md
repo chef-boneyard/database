@@ -79,6 +79,7 @@ sql_server_database 'mr_softie' do
     :password => node['sql_server']['server_sa_password']
   )
   action :create
+  ansi_null true
 end
 ```
 
