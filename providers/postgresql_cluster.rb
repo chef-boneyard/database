@@ -20,7 +20,7 @@ action :init do
     hba_file = "#{config_path}/pg_hba.conf" 
 
     cluster_options = []
-    #cluster_options << "--locale #{params[:locale]}" if params[:locale]
+    cluster_options << "--locale #{@new_resource.locale}" if @new_resource.locale 
 
     create_cluster = begin
                    "pg_createcluster #{cluster_options.join(' ')} #{cluster_version} #{cluster_name}"
