@@ -18,3 +18,4 @@
 #
 
 include_recipe 'mysql-chef_gem'
+node.normal['database']['mysql_flavor'] = 'mysql'

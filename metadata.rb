@@ -12,11 +12,13 @@ recipe 'database::ebs_volume', 'Sets up an EBS volume in EC2 for the database'
 recipe 'database::master', 'Creates application specific user and database'
 recipe 'database::snapshot', 'Locks tables and freezes XFS filesystem for replication, assumes EC2 + EBS'
 
+depends 'mariadb', '>= 0.2.2'
 depends 'mysql', '>= 5.0.0'
 depends 'postgresql', '>= 1.0.0'
 depends 'aws'
 depends 'xfs'
 depends 'mysql-chef_gem'
+depends 'mysql2_chef_gem'
 
 %w(debian ubuntu centos suse fedora redhat scientific amazon).each do |os|
   supports os

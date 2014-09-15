@@ -26,7 +26,12 @@ class Chef
 
         def load_current_resource
           Gem.clear_paths
-          require 'mysql'
+          case node['database']['mysql_flavor']
+          when 'mariadb'
+            require 'mysql2'
+          else
+            require 'mysql'
+          end
           @current_resource = Chef::Resource::DatabaseUser.new(@new_resource.name)
           @current_resource.username(@new_resource.name)
           @current_resource
@@ -82,7 +87,12 @@ class Chef
 
         private
         def exists?
-          db.query("SELECT User,host from mysql.user WHERE User = '#{@new_resource.username}' AND host = '#{@new_resource.host}'").num_rows != 0
+          case node['database']['mysql_flavor']
+          when 'mariadb'
+            db.query("SELECT User,host from mysql.user WHERE User = '#{@new_resource.username}' AND host = '#{@new_resource.host}'").count != 0
+          else
+            db.query("SELECT User,host from mysql.user WHERE User = '#{@new_resource.username}' AND host = '#{@new_resource.host}'").num_rows != 0
+          end
         end
       end
     end
