@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 
-if node[:ec2]
+if node['ec2']
   include_recipe 'aws'
   include_recipe 'xfs'
 
@@ -83,7 +83,7 @@ if node[:ec2]
 
   ruby_block "store_#{db_role}_#{node.chef_environment}_volid" do
     block do
-      ebs_vol_id = node[:aws][:ebs_volume]["#{db_role}_#{node.chef_environment}"][:volume_id]
+      ebs_vol_id = node['aws']['ebs_volume']["#{db_role}_#{node.chef_environment}"]['volume_id']
 
       unless ebs_info['volume_id']
         item = {

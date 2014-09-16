@@ -28,7 +28,7 @@ end
 
 db_role = ''
 db_master_role = ''
-db_type = node[:database][:type]
+db_type = node['database']['type']
 
 search(:apps) do |app|
   db_role = app["database_#{db_type}_role"] & node.run_list.roles
