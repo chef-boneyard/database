@@ -80,12 +80,11 @@ end
   end
 end
 
-if db_type == 'master' && node.chef_environment == 'production'
-  template '/etc/cron.d/db-backup' do
-    source 'ebs-backup-cron.erb'
-    owner 'root'
-    group 'root'
-    mode 0644
-    backup false
-  end
+template '/etc/cron.d/db-backup' do
+  source 'ebs-backup-cron.erb'
+  owner 'root'
+  group 'root'
+  mode 0644
+  backup false
+  only_if { db_type == 'master' && node.chef_environment == 'production' }
 end
