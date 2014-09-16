@@ -84,12 +84,12 @@ class Chef
           require 'mysql2'
           @db ||= begin
             connection = ::Mysql2::Client.new(
-              host: @new_resource.connection[:host],
-              username: @new_resource.connection[:username],
-              password: @new_resource.connection[:password],
-              port: @new_resource.connection[:port] || 3306,
-              socket: @new_resource.connection[:socket] || nil,
-              flags: Mysql2::Client::MULTI_STATEMENTS
+              :host => @new_resource.connection[:host],
+              :username => @new_resource.connection[:username],
+              :password => @new_resource.connection[:password],
+              :port => @new_resource.connection[:port] || 3306,
+              :socket => @new_resource.connection[:socket] || nil,
+              :flags => Mysql2::Client::MULTI_STATEMENTS
             )
             connection
           end

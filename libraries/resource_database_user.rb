@@ -53,15 +53,15 @@ class Chef
         )
       end
 
-      def require_ssl(arg=nil)
+      def require_ssl(arg = nil)
         set_or_return(
           :require_ssl,
           arg,
-          :kind_of => [ TrueClass, FalseClass ]
+          :kind_of => [TrueClass, FalseClass]
         )
       end
 
-      def password(arg=nil)
+      def password(arg = nil)
         set_or_return(
           :password,
           arg,
