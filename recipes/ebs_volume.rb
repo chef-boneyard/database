@@ -148,9 +148,9 @@ if node['ec2']
       variables(
         :output => {
           'db_snapshot' => {
-            'ebs_vol_dev' => node.mysql.ec2_path,
+            'ebs_vol_dev' => node['mysql']['ec2_path'],
             'db_role' => db_role,
-            'app_environment' => node.chef_environment,
+            'app_environment' => node['chef_environment'],
             'username' => 'root',
             'password' => root_pw,
             'aws_access_key_id' => aws['aws_access_key_id'],
