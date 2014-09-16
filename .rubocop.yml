@@ -24,7 +24,7 @@ CyclomaticComplexity:
 
 # Offense count: 2
 BlockNesting:
-  Max: 4
+  Max: 5
 
 # Offense count: 5
 EmptyLinesAroundAccessModifier:
