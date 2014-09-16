@@ -35,8 +35,8 @@ class Chef
         def action_create
           unless exists?
             begin
-              statement = "CREATE USER `#{@new_resource.username}`@`#{@new_resource.host}`"
-              statement += " IDENTIFIED BY '#{@new_resource.password}'" if @new_resource.password
+              statement = "CREATE USER `#{db.escape(@new_resource.username)}`@`#{@new_resource.host}`"
+              statement += " IDENTIFIED BY '#{db.escape(@new_resource.password)}'" if @new_resource.password
               db.query(statement)
               @new_resource.updated_by_last_action(true)
             ensure
@@ -48,7 +48,7 @@ class Chef
         def action_drop
           if exists?
             begin
-              db.query("DROP USER `#{@new_resource.username}`@`#{@new_resource.host}`")
+              db.query("DROP USER `#{db.escape(@new_resource.username)}`@`#{db.escape(@new_resource.host)}`")
               @new_resource.updated_by_last_action(true)
             ensure
               close
@@ -66,7 +66,7 @@ class Chef
               password = "'#{@new_resource.password}'"
               filtered = '[FILTERED]'
             end
-            grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON #{@new_resource.database_name ? "`#{@new_resource.database_name}`" : '*'}.#{@new_resource.table ? "`#{@new_resource.table}`" : '*'} TO `#{@new_resource.username}`@`#{@new_resource.host}` IDENTIFIED BY "
+            grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON #{@new_resource.database_name ? "`#{db.escape(@new_resource.database_name)}`" : '*'}.#{@new_resource.table ? "`#{db.escape(@new_resource.table)}`" : '*'} TO `#{db.escape(@new_resource.username)}`@`#{db.escape(@new_resource.host)}` IDENTIFIED BY "
             grant_statement += password
 
             if @new_resource.require_ssl then
@@ -82,7 +82,7 @@ class Chef
 
         private
         def exists?
-          db.query("SELECT User,host from mysql.user WHERE User = '#{@new_resource.username}' AND host = '#{@new_resource.host}'").count != 0
+          db.query("SELECT User,host from mysql.user WHERE User = '#{db.escape(@new_resource.username)}' AND host = '#{db.escape(@new_resource.host)}'").count != 0
         end
       end
     end
