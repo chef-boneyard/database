@@ -2,8 +2,11 @@ require 'spec_helper'
 
 describe 'debian => database::mysql' do
   let(:chef_run) do
-    ChefSpec::Runner.new(platform: 'debian', version: '7.4',
-      step_into: ['mysql2_chef_gem_installer']) do |node|
+    ChefSpec::Runner.new(
+      :platform => 'debian',
+      :version => '7.4',
+      :step_into => ['mysql2_chef_gem_installer']
+    ) do |node|
     end.converge('database::mysql')
   end
 
