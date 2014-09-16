@@ -17,5 +17,4 @@
 # limitations under the License.
 #
 
-include_recipe 'mysql-chef_gem'
-node.normal['database']['mysql_flavor'] = 'mysql'
+include_recipe 'mysql2_chef_gem'

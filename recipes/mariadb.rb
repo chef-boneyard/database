@@ -18,4 +18,3 @@
 #
 
 include_recipe 'mysql2_chef_gem::mariadb'
-node.normal['database']['mysql_flavor'] = 'mariadb'

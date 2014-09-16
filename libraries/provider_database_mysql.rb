@@ -26,12 +26,7 @@ class Chef
 
         def load_current_resource
           Gem.clear_paths
-          case node['database']['mysql_flavor']
-          when 'mariadb'
-            require 'mysql2'
-          else
-            require 'mysql'
-          end
+          require 'mysql2'
           @current_resource = Chef::Resource::Database.new(@new_resource.name)
           @current_resource.database_name(@new_resource.database_name)
           @current_resource
@@ -86,34 +81,17 @@ class Chef
         end
 
         def db
-          case node['database']['mysql_flavor']
-          when 'mariadb'
-            require 'mysql2'
-            @db ||= begin
-              connection = ::Mysql2::Client.new(
-                host: @new_resource.connection[:host],
-                username: @new_resource.connection[:username],
-                password: @new_resource.connection[:password],
-                port: @new_resource.connection[:port] || 3306,
-                socket: @new_resource.connection[:socket] || nil,
-                flags: Mysql2::Client::MULTI_STATEMENTS
-              )
-              connection
-            end
-          else
-            require 'mysql'
-            @db ||= begin
-              connection = ::Mysql.new(
-                @new_resource.connection[:host],
-                @new_resource.connection[:username],
-                @new_resource.connection[:password],
-                nil,
-                @new_resource.connection[:port] || 3306,
-                @new_resource.connection[:socket] || nil
-              )
-              connection.set_server_option ::Mysql::OPTION_MULTI_STATEMENTS_ON
-              connection
-            end
+          require 'mysql2'
+          @db ||= begin
+            connection = ::Mysql2::Client.new(
+              host: @new_resource.connection[:host],
+              username: @new_resource.connection[:username],
+              password: @new_resource.connection[:password],
+              port: @new_resource.connection[:port] || 3306,
+              socket: @new_resource.connection[:socket] || nil,
+              flags: Mysql2::Client::MULTI_STATEMENTS
+            )
+            connection
           end
         end
 
