@@ -30,9 +30,11 @@ db_role = ''
 db_master_role = ''
 db_type = node['database']['type']
 
-search(:apps) do |app|
-  db_role = app["database_#{db_type}_role"] & node.run_list.roles
-  db_master_role = app['database_master_role']
+unless Chef::Config[:solo]
+  search(:apps) do |app|
+    db_role = app["database_#{db_type}_role"] & node.run_list.roles
+    db_master_role = app['database_master_role']
+  end
 end
 
 ebs_info = Chef::DataBagItem.load(:aws, "ebs_#{db_master_role}_#{node.chef_environment}")

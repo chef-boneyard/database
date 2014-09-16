@@ -46,23 +46,25 @@ if node['ec2']
   snapshots_to_keep = ''
   snapshot_cron_schedule = '00 * * * *' # default to hourly snapshots
 
-  search(:apps) do |app|
-    if (app['database_master_role'] & node.run_list.roles).length == 1 || (app['database_slave_role'] & node.run_list.roles).length == 1
-      master_role = app['database_master_role'] & node.run_list.roles
-      slave_role = app['database_slave_role'] & node.run_list.roles
-      root_pw = app['mysql_root_password'][node.chef_environment]
-      snapshots_to_keep = app['snapshots_to_keep'][node.chef_environment]
-      snapshot_cron_schedule = app['snapshot_cron_schedule'][node.chef_environment] if app['snapshot_cron_schedule'] && app['snapshot_cron_schedule'][node.chef_environment]
+  unless Chef::Config[:solo]
+    search(:apps) do |app|
+      if (app['database_master_role'] & node.run_list.roles).length == 1 || (app['database_slave_role'] & node.run_list.roles).length == 1
+        master_role = app['database_master_role'] & node.run_list.roles
+        slave_role = app['database_slave_role'] & node.run_list.roles
+        root_pw = app['mysql_root_password'][node.chef_environment]
+        snapshots_to_keep = app['snapshots_to_keep'][node.chef_environment]
+        snapshot_cron_schedule = app['snapshot_cron_schedule'][node.chef_environment] if app['snapshot_cron_schedule'] && app['snapshot_cron_schedule'][node.chef_environment]
 
-      if (master_role & node.run_list.roles).length == 1
-        db_type = 'master'
-        db_role = RUBY_VERSION.to_f <= 1.8 ? master_role : master_role.join
-      elsif (slave_role & node.run_list.roles).length == 1
-        db_type = 'slave'
-        db_role = RUBY_VERSION.to_f <= 1.8 ? slave_role : slave_role.join
+        if (master_role & node.run_list.roles).length == 1
+          db_type = 'master'
+          db_role = RUBY_VERSION.to_f <= 1.8 ? master_role : master_role.join
+        elsif (slave_role & node.run_list.roles).length == 1
+          db_type = 'slave'
+          db_role = RUBY_VERSION.to_f <= 1.8 ? slave_role : slave_role.join
+        end
+
+        Chef::Log.info "database::ebs_volume - db_role: #{db_role} db_type: #{db_type}"
       end
-
-      Chef::Log.info "database::ebs_volume - db_role: #{db_role} db_type: #{db_type}"
     end
   end
 
