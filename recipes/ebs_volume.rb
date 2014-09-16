@@ -120,7 +120,7 @@ if node['ec2']
       else
         action [:create, :attach]
       end
-      notifies :create, resources(:ruby_block => "store_#{db_role}_#{node.chef_environment}_volid")
+      notifies :create, "ruby_block[store_#{db_role}_#{node.chef_environment}_volid]"
     when 'slave'
       if master_info['volume_id']
         snapshot_id master_info['volume_id']
