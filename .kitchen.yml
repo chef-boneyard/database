@@ -1,0 +1,19 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: debian-7.6
+    driver_config:
+      box: chef/debian-7.6
+  - name: ubuntu-12.04
+  - name: centos-6.4
+
+suites:
+  - name: mariadb
+    run_list:
+      - recipe[test::mariadb]
+    attributes:
