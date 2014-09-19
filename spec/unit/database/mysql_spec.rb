@@ -7,6 +7,8 @@ describe 'debian => database::mysql' do
       :version => '7.4',
       :step_into => ['mysql2_chef_gem_installer']
     ) do |node|
+      node.automatic['memory']['total'] = '2048kB'
+      node.automatic['ipaddress'] = '1.1.1.1'
     end.converge('database::mysql')
   end
 
