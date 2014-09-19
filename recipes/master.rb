@@ -29,7 +29,7 @@ root_pw = ''
 
 unless Chef::Config[:solo]
   search(:apps) do |app|
-#    (app['database_master_role'] & node.run_list.roles).each do |dbm_role|
+    # (app['database_master_role'] & node.run_list.roles).each do |dbm_role|
     (app['database_master_role'] & node.run_list.roles).each do
       %w(root repl debian).each do |user|
         user_pw = app["mysql_#{user}_password"]
@@ -59,7 +59,7 @@ connection_info = { :host => 'localhost', :username => 'root', :password => node
 
 unless Chef::Config[:solo]
   search(:apps) do |app|
-#    (app['database_master_role'] & node.run_list.roles).each do |dbm_role|
+    # (app['database_master_role'] & node.run_list.roles).each do |dbm_role|
     (app['database_master_role'] & node.run_list.roles).each do
       app['databases'].each do |env, db|
         if env =~ /#{node.chef_environment}/
