@@ -62,20 +62,19 @@ unless Chef::Config[:solo]
     # (app['database_master_role'] & node.run_list.roles).each do |dbm_role|
     (app['database_master_role'] & node.run_list.roles).each do
       app['databases'].each do |env, db|
-        if env =~ /#{node.chef_environment}/
-          mysql_database "create #{db['database']}" do
-            database_name db['database']
+        next unless env =~ /#{node.chef_environment}/
+        mysql_database "create #{db['database']}" do
+          database_name db['database']
+          connection connection_info
+          action :create
+        end
+        %W(% #{node['fqdn']} localhost).each do |h|
+          mysql_database_user db['username'] do
             connection connection_info
-            action :create
-          end
-          %W(% #{node['fqdn']} localhost).each do |h|
-            mysql_database_user db['username'] do
-              connection connection_info
-              password db['password']
-              database_name db['database']
-              host h
-              action :grant
-            end
+            password db['password']
+            database_name db['database']
+            host h
+            action :grant
           end
         end
       end
