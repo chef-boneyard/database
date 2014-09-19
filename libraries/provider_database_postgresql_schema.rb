@@ -33,28 +33,26 @@ class Chef
         end
 
         def action_create
-          unless exists?
-            begin
-              if new_resource.owner
-                db(@new_resource.database_name).query("CREATE SCHEMA \"#{@new_resource.schema_name}\" AUTHORIZATION \"#{@new_resource.owner}\"")
-              else
-                db(@new_resource.database_name).query("CREATE SCHEMA \"#{@new_resource.schema_name}\"")
-              end
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
+          return if exists?
+          begin
+            if new_resource.owner
+              db(@new_resource.database_name).query("CREATE SCHEMA \"#{@new_resource.schema_name}\" AUTHORIZATION \"#{@new_resource.owner}\"")
+            else
+              db(@new_resource.database_name).query("CREATE SCHEMA \"#{@new_resource.schema_name}\"")
             end
+            @new_resource.updated_by_last_action(true)
+          ensure
+            close
           end
         end
 
         def action_drop
-          if exists?
-            begin
-              db(@new_resource.database_name).query("DROP SCHEMA \"#{@new_resource.schema_name}\"")
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
-            end
+          return unless exists?
+          begin
+            db(@new_resource.database_name).query("DROP SCHEMA \"#{@new_resource.schema_name}\"")
+            @new_resource.updated_by_last_action(true)
+          ensure
+            close
           end
         end
 

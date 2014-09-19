@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 
-if node[:ec2]
+if node['ec2']
   include_recipe 'aws'
   include_recipe 'xfs'
 
@@ -46,23 +46,25 @@ if node[:ec2]
   snapshots_to_keep = ''
   snapshot_cron_schedule = '00 * * * *' # default to hourly snapshots
 
-  search(:apps) do |app|
-    if (app['database_master_role'] & node.run_list.roles).length == 1 || (app['database_slave_role'] & node.run_list.roles).length == 1
-      master_role = app['database_master_role'] & node.run_list.roles
-      slave_role = app['database_slave_role'] & node.run_list.roles
-      root_pw = app['mysql_root_password'][node.chef_environment]
-      snapshots_to_keep = app['snapshots_to_keep'][node.chef_environment]
-      snapshot_cron_schedule = app['snapshot_cron_schedule'][node.chef_environment] if app['snapshot_cron_schedule'] && app['snapshot_cron_schedule'][node.chef_environment]
+  unless Chef::Config[:solo]
+    search(:apps) do |app|
+      if (app['database_master_role'] & node.run_list.roles).length == 1 || (app['database_slave_role'] & node.run_list.roles).length == 1
+        master_role = app['database_master_role'] & node.run_list.roles
+        slave_role = app['database_slave_role'] & node.run_list.roles
+        root_pw = app['mysql_root_password'][node.chef_environment]
+        snapshots_to_keep = app['snapshots_to_keep'][node.chef_environment]
+        snapshot_cron_schedule = app['snapshot_cron_schedule'][node.chef_environment] if app['snapshot_cron_schedule'] && app['snapshot_cron_schedule'][node.chef_environment]
 
-      if (master_role & node.run_list.roles).length == 1
-        db_type = 'master'
-        db_role = RUBY_VERSION.to_f <= 1.8 ? master_role : master_role.join
-      elsif (slave_role & node.run_list.roles).length == 1
-        db_type = 'slave'
-        db_role = RUBY_VERSION.to_f <= 1.8 ? slave_role : slave_role.join
+        if (master_role & node.run_list.roles).length == 1
+          db_type = 'master'
+          db_role = RUBY_VERSION.to_f <= 1.8 ? master_role : master_role.join
+        elsif (slave_role & node.run_list.roles).length == 1
+          db_type = 'slave'
+          db_role = RUBY_VERSION.to_f <= 1.8 ? slave_role : slave_role.join
+        end
+
+        Chef::Log.info "database::ebs_volume - db_role: #{db_role} db_type: #{db_type}"
       end
-
-      Chef::Log.info "database::ebs_volume - db_role: #{db_role} db_type: #{db_type}"
     end
   end
 
@@ -83,7 +85,7 @@ if node[:ec2]
 
   ruby_block "store_#{db_role}_#{node.chef_environment}_volid" do
     block do
-      ebs_vol_id = node[:aws][:ebs_volume]["#{db_role}_#{node.chef_environment}"][:volume_id]
+      ebs_vol_id = node['aws']['ebs_volume']["#{db_role}_#{node.chef_environment}"]['volume_id']
 
       unless ebs_info['volume_id']
         item = {
@@ -118,7 +120,7 @@ if node[:ec2]
       else
         action [:create, :attach]
       end
-      notifies :create, resources(:ruby_block => "store_#{db_role}_#{node.chef_environment}_volid")
+      notifies :create, "ruby_block[store_#{db_role}_#{node.chef_environment}_volid]"
     when 'slave'
       if master_info['volume_id']
         snapshot_id master_info['volume_id']
@@ -146,9 +148,9 @@ if node[:ec2]
       variables(
         :output => {
           'db_snapshot' => {
-            'ebs_vol_dev' => node.mysql.ec2_path,
+            'ebs_vol_dev' => node['mysql']['ec2_path'],
             'db_role' => db_role,
-            'app_environment' => node.chef_environment,
+            'app_environment' => node['chef_environment'],
             'username' => 'root',
             'password' => root_pw,
             'aws_access_key_id' => aws['aws_access_key_id'],

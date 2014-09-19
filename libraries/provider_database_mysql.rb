@@ -26,71 +26,68 @@ class Chef
 
         def load_current_resource
           Gem.clear_paths
-          require 'mysql'
+          require 'mysql2'
           @current_resource = Chef::Resource::Database.new(@new_resource.name)
           @current_resource.database_name(@new_resource.database_name)
           @current_resource
         end
 
         def action_create
-          unless exists?
-            begin
-              Chef::Log.debug("#{@new_resource}: Creating database `#{new_resource.database_name}`")
-              create_sql = "CREATE DATABASE `#{new_resource.database_name}`"
-              create_sql += " CHARACTER SET = #{new_resource.encoding}" if new_resource.encoding
-              create_sql += " COLLATE = #{new_resource.collation}" if new_resource.collation
-              Chef::Log.debug("#{@new_resource}: Performing query [#{create_sql}]")
-              db.query(create_sql)
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
-            end
+          return if exists?
+          begin
+            Chef::Log.debug("#{@new_resource}: Creating database `#{new_resource.database_name}`")
+            create_sql = "CREATE DATABASE `#{db.escape(new_resource.database_name)}`"
+            create_sql += " CHARACTER SET = #{db.escape(new_resource.encoding)}" if new_resource.encoding
+            create_sql += " COLLATE = #{db.escape(new_resource.collation)}" if new_resource.collation
+            Chef::Log.debug("#{@new_resource}: Performing query [#{create_sql}]")
+            db.query(create_sql)
+            @new_resource.updated_by_last_action(true)
+          ensure
+            close
           end
         end
 
         def action_drop
-          if exists?
-            begin
-              Chef::Log.debug("#{@new_resource}: Dropping database #{new_resource.database_name}")
-              db.query("DROP DATABASE `#{new_resource.database_name}`")
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
-            end
+          return unless exists?
+          begin
+            Chef::Log.debug("#{@new_resource}: Dropping database #{new_resource.database_name}")
+            db.query("DROP DATABASE `#{db.escape(new_resource.database_name)}`")
+            @new_resource.updated_by_last_action(true)
+          ensure
+            close
           end
         end
 
         def action_query
-          if exists?
-            begin
-              db.select_db(@new_resource.database_name) if @new_resource.database_name
-              Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
-              db.query(@new_resource.sql_query)
-              db.next_result while db.next_result
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
-            end
+          return unless exists?
+          begin
+            db.select_db(@new_resource.database_name) if @new_resource.database_name
+            Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
+            db.query(@new_resource.sql_query)
+            db.next_result while db.next_result
+            @new_resource.updated_by_last_action(true)
+          ensure
+            close
           end
         end
 
         private
         
         def exists?
-          db.list_dbs.include?(@new_resource.database_name)
+          db.query("SHOW DATABASES LIKE '#{db.escape(@new_resource.database_name)}';").count > 0
         end
 
         def db
+          require 'mysql2'
           @db ||= begin
-            connection = ::Mysql.new(
-              @new_resource.connection[:host],
-              @new_resource.connection[:username],
-              @new_resource.connection[:password],
-              nil,
-              @new_resource.connection[:port] || 3306,
-              @new_resource.connection[:socket] || nil
+            connection = ::Mysql2::Client.new(
+              :host => @new_resource.connection[:host],
+              :username => @new_resource.connection[:username],
+              :password => @new_resource.connection[:password],
+              :port => @new_resource.connection[:port] || 3306,
+              :socket => @new_resource.connection[:socket] || nil,
+              :flags => Mysql2::Client::MULTI_STATEMENTS
             )
-            connection.set_server_option ::Mysql::OPTION_MULTI_STATEMENTS_ON
             connection
           end
         end

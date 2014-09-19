@@ -55,7 +55,7 @@ class Chef
       end
 
       def sql_query
-        if sql.kind_of?(Proc)
+        if sql.is_a?(Proc)
           sql.call
         else
           sql
