@@ -69,7 +69,6 @@ class Chef
           ensure
             close
           end
-          end
         end
 
         private
