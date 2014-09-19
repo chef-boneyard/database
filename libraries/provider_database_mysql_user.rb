@@ -33,26 +33,24 @@ class Chef
         end
 
         def action_create
-          unless exists?
-            begin
-              statement = "CREATE USER `#{db.escape(@new_resource.username)}`@`#{@new_resource.host}`"
-              statement += " IDENTIFIED BY '#{db.escape(@new_resource.password)}'" if @new_resource.password
-              db.query(statement)
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
-            end
+          return if exists?
+          begin
+            statement = "CREATE USER `#{db.escape(@new_resource.username)}`@`#{@new_resource.host}`"
+            statement += " IDENTIFIED BY '#{db.escape(@new_resource.password)}'" if @new_resource.password
+            db.query(statement)
+            @new_resource.updated_by_last_action(true)
+          ensure
+            close
           end
         end
 
         def action_drop
-          if exists?
-            begin
-              db.query("DROP USER `#{db.escape(@new_resource.username)}`@`#{db.escape(@new_resource.host)}`")
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
-            end
+          return unless exists?
+          begin
+            db.query("DROP USER `#{db.escape(@new_resource.username)}`@`#{db.escape(@new_resource.host)}`")
+            @new_resource.updated_by_last_action(true)
+          ensure
+            close
           end
         end
 

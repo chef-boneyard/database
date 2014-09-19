@@ -34,51 +34,48 @@ class Chef
         end
 
         def action_create
-          unless exists?
-            begin
-              encoding = @new_resource.encoding
-              if encoding != 'DEFAULT'
-                encoding = "'#{@new_resource.encoding}'"
-              end
-              Chef::Log.debug("#{@new_resource}: Creating database #{new_resource.database_name}")
-              create_sql = "CREATE DATABASE \"#{new_resource.database_name}\""
-              create_sql += " TEMPLATE = #{new_resource.template}" if new_resource.template
-              create_sql += " ENCODING = #{encoding}" if new_resource.encoding
-              create_sql += " TABLESPACE = #{new_resource.tablespace}" if new_resource.tablespace
-              create_sql += " LC_CTYPE = '#{new_resource.collation}' LC_COLLATE = '#{new_resource.collation}'" if new_resource.collation
-              create_sql += " CONNECTION LIMIT = #{new_resource.connection_limit}" if new_resource.connection_limit
-              create_sql += " OWNER = \"#{new_resource.owner}\"" if new_resource.owner
-              Chef::Log.debug("#{@new_resource}: Performing query [#{create_sql}]")
-              db('template1').query(create_sql)
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
+          return if exists?
+          begin
+            encoding = @new_resource.encoding
+            if encoding != 'DEFAULT'
+              encoding = "'#{@new_resource.encoding}'"
             end
+            Chef::Log.debug("#{@new_resource}: Creating database #{new_resource.database_name}")
+            create_sql = "CREATE DATABASE \"#{new_resource.database_name}\""
+            create_sql += " TEMPLATE = #{new_resource.template}" if new_resource.template
+            create_sql += " ENCODING = #{encoding}" if new_resource.encoding
+            create_sql += " TABLESPACE = #{new_resource.tablespace}" if new_resource.tablespace
+            create_sql += " LC_CTYPE = '#{new_resource.collation}' LC_COLLATE = '#{new_resource.collation}'" if new_resource.collation
+            create_sql += " CONNECTION LIMIT = #{new_resource.connection_limit}" if new_resource.connection_limit
+            create_sql += " OWNER = \"#{new_resource.owner}\"" if new_resource.owner
+            Chef::Log.debug("#{@new_resource}: Performing query [#{create_sql}]")
+            db('template1').query(create_sql)
+            @new_resource.updated_by_last_action(true)
+          ensure
+            close
           end
         end
 
         def action_drop
-          if exists?
-            begin
-              Chef::Log.debug("#{@new_resource}: Dropping database #{new_resource.database_name}")
-              db('template1').query("DROP DATABASE \"#{new_resource.database_name}\"")
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
-            end
+          return unless exists?
+          begin
+            Chef::Log.debug("#{@new_resource}: Dropping database #{new_resource.database_name}")
+            db('template1').query("DROP DATABASE \"#{new_resource.database_name}\"")
+            @new_resource.updated_by_last_action(true)
+          ensure
+            close
           end
         end
 
         def action_query
-          if exists?
-            begin
-              Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
-              db(@new_resource.database_name).query(@new_resource.sql_query)
-              Chef::Log.debug("#{@new_resource}: query [#{new_resource.sql_query}] succeeded")
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
-            end
+          return unless exists?
+          begin
+            Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
+            db(@new_resource.database_name).query(@new_resource.sql_query)
+            Chef::Log.debug("#{@new_resource}: query [#{new_resource.sql_query}] succeeded")
+            @new_resource.updated_by_last_action(true)
+          ensure
+            close
           end
         end
 

@@ -35,26 +35,24 @@ class Chef
         end
 
         def action_create
-          unless exists?
-            begin
-              statement = "CREATE USER \"#{@new_resource.username}\""
-              statement += " WITH PASSWORD '#{@new_resource.password}'" if @new_resource.password
-              db('template1').query(statement)
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
-            end
+          return if exists?
+          begin
+            statement = "CREATE USER \"#{@new_resource.username}\""
+            statement += " WITH PASSWORD '#{@new_resource.password}'" if @new_resource.password
+            db('template1').query(statement)
+            @new_resource.updated_by_last_action(true)
+          ensure
+            close
           end
         end
 
         def action_drop
-          if exists?
-            begin
-              db('template1').query("DROP USER \"#{@new_resource.username}\"")
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
-            end
+          return unless exists?
+          begin
+            db('template1').query("DROP USER \"#{@new_resource.username}\"")
+            @new_resource.updated_by_last_action(true)
+          ensure
+            close
           end
         end
 
