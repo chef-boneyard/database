@@ -33,7 +33,7 @@ class Chef
           @current_resource
         end
 
-        def get_create_query(new_resource)
+        def get_create_query(new_resource, encoding)
           create_sql = "CREATE DATABASE \"#{new_resource.database_name}\""
           create_sql += " TEMPLATE = #{new_resource.template}" if new_resource.template
           create_sql += " ENCODING = #{encoding}" if new_resource.encoding
@@ -52,7 +52,7 @@ class Chef
               encoding = "'#{@new_resource.encoding}'"
             end
             Chef::Log.debug("#{@new_resource}: Creating database #{new_resource.database_name}")
-            create_sql = get_create_query(@new_resource)
+            create_sql = get_create_query(@new_resource, encoding)
             Chef::Log.debug("#{@new_resource}: Performing query [#{create_sql}]")
             db('template1').query(create_sql)
             @new_resource.updated_by_last_action(true)

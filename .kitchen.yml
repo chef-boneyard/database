@@ -17,3 +17,7 @@ suites:
     run_list:
       - recipe[test::mariadb]
     attributes:
+  - name: postgresql
+    run_list:
+      - recipe[test::postgresql]
+    attributes:
