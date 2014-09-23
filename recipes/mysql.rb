@@ -17,6 +17,4 @@
 # limitations under the License.
 #
 
-include_recipe 'build-essential::default'
-include_recipe 'mysql::client'
-include_recipe 'database::mysql2_gem'
+include_recipe 'mysql2-chef_gem'
