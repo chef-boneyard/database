@@ -18,5 +18,5 @@
 #
 
 chef_gem 'mysql2' do
-  action :install
-end
+  action :nothing
+end.run_action(:install)
