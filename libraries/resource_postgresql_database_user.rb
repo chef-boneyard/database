@@ -34,6 +34,7 @@ class Chef
         @replication = false
         @superuser = false
         @schema_name = nil
+        @roles = {}
         @allowed_actions.push(:create, :drop, :grant, :grant_schema)
       end
 
@@ -85,9 +86,9 @@ class Chef
         )
       end
 
-      def role_attributes(arg=nil)
+      def roles(arg = {})
         set_or_return(
-          :role_attributes,
+          :roles,
           arg,
           :kind_of => Hash
         )
