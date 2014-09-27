@@ -402,6 +402,16 @@ end
 
 
 
+# Create a postgresql user with multiple roles
+postgresql_database_user 'disenfranchised' do
+  connection postgresql_connection_info
+  password   'super_secret'
+  roles      :superuser => true, :createdb => true
+  action     :create
+end
+
+
+
 # Do the same but pass the provider to the database resource
 database_user 'disenfranchised' do
   connection postgresql_connection_info
