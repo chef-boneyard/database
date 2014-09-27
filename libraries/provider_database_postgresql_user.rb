@@ -40,18 +40,11 @@ class Chef
               statement = "CREATE USER \"#{@new_resource.username}\""
               statement += " WITH PASSWORD '#{@new_resource.password}'" if @new_resource.password
               db('template1').query(statement)
+              alter_roles
               @new_resource.updated_by_last_action(true)
             ensure
               close
             end
-          end
-
-          # Allow role attributes to be specified 
-          #
-          # role_attributes :superuser => true, :createdb => true
-          if @new_resource.role_attributes and @new_resource.role_attributes.any?
-            role_attributes_sql = @new_resource.role_attributes.to_a.map! { |a, b| (b ? "" : "NO") + a.to_s.upcase }.join(" ")
-            db("postgres").query("ALTER ROLE #{@new_resource.username} #{role_attributes_sql}") 
           end
         end
 
@@ -72,6 +65,7 @@ class Chef
             grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON DATABASE \"#{@new_resource.database_name}\" TO \"#{@new_resource.username}\""
             Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}]")
             db(@new_resource.database_name).query(grant_statement)
+            alter_roles
             @new_resource.updated_by_last_action(true)
           ensure
             close
@@ -97,6 +91,13 @@ class Chef
             close
           end
           exists
+        end
+
+        def alter_roles
+          if @new_resource.roles.any?
+            sql = @new_resource.roles.to_a.map! { |a, b| (b ? "" : "NO") + a.to_s.upcase }.join(" ")
+            db("postgres").query("ALTER ROLE #{@new_resource.username} #{sql}")
+          end
         end
       end
     end
