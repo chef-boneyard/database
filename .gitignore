@@ -18,4 +18,3 @@ Gemfile.lock
 .vagrant.d/
 bin/
 tmp/
-vendor/
