@@ -17,4 +17,4 @@
 # limitations under the License.
 #
 
-include_recipe 'mysql2-chef_gem'
+include_recipe 'mysql2_chef_gem'
