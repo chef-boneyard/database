@@ -25,8 +25,6 @@ class Chef
         include Chef::Mixin::ShellOut
 
         def load_current_resource
-          Gem.clear_paths
-          require 'mysql'
           @current_resource = Chef::Resource::Database.new(@new_resource.name)
           @current_resource.database_name(@new_resource.database_name)
           @current_resource
@@ -36,9 +34,9 @@ class Chef
           unless exists?
             begin
               Chef::Log.debug("#{@new_resource}: Creating database `#{new_resource.database_name}`")
-              create_sql = "CREATE DATABASE `#{new_resource.database_name}`"
-              create_sql += " CHARACTER SET = #{new_resource.encoding}" if new_resource.encoding
-              create_sql += " COLLATE = #{new_resource.collation}" if new_resource.collation
+              create_sql = "CREATE DATABASE `#{db.escape(new_resource.database_name)}`"
+              create_sql += " CHARACTER SET = #{db.escape(new_resource.encoding)}" if new_resource.encoding
+              create_sql += " COLLATE = #{db.escape(new_resource.collation)}" if new_resource.collation
               Chef::Log.debug("#{@new_resource}: Performing query [#{create_sql}]")
               db.query(create_sql)
               @new_resource.updated_by_last_action(true)
@@ -52,7 +50,7 @@ class Chef
           if exists?
             begin
               Chef::Log.debug("#{@new_resource}: Dropping database #{new_resource.database_name}")
-              db.query("DROP DATABASE `#{new_resource.database_name}`")
+              db.query("DROP DATABASE `#{db.escape(new_resource.database_name)}`")
               @new_resource.updated_by_last_action(true)
             ensure
               close
@@ -75,24 +73,25 @@ class Chef
         end
 
         private
-        
+
         def exists?
-          db.list_dbs.include?(@new_resource.database_name)
+          db.query("SHOW DATABASES LIKE '#{db.escape(@new_resource.database_name)}'").count > 0
         end
 
         def db
-          @db ||= begin
-            connection = ::Mysql.new(
-              @new_resource.connection[:host],
-              @new_resource.connection[:username],
-              @new_resource.connection[:password],
-              nil,
-              @new_resource.connection[:port] || 3306,
-              @new_resource.connection[:socket] || nil
+          unless @db
+            Gem.clear_paths
+            require 'mysql2'
+            @db = Mysql2::Client.new(
+              host: @new_resource.connection[:host],
+              username: @new_resource.connection[:username],
+              password: @new_resource.connection[:password],
+              port: @new_resource.connection[:port] || 3306,
+              database: @new_resource.connection[:socket] || nil,
+              flags: Mysql2::Client::MULTI_STATEMENTS
             )
-            connection.set_server_option ::Mysql::OPTION_MULTI_STATEMENTS_ON
-            connection
           end
+          @db
         end
 
         def close

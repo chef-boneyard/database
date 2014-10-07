@@ -17,4 +17,6 @@
 # limitations under the License.
 #
 
-include_recipe 'mysql2_chef_gem'
+chef_gem 'mysql2' do
+  action :nothing
+end.run_action(:install)
