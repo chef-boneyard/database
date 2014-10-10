@@ -205,7 +205,7 @@ end
 # Vacuum a postgres database
 postgresql_database 'vacuum databases' do
   connection      postgresql_connection_info
-  database_table 'template1'
+  database_name 'template1'
   sql 'VACUUM FULL VERBOSE ANALYZE'
   action :query
 end
