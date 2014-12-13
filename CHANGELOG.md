@@ -1,3 +1,7 @@
+v2.3.1 (2014-12-13)
+-------------------
+- Locking mysql and mysql-chef_gem dependencies down in metadata.rb
+
 v2.3.0 (2014-08-13)
 -------------------
 - [#62] Allow requiring SSL
