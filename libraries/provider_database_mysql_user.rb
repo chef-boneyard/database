@@ -80,6 +80,17 @@ class Chef
           end
         end
 
+        def action_revoke
+          begin
+            revoke_statement = "REVOKE #{@new_resource.privileges.join(', ')} ON #{@new_resource.database_name ? "`#{@new_resource.database_name}`" : '*'}.#{@new_resource.table ? "`#{@new_resource.table}`" : '*'} FROM `#{@new_resource.username}`@`#{@new_resource.host}` "
+            Chef::Log.info("#{@new_resource}: revoking access with statement [#{grant_statement}#{filtered}]")
+            db.query(revoke_statement)
+            @new_resource.updated_by_last_action(true)          
+          ensure
+            close
+          end
+        end
+
         private
         def exists?
           db.query("SELECT User,host from mysql.user WHERE User = '#{@new_resource.username}' AND host = '#{@new_resource.host}'").num_rows != 0
