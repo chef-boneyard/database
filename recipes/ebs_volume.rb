@@ -118,7 +118,7 @@ if node[:ec2]
       else
         action [:create, :attach]
       end
-      notifies :create, resources(:ruby_block => "store_#{db_role}_#{node.chef_environment}_volid")
+      notifies :create, resources(ruby_block: "store_#{db_role}_#{node.chef_environment}_volid")
     when 'slave'
       if master_info['volume_id']
         snapshot_id master_info['volume_id']
@@ -135,7 +135,7 @@ if node[:ec2]
     Chef::Log.info 'Setting up templates for chef-solo snapshots'
     template '/etc/chef/chef-solo-database-snapshot.rb' do
       source 'chef-solo-database-snapshot.rb.erb'
-      variables :cookbook_path => Chef::Config[:cookbook_path]
+      variables cookbook_path: Chef::Config[:cookbook_path]
       owner 'root'
       group 'root'
       mode 0600
@@ -144,7 +144,7 @@ if node[:ec2]
     template '/etc/chef/chef-solo-database-snapshot.json' do
       source 'chef-solo-database-snapshot.json.erb'
       variables(
-        :output => {
+        output: {
           'db_snapshot' => {
             'ebs_vol_dev' => node.mysql.ec2_path,
             'db_role' => db_role,
@@ -169,9 +169,9 @@ if node[:ec2]
     template '/etc/cron.d/chef-solo-database-snapshot' do
       source 'chef-solo-database-snapshot.cron.erb'
       variables(
-        :json_attribs => '/etc/chef/chef-solo-database-snapshot.json',
-        :config_file => '/etc/chef/chef-solo-database-snapshot.rb',
-        :schedule => snapshot_cron_schedule
+        json_attribs: '/etc/chef/chef-solo-database-snapshot.json',
+        config_file: '/etc/chef/chef-solo-database-snapshot.rb',
+        schedule: snapshot_cron_schedule
       )
       owner 'root'
       group 'root'

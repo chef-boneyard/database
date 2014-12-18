@@ -11,55 +11,26 @@ MethodLength:
   Enabled: false
 
 LineLength:
-  Max: 200
+  Enabled: false
 
-HashSyntax:
-  EnforcedStyle: hash_rockets
+# HashSyntax:
+#  EnforcedStyle: hash_rockets
 
 Documentation:
   Enabled: false
 
+PerceivedComplexity:
+  Enabled: false
+
 CyclomaticComplexity:
-  Max: 9
-
-# Offense count: 2
-BlockNesting:
-  Max: 4
-
-# Offense count: 5
-EmptyLinesAroundAccessModifier:
   Enabled: false
 
-# Offense count: 3
-# Configuration parameters: MaxLineLength.
-IfUnlessModifier:
+PerceivedComplexity:
   Enabled: false
 
-# Offense count: 1
-LineLength:
-  Max: 349
-
-# Offense count: 1
-MultilineIfThen:
+Style/FileName:
   Enabled: false
 
-# Offense count: 7
-RedundantBegin:
-  Enabled: false
-
-# Offense count: 1
-RegexpLiteral:
-  MaxSlashes: 2
-
-# Offense count: 3
-RescueModifier:
-  Enabled: false
-
-# Offense count: 1
-# Cop supports --auto-correct.
-TrailingWhitespace:
-  Enabled: false
-
-# Offense count: 1
-UselessAssignment:
-  Enabled: false
+AllCops:
+  Exclude:
+    - 'Guardfile'

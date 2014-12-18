@@ -49,8 +49,8 @@ end
 template '/mnt/aws-config/config' do
   source 'aws_config.erb'
   variables(
-    :access_key => aws['aws_access_key_id'],
-    :secret_key => aws['aws_secret_access_key']
+    access_key: aws['aws_access_key_id'],
+    secret_key: aws['aws_secret_access_key']
   )
   owner 'root'
   group 'root'
@@ -71,9 +71,9 @@ end
     group 'root'
     mode 0700
     variables(
-      :mysql_root_passwd => node['mysql']['server_root_password'],
-      :mysql_device => node['mysql']['ebs_vol_dev'],
-      :ebs_vol_id => ebs_info['volume_id']
+      mysql_root_passwd: node['mysql']['server_root_password'],
+      mysql_device: node['mysql']['ebs_vol_dev'],
+      ebs_vol_id: ebs_info['volume_id']
     )
   end
 end

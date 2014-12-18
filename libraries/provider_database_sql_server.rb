@@ -72,6 +72,7 @@ class Chef
         end
 
         private
+
         def exists?
           exists = false
           begin
@@ -92,10 +93,10 @@ class Chef
         def db
           @db ||= begin
             ::TinyTds::Client.new(
-              :host => @new_resource.connection[:host],
-              :username => @new_resource.connection[:username],
-              :password => @new_resource.connection[:password],
-              :port => @new_resource.connection[:port] || 1433
+              host: @new_resource.connection[:host],
+              username: @new_resource.connection[:username],
+              password: @new_resource.connection[:password],
+              port: @new_resource.connection[:port] || 1433
             )
           end
         end

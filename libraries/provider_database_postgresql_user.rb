@@ -59,29 +59,25 @@ class Chef
         end
 
         def action_grant
-          begin
-            # FIXME: grants on individual tables
-            grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON DATABASE \"#{@new_resource.database_name}\" TO \"#{@new_resource.username}\""
-            Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}]")
-            db(@new_resource.database_name).query(grant_statement)
-            @new_resource.updated_by_last_action(true)
-          ensure
-            close
-          end
+          grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON DATABASE \"#{@new_resource.database_name}\" TO \"#{@new_resource.username}\""
+          Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}]")
+          db(@new_resource.database_name).query(grant_statement)
+          @new_resource.updated_by_last_action(true)
+        ensure
+          close
         end
 
         def action_grant_schema
-          begin
-            grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON SCHEMA \"#{@new_resource.schema_name}\" TO \"#{@new_resource.username}\""
-            Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}]")
-            db(@new_resource.database_name).query(grant_statement)
-            @new_resource.updated_by_last_action(true)
-          ensure
-            close
-          end
+          grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON SCHEMA \"#{@new_resource.schema_name}\" TO \"#{@new_resource.username}\""
+          Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}]")
+          db(@new_resource.database_name).query(grant_statement)
+          @new_resource.updated_by_last_action(true)
+        ensure
+          close
         end
 
         private
+
         def exists?
           begin
             exists = db('template1').query("SELECT * FROM pg_user WHERE usename='#{@new_resource.username}'").num_tuples != 0

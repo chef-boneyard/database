@@ -59,6 +59,7 @@ class Chef
         end
 
         private
+
         def exists?
           begin
             exists = db(@new_resource.database_name).query("SELECT schema_name FROM information_schema.schemata WHERE schema_name='#{@new_resource.schema_name}'").num_tuples != 0

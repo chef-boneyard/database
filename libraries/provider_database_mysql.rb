@@ -75,7 +75,7 @@ class Chef
         end
 
         private
-        
+
         def exists?
           db.list_dbs.include?(@new_resource.database_name)
         end

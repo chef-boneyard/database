@@ -35,7 +35,7 @@ class Chef
         set_or_return(
           :schema_name,
           arg,
-          :kind_of => String
+          kind_of: String
         )
       end
     end

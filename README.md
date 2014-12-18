@@ -14,13 +14,10 @@ Chef version 0.11+
 * Red Hat, CentOS, Scientific, Fedora, Amazon
 
 ### Cookbooks
-The following Opscode cookbooks are dependencies:
+The following Chef Software cookbooks are dependencies:
 
-* mysql
+* mysql-chef_gem
 * postgresql
-* xfs
-* aws
-
 
 Resources/Providers
 -------------------
@@ -47,9 +44,9 @@ Manage databases in a RDBMS. Use the proper shortcut resource depending on your 
 
 \* The database cookbook uses the `mysql` gem, which uses the `real_connect()` function from mysql API to connect to the server.
 
-> "The value of host may be either a host name or an IP address. If host is NULL or the string "localhost", a connection to the local host is assumed. For Windows, the client connects using a shared-memory connection, if the server has shared-memory connections enabled. Otherwise, TCP/IP is used. For Unix, the client connects using a Unix socket file. For local connections, you can also influence the type of connection to use with the MYSQL_OPT_PROTOCOL or MYSQL_OPT_NAMED_PIPE options to mysql_options(). The type of connection must be supported by the server. For a host value of "." on Windows, the client connects using a named pipe, if the server has named-pipe connections enabled. If named-pipe connections are not enabled, an error occurs."
+> "The value of host may be either a host name or an IP address. If host is NULL or the string "127.0.0.1", a connection to the local host is assumed. For Windows, the client connects using a shared-memory connection, if the server has shared-memory connections enabled. Otherwise, TCP/IP is used. For Unix, the client connects using a Unix socket file. For local connections, you can also influence the type of connection to use with the MYSQL_OPT_PROTOCOL or MYSQL_OPT_NAMED_PIPE options to mysql_options(). The type of connection must be supported by the server. For a host value of "." on Windows, the client connects using a named pipe, if the server has named-pipe connections enabled. If named-pipe connections are not enabled, an error occurs."
 
-If you set the `:host` key to "localhost" or if you leave it blank, a socket will be used. By default `real_connect()` function will look for socket in `/var/lib/mysql/mysql.sock`. If your socket file in non-default location - you can use :socket key to specify that location.
+If you set the `:host` key to "127.0.0.1" or if you leave it blank, a socket will be used. By default `real_connect()` function will look for socket in `/var/lib/mysql/mysql.sock`. If your socket file in non-default location - you can use :socket key to specify that location.
 
 #### Providers
 - `Chef::Provider::Database::Mysql`: shortcut resource `mysql_database`
@@ -61,7 +58,7 @@ If you set the `:host` key to "localhost" or if you leave it blank, a socket wil
 # Create a mysql database
 mysql_database 'oracle_rules' do
   connection(
-    :host     => 'localhost',
+    :host     => '127.0.0.1',
     :username => 'root',
     :password => node['mysql']['server_root_password']
   )
@@ -116,13 +113,13 @@ end
 ```ruby
 # Externalize conection info in a ruby hash
 mysql_connection_info = {
-  :host     => 'localhost',
+  :host     => '127.0.0.1',
   :username => 'root',
   :password => node['mysql']['server_root_password']
 }
 
 sql_server_connection_info = {
-  :host     => 'localhost',
+  :host     => '127.0.0.1',
   :port     => node['sql_server']['port'],
   :username => 'sa',
   :password => node['sql_server']['server_sa_password']
@@ -228,7 +225,7 @@ Manage users and user privileges in a RDBMS. Use the proper shortcut resource de
 - privileges: array of database privileges to grant user. used by the
   :grant action. default is :all
 - host: host where user connections are allowed from. used by MySQL
-  provider only. default is 'localhost'
+  provider only. default is '127.0.0.1'
 - table: table to grant privileges on. used by :grant action and MySQL
   provider only. default is '*' (all tables)
 - require_ssl: true or false to force SSL connections to be used for user
@@ -245,14 +242,14 @@ Manage users and user privileges in a RDBMS. Use the proper shortcut resource de
 ### Examples
 
     # create connection info as an external ruby hash
-    mysql_connection_info = {:host => "localhost",
+    mysql_connection_info = {:host => "127.0.0.1",
                              :username => 'root',
                              :password => node['mysql']['server_root_password']}
-    postgresql_connection_info = {:host => "localhost",
+    postgresql_connection_info = {:host => "127.0.0.1",
                                   :port => node['postgresql']['config']['port'],
                                   :username => 'postgres',
                                   :password => node['postgresql']['password']['postgres']}
-    sql_server_connection_info = {:host => "localhost",
+    sql_server_connection_info = {:host => "127.0.0.1",
                                   :port => node['sql_server']['port'],
                                   :username => 'sa',
                                   :password => node['sql_server']['server_sa_password']}
@@ -319,7 +316,7 @@ Manage users and user privileges in a RDBMS. Use the proper shortcut resource de
       action :grant
     end
 
-    # grant all privileges on all databases/tables from localhost
+    # grant all privileges on all databases/tables from 127.0.0.1
     mysql_database_user 'super_user' do
       connection mysql_connection_info
       password 'super_secret'
@@ -353,20 +350,20 @@ Manage users and user privileges in a RDBMS. Use the proper shortcut resource de
 ```ruby
 # create connection info as an external ruby hash
 mysql_connection_info = {
-  :host     => 'localhost',
+  :host     => '127.0.0.1',
   :username => 'root',
   :password => node['mysql']['server_root_password']
 }
 
 postgresql_connection_info = {
-  :host     => 'localhost',
+  :host     => '127.0.0.1',
   :port     => node['postgresql']['config']['port'],
   :username => 'postgres',
   :password => node['postgresql']['password']['postgres']
 }
 
 sql_server_connection_info = {
-  :host     => 'localhost',
+  :host     => '127.0.0.1',
   :port     => node['sql_server']['port'],
   :username => 'sa',
   :password => node['sql_server']['server_sa_password']
@@ -451,7 +448,7 @@ end
 
 
 
-# Grant all privileges on all databases/tables from localhost
+# Grant all privileges on all databases/tables from 127.0.0.1
 mysql_database_user 'super_user' do
   connection mysql_connection_info
   password   'super_secret'
@@ -587,14 +584,15 @@ The cookbook `my_app_database` is recommended to set up any application specific
 
 License & Authors
 -----------------
-- Author:: Adam Jacob (<adam@opscode.com>)
-- Author:: Joshua Timberman (<joshua@opscode.com>)
-- Author:: AJ Christensen (<aj@opscode.com>)
-- Author:: Seth Chisamore (<schisamo@opscode.com>)
-- Author:: Lamont Granquist (<lamont@opscode.com>)
+- Author:: Adam Jacob (<adam@chef.io>)
+- Author:: Joshua Timberman (<joshua@chef.io>)
+- Author:: AJ Christensen (<aj@chef.io>)
+- Author:: Seth Chisamore (<schisamo@chef.io>)
+- Author:: Lamont Granquist (<lamont@chef.io>)
+- Author:: Sean OMeara (<sean@chef.io>)
 
 ```text
-Copyright 2009-2013, Opscode, Inc.
+Copyright 2009-2015, Chef Software, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

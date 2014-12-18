@@ -57,30 +57,26 @@ class Chef
         end
 
         def action_grant
-          begin
-            # does password look like MySQL hex digest?
-            # (begins with *, followed by 40 hexadecimal characters)
-            if (/(\A\*[0-9A-F]{40}\z)/i).match(@new_resource.password) then
-              password = filtered = "PASSWORD '#{Regexp.last_match[1]}'"
-            else
-              password = "'#{@new_resource.password}'"
-              filtered = '[FILTERED]'
-            end
-            grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON #{@new_resource.database_name ? "`#{@new_resource.database_name}`" : '*'}.#{@new_resource.table ? "`#{@new_resource.table}`" : '*'} TO `#{@new_resource.username}`@`#{@new_resource.host}` IDENTIFIED BY "
-            grant_statement += password
-
-            if (@new_resource.require_ssl) then
-              grant_statement += " REQUIRE SSL"
-            end
-            Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}#{filtered}]")
-            db.query(grant_statement)
-            @new_resource.updated_by_last_action(true)
-          ensure
-            close
+          if (/(\A\*[0-9A-F]{40}\z)/i).match(@new_resource.password) then
+            password = filtered = "PASSWORD '#{Regexp.last_match[1]}'"
+          else
+            password = "'#{@new_resource.password}'"
+            filtered = '[FILTERED]'
           end
+          grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON #{@new_resource.database_name ? "`#{@new_resource.database_name}`" : '*'}.#{@new_resource.table ? "`#{@new_resource.table}`" : '*'} TO `#{@new_resource.username}`@`#{@new_resource.host}` IDENTIFIED BY "
+          grant_statement += password
+          if @new_resource.require_ssl then
+            grant_statement += ' REQUIRE SSL'
+         end
+          Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}#{filtered}]")
+          db.query(grant_statement)
+          @new_resource.updated_by_last_action(true)
+        ensure
+          close
         end
 
         private
+
         def exists?
           db.query("SELECT User,host from mysql.user WHERE User = '#{@new_resource.username}' AND host = '#{@new_resource.host}'").num_rows != 0
         end
