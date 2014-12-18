@@ -33,7 +33,7 @@ class Chef
         @grant_option = false
         @require_ssl = false
 
-        @allowed_actions.push(:create, :drop, :grant)
+        @allowed_actions.push(:create, :drop, :grant, :revoke)
         @action = :create
       end
 
