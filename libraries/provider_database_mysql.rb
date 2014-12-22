@@ -33,43 +33,33 @@ class Chef
         end
 
         def action_create
-          begin
-            Chef::Log.debug("#{@new_resource}: Creating database `#{new_resource.database_name}`")
-            sql = "CREATE DATABASE IF NOT EXISTS `#{new_resource.database_name}`"
-            sql += " CHARACTER SET = #{new_resource.encoding}" if new_resource.encoding
-            sql += " COLLATE = #{new_resource.collation}" if new_resource.collation
-            Chef::Log.debug("#{@new_resource}: Performing query [#{sql}]")
-            db.query(sql)
-            @new_resource.updated_by_last_action(true)
-          ensure
-            close
-          end
+          Chef::Log.debug("#{@new_resource}: Creating database `#{new_resource.database_name}`")
+          sql = "CREATE DATABASE IF NOT EXISTS `#{new_resource.database_name}`"
+          sql += " CHARACTER SET = #{new_resource.encoding}" if new_resource.encoding
+          sql += " COLLATE = #{new_resource.collation}" if new_resource.collation
+          Chef::Log.debug("#{@new_resource}: Performing query [#{sql}]")
+          db.query(sql)
+          @new_resource.updated_by_last_action(true)
+        ensure
+          close
         end
 
         def action_drop
-          if exists?
-            begin
-              Chef::Log.debug("#{@new_resource}: Dropping database #{new_resource.database_name}")
-              db.query("DROP DATABASE `#{new_resource.database_name}`")
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
-            end
-          end
+          Chef::Log.debug("#{@new_resource}: Dropping database #{new_resource.database_name}")
+          db.query("DROP DATABASE IF EXISTS `#{new_resource.database_name}`")
+          @new_resource.updated_by_last_action(true)
+        ensure
+          close
         end
 
         def action_query
-          if exists?
-            begin
-              db.select_db(@new_resource.database_name) if @new_resource.database_name
-              Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
-              db.query(@new_resource.sql_query)
-              db.next_result while db.next_result
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
-            end
-          end
+          db.select_db(@new_resource.database_name) if @new_resource.database_name
+          Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
+          db.query(@new_resource.sql_query)
+          db.next_result while db.next_result
+          @new_resource.updated_by_last_action(true)
+        ensure
+          close
         end
 
         private
