@@ -18,7 +18,8 @@ driver_config:
 provisioner:
   name: chef_solo
   # require_chef_omnibus: 11.16.4
-  require_chef_omnibus: 12.0.0
+  require_chef_omnibus: 12.0.3
+  # require_chef_omnibus: latest
 
 platforms:
 - name: centos-5.8
@@ -121,6 +122,61 @@ suites:
   #
   # database-test
   #
-  - name: mysql-database-test
+  - name: myclient50
     run_list:
     - recipe[mysql_database_test]
+    attributes:
+      mysql:
+       version: '5.0'
+    includes: [
+      'centos-5.8'
+    ]
+
+  - name: myclient51
+    run_list:
+    - recipe[mysql_database_test]
+    attributes:
+      mysql:
+       version: '5.1'
+    includes: [
+      'centos-6.5',
+      'ubuntu-10.04'
+    ]
+
+  - name: myclient55
+    run_list:
+    - recipe[mysql_database_test]
+    attributes:
+      mysql:
+       version: '5.5'
+    includes: [
+      'centos-6.5',
+      'debian-7.0',
+      'ubuntu-12.04',
+      'ubuntu-14.04'
+    ]
+
+  - name: myclient56
+    run_list:
+    - recipe[mysql_database_test]
+    attributes:
+      mysql:
+       version: '5.6'
+    includes: [
+      'centos-5.8',
+      'centos-6.5',
+      'centos-7.0',
+      'ubuntu-14.04'
+    ]
+
+  - name: myclient57
+    run_list:
+    - recipe[mysql_database_test]
+    attributes:
+      mysql:
+       version: '5.7'
+    includes: [
+      'centos-5.8',
+      'centos-6.5',
+      'centos-7.0'
+    ]

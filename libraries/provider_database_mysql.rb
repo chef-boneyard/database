@@ -21,62 +21,63 @@ require 'chef/provider'
 class Chef
   class Provider
     class Database
-      class Mysql < Chef::Provider
+      class Mysql < Chef::Provider::LWRPBase
         include Chef::Mixin::ShellOut
 
-        def load_current_resource
-          Gem.clear_paths
-          require 'mysql2'
-          @current_resource = Chef::Resource::Database.new(@new_resource.name)
-          @current_resource.database_name(@new_resource.database_name)
-          @current_resource
-        end
-
-        def action_create
-          Chef::Log.debug("#{@new_resource}: Creating database `#{new_resource.database_name}`")
-          sql = "CREATE DATABASE IF NOT EXISTS `#{new_resource.database_name}`"
+        action :create do
+          Chef::Log.debug("#{new_resource}: Creating database '#{new_resource.database_name}'")
+          sql = "CREATE SCHEMA IF NOT EXISTS `#{new_resource.database_name}`"
           sql += " CHARACTER SET = #{new_resource.encoding}" if new_resource.encoding
-          sql += " COLLATE = #{new_resource.collation}" if new_resource.collation
+          sql += " COLLATE = #{new_resource.collation}" if new_resource.collation          
           Chef::Log.debug("#{@new_resource}: Performing query [#{sql}]")
-          db.query(sql)
-          @new_resource.updated_by_last_action(true)
-        ensure
-          close
+          # test
+          # FIXME
+          
+          # repair
+          begin
+            db.query(sql)
+          ensure
+            close
+          end
         end
 
-        def action_drop
-          Chef::Log.debug("#{@new_resource}: Dropping database #{new_resource.database_name}")
-          db.query("DROP DATABASE IF EXISTS `#{new_resource.database_name}`")
-          @new_resource.updated_by_last_action(true)
-        ensure
-          close
+        action :drop do
+          Chef::Log.debug("#{new_resource}: Dropping database #{new_resource.database_name}")
+          begin
+            db.query("DROP SCHEMA IF EXISTS `#{new_resource.database_name}`")
+          ensure
+            close
+          end
         end
 
-        def action_query
+        action :query do
           db.select_db(@new_resource.database_name) if @new_resource.database_name
           Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
-          db.query(@new_resource.sql_query)
-          db.next_result while db.next_result
-          @new_resource.updated_by_last_action(true)
-        ensure
-          close
+          begin
+            db.query(@new_resource.sql_query)
+            db.next_result while db.next_result
+            @new_resource.updated_by_last_action(true)
+          ensure
+            close
+          end
         end
 
         private
 
         def db
-          @db ||= begin
-                    connection = ::Mysql2::Client.new(
-              host: @new_resource.connection[:host],
-              username: @new_resource.connection[:username],
-              password: @new_resource.connection[:password],
-              port: @new_resource.connection[:port]
-              )
-                  end
+          require 'mysql2'
+          @db ||=
+            Mysql2::Client.new(
+            host: @new_resource.connection[:host],
+            username: @new_resource.connection[:username],
+            password: @new_resource.connection[:password],
+            port: @new_resource.connection[:port]
+            )
         end
 
         def close
-          @db.close rescue nil
+          @db.close
+        rescue Mysql2::Error
           @db = nil
         end
       end
