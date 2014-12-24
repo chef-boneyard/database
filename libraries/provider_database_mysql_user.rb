@@ -57,7 +57,7 @@ class Chef
         end
 
         def action_grant
-          if (/(\A\*[0-9A-F]{40}\z)/i).match(@new_resource.password) then
+          if (/(\A\*[0-9A-F]{40}\z)/i).match(@new_resource.password)
             password = filtered = "PASSWORD '#{Regexp.last_match[1]}'"
           else
             password = "'#{@new_resource.password}'"
@@ -65,7 +65,7 @@ class Chef
           end
           grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON #{@new_resource.database_name ? "`#{@new_resource.database_name}`" : '*'}.#{@new_resource.table ? "`#{@new_resource.table}`" : '*'} TO `#{@new_resource.username}`@`#{@new_resource.host}` IDENTIFIED BY "
           grant_statement += password
-          if @new_resource.require_ssl then
+          if @new_resource.require_ssl
             grant_statement += ' REQUIRE SSL'
          end
           Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}#{filtered}]")

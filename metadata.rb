@@ -15,4 +15,4 @@ supports 'scientific'
 supports 'amazon'
 
 depends 'postgresql', '>= 1.0.0'
-depends 'mysql2-chef_gem', '~> 1.0'
+depends 'mysql2_chef_gem', '~> 1.0'
