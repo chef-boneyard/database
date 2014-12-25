@@ -78,7 +78,7 @@ mysql_database_user 'fozzie' do
   database_name 'databass'
   password 'wokkawokka'
   host 'mars'
-  privileges [:select,:update,:insert]
+  privileges [:select, :update, :insert]
   require_ssl true
   action :grant
 end

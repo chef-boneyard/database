@@ -96,7 +96,7 @@ class Chef
           # Test
           incorrect_privs = nil
           begin
-            test_sql = "SELECT * from mysql.db"
+            test_sql = 'SELECT * from mysql.db'
             test_sql += " WHERE User='#{new_resource.username}'"
             test_sql += " AND Host='#{new_resource.host}'"
             test_sql += " AND Db='#{db_name}'"
