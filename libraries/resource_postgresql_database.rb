@@ -26,7 +26,17 @@ class Chef
       def initialize(name, run_context = nil)
         super
         @resource_name = :postgresql_database
+        @connection_database = :template1
         @provider = Chef::Provider::Database::Postgresql
+      end
+
+      def connection_database(arg = nil)
+        set_or_return(
+          :connection_database,
+          arg,
+          :kind_of => String,
+          :default => 'template1'
+        )
       end
     end
   end

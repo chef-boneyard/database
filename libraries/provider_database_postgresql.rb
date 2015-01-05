@@ -49,7 +49,7 @@ class Chef
               create_sql += " CONNECTION LIMIT = #{new_resource.connection_limit}" if new_resource.connection_limit
               create_sql += " OWNER = \"#{new_resource.owner}\"" if new_resource.owner
               Chef::Log.debug("#{@new_resource}: Performing query [#{create_sql}]")
-              db('template1').query(create_sql)
+              db(@new_resource.connection_database).query(create_sql)
               @new_resource.updated_by_last_action(true)
             ensure
               close
@@ -61,7 +61,7 @@ class Chef
           if exists?
             begin
               Chef::Log.debug("#{@new_resource}: Dropping database #{new_resource.database_name}")
-              db('template1').query("DROP DATABASE \"#{new_resource.database_name}\"")
+              db(@new_resource.connection_database).query("DROP DATABASE \"#{new_resource.database_name}\"")
               @new_resource.updated_by_last_action(true)
             ensure
               close
@@ -87,7 +87,7 @@ class Chef
         def exists?
           begin
             Chef::Log.debug("#{@new_resource}: checking if database #{@new_resource.database_name} exists")
-            ret = db('template1').query("SELECT * FROM pg_database where datname = '#{@new_resource.database_name}'").num_tuples != 0
+            ret = db(@new_resource.connection_database).query("SELECT * FROM pg_database where datname = '#{@new_resource.database_name}'").num_tuples != 0
             ret ? Chef::Log.debug("#{@new_resource}: database #{@new_resource.database_name} exists") :
                   Chef::Log.debug("#{@new_resource}: database #{@new_resource.database_name} does not exist")
           ensure
