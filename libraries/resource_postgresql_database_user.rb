@@ -39,6 +39,15 @@ class Chef
           :kind_of => String
         )
       end
+
+      def connection_database(arg = nil)
+        set_or_return(
+          :connection_database,
+          arg,
+          :kind_of => String,
+          :default => 'template1'
+        )
+      end
     end
   end
 end
