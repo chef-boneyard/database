@@ -36,7 +36,7 @@ class Chef
           unless exists?
             begin
               statement = "CREATE USER `#{@new_resource.username}`@`#{@new_resource.host}`"
-              statement += " IDENTIFIED BY '#{@new_resource.password}'" if @new_resource.password
+              statement += " IDENTIFIED BY '#{mysql_escape(@new_resource.password)}'" if @new_resource.password
               db.query(statement)
               @new_resource.updated_by_last_action(true)
             ensure
@@ -63,7 +63,7 @@ class Chef
             if (/(\A\*[0-9A-F]{40}\z)/i).match(@new_resource.password) then
               password = filtered = "PASSWORD '#{Regexp.last_match[1]}'"
             else
-              password = "'#{@new_resource.password}'"
+              password = "'#{mysql_escape(@new_resource.password)}'"
               filtered = '[FILTERED]'
             end
             grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON #{@new_resource.database_name ? "`#{@new_resource.database_name}`" : '*'}.#{@new_resource.table ? "`#{@new_resource.table}`" : '*'} TO `#{@new_resource.username}`@`#{@new_resource.host}` IDENTIFIED BY "
@@ -83,6 +83,11 @@ class Chef
         private
         def exists?
           db.query("SELECT User,host from mysql.user WHERE User = '#{@new_resource.username}' AND host = '#{@new_resource.host}'").num_rows != 0
+        end
+
+        def mysql_escape (s)
+          # having in mind that escaped string will be used within single quotes!
+          s.gsub(/'/,"''").gsub(/\\/,'\\\\\\')
         end
       end
     end
