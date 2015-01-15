@@ -3,7 +3,7 @@ maintainer 'Chef Software, Inc.'
 maintainer_email 'cookbooks@chef.io'
 license 'Apache 2.0'
 description 'provides LWRPs for common database tasks'
-version '2.3.1'
+version '3.0.0'
 
 supports 'debian'
 supports 'ubuntu'
