@@ -1,5 +1,6 @@
 #
 # Author:: Seth Chisamore (<schisamo@opscode.com>)
+# Author:: Sean OMeara (<sean@chef.io>)
 # Copyright:: Copyright (c) 2011 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -16,88 +17,122 @@
 # limitations under the License.
 #
 
-require 'chef/provider'
-
 class Chef
   class Provider
     class Database
-      class Mysql < Chef::Provider
-        include Chef::Mixin::ShellOut
+      class Mysql < Chef::Provider::LWRPBase
+        use_inline_resources if defined?(use_inline_resources)
 
-        def load_current_resource
-          Gem.clear_paths
-          require 'mysql'
-          @current_resource = Chef::Resource::Database.new(@new_resource.name)
-          @current_resource.database_name(@new_resource.database_name)
-          @current_resource
+        def whyrun_supported?
+          true
         end
 
-        def action_create
-          unless exists?
-            begin
-              Chef::Log.debug("#{@new_resource}: Creating database `#{new_resource.database_name}`")
-              create_sql = "CREATE DATABASE `#{new_resource.database_name}`"
-              create_sql += " CHARACTER SET = #{new_resource.encoding}" if new_resource.encoding
-              create_sql += " COLLATE = #{new_resource.collation}" if new_resource.collation
-              Chef::Log.debug("#{@new_resource}: Performing query [#{create_sql}]")
-              db.query(create_sql)
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
+        action :create do
+          # install mysql2 gem into Chef's environment
+          mysql2_chef_gem 'default' do
+            client_version node['mysql']['version']
+          end.run_action(:install)
+
+          # test
+          schema_present = nil
+
+          begin
+            test_sql = 'SHOW SCHEMAS;'
+            Chef::Log.debug("#{new_resource.name}: Performing query [#{test_sql}]")
+            test_sql_results = test_client.query(test_sql)
+            test_sql_results.each do |r|
+              schema_present = true if r['Database'] == new_resource.database_name
+            end
+          ensure
+            close_test_client
+          end
+
+          # repair
+          unless schema_present
+            converge_by "Creating schema '#{new_resource.database_name}'" do
+              begin
+                repair_sql = "CREATE SCHEMA IF NOT EXISTS `#{new_resource.database_name}`"
+                repair_sql += " CHARACTER SET = #{new_resource.encoding}" if new_resource.encoding
+                repair_sql += " COLLATE = #{new_resource.collation}" if new_resource.collation
+                Chef::Log.debug("#{new_resource.name}: Performing query [#{repair_sql}]")
+                repair_client.query(repair_sql)
+              ensure
+                close_repair_client
+              end
             end
           end
         end
 
-        def action_drop
-          if exists?
-            begin
-              Chef::Log.debug("#{@new_resource}: Dropping database #{new_resource.database_name}")
-              db.query("DROP DATABASE `#{new_resource.database_name}`")
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
-            end
-          end
-        end
+        action :drop do
+          # install mysql2 gem into Chef's environment
+          mysql2_chef_gem 'default' do
+            client_version node['mysql']['version']
+          end.run_action(:install)
 
-        def action_query
-          if exists?
-            begin
-              db.select_db(@new_resource.database_name) if @new_resource.database_name
-              Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
-              db.query(@new_resource.sql_query)
-              db.next_result while db.next_result
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
+          # test
+          schema_present = nil
+
+          begin
+            test_sql = 'SHOW SCHEMAS;'
+            Chef::Log.debug("Performing query [#{test_sql}]")
+            test_sql_results = test_client.query(test_sql)
+            test_sql_results.each do |r|
+              schema_present = true if r['Database'] == new_resource.database_name
+            end
+          ensure
+            close_test_client
+          end
+
+          # repair
+          if schema_present
+            converge_by "Dropping schema '#{new_resource.database_name}'" do
+              begin
+                repair_sql = "DROP SCHEMA IF EXISTS `#{new_resource.database_name}`"
+                Chef::Log.debug("Performing query [#{repair_sql}]")
+                repair_client.query(repair_sql)
+              ensure
+                close_repair_client
+              end
             end
           end
         end
 
         private
-        
-        def exists?
-          db.list_dbs.include?(@new_resource.database_name)
-        end
 
-        def db
-          @db ||= begin
-            connection = ::Mysql.new(
-              @new_resource.connection[:host],
-              @new_resource.connection[:username],
-              @new_resource.connection[:password],
-              nil,
-              @new_resource.connection[:port] || 3306,
-              @new_resource.connection[:socket] || nil
+        def test_client
+          require 'mysql2'
+          @test_client ||=
+            Mysql2::Client.new(
+            host: new_resource.connection[:host],
+            socket: new_resource.connection[:socket],
+            username: new_resource.connection[:username],
+            password: new_resource.connection[:password],
+            port: new_resource.connection[:port]
             )
-            connection.set_server_option ::Mysql::OPTION_MULTI_STATEMENTS_ON
-            connection
-          end
         end
 
-        def close
-          @db.close rescue nil
-          @db = nil
+        def close_test_client
+          @test_client.close
+        rescue Mysql2::Error
+          @test_client = nil
+        end
+
+        def repair_client
+          require 'mysql2'
+          @repair_client ||=
+            Mysql2::Client.new(
+            host: new_resource.connection[:host],
+            socket: new_resource.connection[:socket],
+            username: new_resource.connection[:username],
+            password: new_resource.connection[:password],
+            port: new_resource.connection[:port]
+            )
+        end
+
+        def close_repair_client
+          @repair_client.close
+        rescue Mysql2::Error
+          @repair_client = nil
         end
       end
     end

@@ -1,6 +1,7 @@
 #
 # Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Author:: Sean OMeara (<sean@chef.io>)
+# Copyright:: 2011-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,73 +17,171 @@
 # limitations under the License.
 #
 
-require File.join(File.dirname(__FILE__), 'provider_database_mysql')
-
 class Chef
   class Provider
     class Database
       class MysqlUser < Chef::Provider::Database::Mysql
-        include Chef::Mixin::ShellOut
+        use_inline_resources if defined?(use_inline_resources)
 
-        def load_current_resource
-          Gem.clear_paths
-          require 'mysql'
-          @current_resource = Chef::Resource::DatabaseUser.new(@new_resource.name)
-          @current_resource.username(@new_resource.name)
-          @current_resource
+        def whyrun_supported?
+          true
         end
 
-        def action_create
-          unless exists?
-            begin
-              statement = "CREATE USER `#{@new_resource.username}`@`#{@new_resource.host}`"
-              statement += " IDENTIFIED BY '#{@new_resource.password}'" if @new_resource.password
-              db.query(statement)
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
-            end
+        action :create do
+          # install mysql2 gem into Chef's environment
+          mysql2_chef_gem 'default' do
+            client_version node['mysql']['version']
+            action :install
           end
-        end
-
-        def action_drop
-          if exists?
-            begin
-              db.query("DROP USER `#{@new_resource.username}`@`#{@new_resource.host}`")
-              @new_resource.updated_by_last_action(true)
-            ensure
-              close
-            end
-          end
-        end
-
-        def action_grant
+          
+          # test
+          user_present = nil
           begin
-            # does password look like MySQL hex digest?
-            # (begins with *, followed by 40 hexadecimal characters)
-            if (/(\A\*[0-9A-F]{40}\z)/i).match(@new_resource.password) then
-              password = filtered = "PASSWORD '#{Regexp.last_match[1]}'"
-            else
-              password = "'#{@new_resource.password}'"
-              filtered = '[FILTERED]'
+            test_sql = "SELECT User,Host from mysql.user WHERE User='#{new_resource.username}' AND Host='#{new_resource.host}';"
+            test_sql_results = test_client.query(test_sql)
+            test_sql_results.each do |r|
+              user_present = true if r['User'] == new_resource.username
             end
-            grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON #{@new_resource.database_name ? "`#{@new_resource.database_name}`" : '*'}.#{@new_resource.table ? "`#{@new_resource.table}`" : '*'} TO `#{@new_resource.username}`@`#{@new_resource.host}` IDENTIFIED BY "
-            grant_statement += password
-
-            if (@new_resource.require_ssl) then
-              grant_statement += " REQUIRE SSL"
-            end
-            Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}#{filtered}]")
-            db.query(grant_statement)
-            @new_resource.updated_by_last_action(true)
           ensure
-            close
+            close_test_client
+          end
+
+          # repair
+          unless user_present
+            converge_by "Creating user '#{new_resource.username}'@'#{new_resource.host}'" do
+              begin
+                repair_sql = "CREATE USER '#{new_resource.username}'@'#{new_resource.host}'"
+                repair_sql += " IDENTIFIED BY '#{new_resource.password}'" if new_resource.password
+                repair_client.query(repair_sql)
+              ensure
+                close_repair_client
+              end
+            end
+          end
+        end
+
+        action :drop do
+          # install mysql2 gem into Chef's environment
+          mysql2_chef_gem 'default' do
+            client_version node['mysql']['version']
+            action :install
+          end
+          
+          # test
+          user_present = nil
+          begin
+            test_sql = 'SELECT User,Host'
+            test_sql += ' from mysql.user'
+            test_sql += " WHERE User='#{new_resource.username}'"
+            test_sql += " AND Host='#{new_resource.host}'"
+            test_sql_results = test_client.query test_sql
+            test_sql_results.each do |r|
+              user_present = true if r['User'] == new_resource.username
+            end
+          ensure
+            close_test_client
+          end
+
+          # repair
+          if user_present
+            converge_by "Dropping user '#{new_resource.username}'@'#{new_resource.host}'" do
+              begin
+                repair_sql = 'DROP USER'
+                repair_sql += " '#{new_resource.username}'@'#{new_resource.host}'"
+                repair_client.query repair_sql
+              ensure
+                close_repair_client
+              end
+            end
+          end
+        end
+
+        action :grant do
+          # gratuitous function
+          def ishash?
+            return true if (/(\A\*[0-9A-F]{40}\z)/i).match(new_resource.password)
+          end
+
+          db_name = new_resource.database_name ? new_resource.database_name : '*'
+          tbl_name = new_resource.table ? new_resource.table : '*'
+
+          # Test
+          incorrect_privs = nil
+          begin
+            test_sql = 'SELECT * from mysql.db'
+            test_sql += " WHERE User='#{new_resource.username}'"
+            test_sql += " AND Host='#{new_resource.host}'"
+            test_sql += " AND Db='#{db_name}'"
+            test_sql_results = test_client.query test_sql
+
+            incorrect_privs = true if test_sql_results.size == 0
+            # These should all by 'Y'
+            test_sql_results.each do |r|
+              new_resource.privileges.each do |p|
+                key = "#{p.capitalize}_priv"
+                incorrect_privs = true if r[key] != 'Y'
+              end
+            end
+          ensure
+            close_test_client
+          end
+
+          # Repair
+          if incorrect_privs
+            converge_by "Granting privs for '#{new_resource.username}'@'#{new_resource.host}'" do
+              begin
+                repair_sql = "GRANT #{new_resource.privileges.join(',')}"
+                repair_sql += " ON #{db_name}.#{tbl_name}"
+                repair_sql += " TO '#{new_resource.username}'@'#{new_resource.host}' IDENTIFIED BY"
+                repair_sql += " '#{new_resource.password}'"
+                # repair_sql += ' REQUIRE SSL' if new_resource.require_ssl
+
+                Chef::Log.info("#{new_resource}: granting access with statement [#{repair_sql}]")
+                repair_client.query(repair_sql)
+                repair_client.query('FLUSH PRIVILEGES')
+              ensure
+                close_repair_client
+              end
+            end
           end
         end
 
         private
-        def exists?
-          db.query("SELECT User,host from mysql.user WHERE User = '#{@new_resource.username}' AND host = '#{@new_resource.host}'").num_rows != 0
+
+        def test_client
+          require 'mysql2'
+          @test_client ||=
+            Mysql2::Client.new(
+            host: new_resource.connection[:host],
+            socket: new_resource.connection[:socket],
+            username: new_resource.connection[:username],
+            password: new_resource.connection[:password],
+            port: new_resource.connection[:port]
+            )
+        end
+
+        def close_test_client
+          @test_client.close
+        rescue Mysql2::Error
+          @test_client = nil
+        end
+
+        def repair_client
+          require 'mysql2'
+          @repair_client ||=
+            Mysql2::Client.new(
+            host: new_resource.connection[:host],
+            socket: new_resource.connection[:socket],
+            username: new_resource.connection[:username],
+            password: new_resource.connection[:password],
+            port: new_resource.connection[:port]
+            )
+        end
+
+        def close_repair_client
+          @repair_client.close
+        rescue Mysql2::Error
+          @repair_client = nil
         end
       end
     end

@@ -1,5 +1,6 @@
 #
 # Author:: Seth Chisamore (<schisamo@opscode.com>)
+# Author:: Sean OMeara (<sean@chef.io>)
 # Copyright:: Copyright (c) 2011 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -15,9 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-require File.join(File.dirname(__FILE__), 'resource_database')
-require File.join(File.dirname(__FILE__), 'provider_database_mysql')
 
 class Chef
   class Resource
