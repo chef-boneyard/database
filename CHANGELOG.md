@@ -1,6 +1,10 @@
 Database cookbook README
 ========================
 
+v3.0.2 (2015-01-16)
+-------------------
+- Fix bug to allow grants on databases with special characters
+
 v3.0.1 (2015-01-16)
 -------------------
 - Enabling ssl for provider_mysql_database_user
