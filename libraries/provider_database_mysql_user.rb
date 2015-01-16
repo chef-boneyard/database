@@ -134,7 +134,7 @@ class Chef
                 repair_sql += " ON #{db_name}.#{tbl_name}"
                 repair_sql += " TO '#{new_resource.username}'@'#{new_resource.host}' IDENTIFIED BY"
                 repair_sql += " '#{new_resource.password}'"
-                # repair_sql += ' REQUIRE SSL' if new_resource.require_ssl
+                repair_sql += ' REQUIRE SSL' if new_resource.require_ssl
 
                 Chef::Log.info("#{new_resource}: granting access with statement [#{repair_sql}]")
                 repair_client.query(repair_sql)
