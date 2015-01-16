@@ -1,6 +1,10 @@
 Database cookbook README
 ========================
 
+v3.0.1 (2015-01-16)
+-------------------
+- Enabling ssl for provider_mysql_database_user
+
 v3.0.0 (2015-01-15)
 -------------------
 - Removing out of scope recipes
