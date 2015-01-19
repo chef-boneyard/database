@@ -112,7 +112,7 @@ class Chef
         end
 
         def close_test_client
-          @test_client.close
+          @test_client.close if @test_client
         rescue Mysql2::Error
           @test_client = nil
         end
@@ -130,7 +130,7 @@ class Chef
         end
 
         def close_repair_client
-          @repair_client.close
+          @repair_client.close if @repair_client
         rescue Mysql2::Error
           @repair_client = nil
         end
