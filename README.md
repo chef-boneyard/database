@@ -97,7 +97,18 @@ mysql_database 'oracle_rules' do
   action :create
 end
 ```
-
+```ruby
+# Create a mysql database on a named mysql instance
+mysql_database 'oracle_rools' do
+  connection(
+    :host     => '127.0.0.1',
+    :username => 'root',
+    :socket   => "/var/run/mysql-#{instance-name}/mysqld.sock"
+    :password => node['mysql']['server_root_password']
+  )
+  action :create
+end       
+```
 ```ruby
 # Create a sql server database
 sql_server_database 'mr_softie' do
