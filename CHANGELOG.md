@@ -1,6 +1,10 @@
 Database cookbook README
 ========================
 
+v3.0.3 (2015-01-20)
+-------------------
+- Bugfix: bugfix: lack of node['mysql']['version'] causing NilClass error
+
 v3.0.2 (2015-01-16)
 -------------------
 - Fix bug to allow grants on databases with special characters
