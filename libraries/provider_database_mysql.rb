@@ -30,7 +30,7 @@ class Chef
         action :create do
           # install mysql2 gem into Chef's environment
           mysql2_chef_gem 'default' do
-            client_version node['mysql']['version']
+            client_version node['mysql']['version'] if node['mysql'] && node['mysql']['version']
           end.run_action(:install)
 
           # test
