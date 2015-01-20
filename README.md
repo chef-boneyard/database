@@ -216,7 +216,13 @@ mysql_database 'flush the privileges' do
   action     :query
 end
 
-
+# Create a new table in a postgres database
+postgresql_database 'create test table' do
+  connection postgresql_connection_info
+  database_name 'testdb'
+  sql 'CREATE TABLE test (id integer)'
+  action :query
+end
 
 # Query a database from a sql script on disk
 mysql_database 'run script' do
