@@ -102,7 +102,7 @@ class Chef
             return true if (/(\A\*[0-9A-F]{40}\z)/i).match(new_resource.password)
           end
 
-          db_name = new_resource.database_name ? new_resource.database_name : '*'
+          db_name = new_resource.database_name ? "`#{new_resource.database_name}`" : '*'
           tbl_name = new_resource.table ? new_resource.table : '*'
 
           # Test
@@ -131,7 +131,7 @@ class Chef
             converge_by "Granting privs for '#{new_resource.username}'@'#{new_resource.host}'" do
               begin
                 repair_sql = "GRANT #{new_resource.privileges.join(',')}"
-                repair_sql += " ON `#{db_name}`.#{tbl_name}"
+                repair_sql += " ON #{db_name}.#{tbl_name}"
                 repair_sql += " TO '#{new_resource.username}'@'#{new_resource.host}' IDENTIFIED BY"
                 repair_sql += " '#{new_resource.password}'"
                 repair_sql += ' REQUIRE SSL' if new_resource.require_ssl
