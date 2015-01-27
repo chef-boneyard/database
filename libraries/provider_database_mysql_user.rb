@@ -17,6 +17,8 @@
 # limitations under the License.
 #
 
+require File.join(File.dirname(__FILE__), 'provider_database_mysql')
+
 class Chef
   class Provider
     class Database
@@ -33,7 +35,7 @@ class Chef
             client_version node['mysql']['version']
             action :install
           end
-          
+
           # test
           user_present = nil
           begin
@@ -66,7 +68,7 @@ class Chef
             client_version node['mysql']['version']
             action :install
           end
-          
+
           # test
           user_present = nil
           begin

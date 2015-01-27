@@ -17,6 +17,8 @@
 # limitations under the License.
 #
 
+require File.join(File.dirname(__FILE__), 'provider_database_mysql')
+
 class Chef
   class Resource
     class MysqlDatabase < Chef::Resource::Database
