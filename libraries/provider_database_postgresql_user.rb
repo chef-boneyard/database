@@ -37,8 +37,19 @@ class Chef
         def action_create
           unless exists?
             begin
+              options = String.new
+              options += " PASSWORD '#{@new_resource.password}'" if @new_resource.password
+              options += " #{@new_resource.createdb ? 'CREATEDB' : 'NOCREATEDB'}"
+              options += " #{@new_resource.createrole ? 'CREATEROLE' : 'NOCREATEROLE'}"
+              options += " #{@new_resource.login ? 'LOGIN' : 'NOLOGIN'}"
+              options += " #{@new_resource.replication ? 'REPLICATION' : 'NOREPLICATION'}"
+              options += " #{@new_resource.superuser ? 'SUPERUSER' : 'NOSUPERUSER'}"
+
               statement = "CREATE USER \"#{@new_resource.username}\""
-              statement += " WITH PASSWORD '#{@new_resource.password}'" if @new_resource.password
+              if options.length > 0
+                statement += " WITH #{options}"
+              end
+
               db('template1').query(statement)
               @new_resource.updated_by_last_action(true)
             ensure
