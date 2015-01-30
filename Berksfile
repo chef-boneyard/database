@@ -8,3 +8,4 @@ group :integration do
 end
 
 cookbook 'mysql_database_test', path: 'test/fixtures/cookbooks/mysql_database_test'
+cookbook 'postgresql_database_test', path: 'test/fixtures/cookbooks/postgresql_database_test'
