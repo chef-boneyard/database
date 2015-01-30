@@ -1,5 +1,9 @@
 Database cookbook README
 ========================
+v3.1.0 (2015-01-30)
+-------------------
+- Add support for postgresql_database_user privileges
+- Add postgresql_database_test cookbook to test/fixtures
 
 v3.0.3 (2015-01-20)
 -------------------
