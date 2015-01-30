@@ -28,8 +28,45 @@ class Chef
         super
         @resource_name = :postgresql_database_user
         @provider = Chef::Provider::Database::PostgresqlUser
+        @createdb = false
+        @createrole = false
+        @login = true
+        @replication = false
+        @superuser = false
         @schema_name = nil
         @allowed_actions.push(:create, :drop, :grant, :grant_schema)
+      end
+
+      def createdb(arg = nil)
+        set_or_return(
+          :createdb,
+          arg,
+          :equal_to => [true, false]
+        )
+      end
+
+      def createrole(arg = nil)
+        set_or_return(
+          :createrole,
+          arg,
+          :equal_to => [true, false]
+        )
+      end
+
+      def login(arg = nil)
+        set_or_return(
+          :login,
+          arg,
+          :equal_to => [true, false]
+        )
+      end
+
+      def replication(arg = nil)
+        set_or_return(
+          :replication,
+          arg,
+          :equal_to => [true, false]
+        )
       end
 
       def schema_name(arg = nil)
@@ -37,6 +74,14 @@ class Chef
           :schema_name,
           arg,
           kind_of: String
+        )
+      end
+
+      def superuser(arg = nil)
+        set_or_return(
+          :superuser,
+          arg,
+          :equal_to => [true, false]
         )
       end
     end
