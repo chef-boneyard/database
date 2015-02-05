@@ -37,7 +37,7 @@ class Chef
         def action_create
           unless exists?
             begin
-              options = String.new
+              options = ''
               options += " PASSWORD '#{@new_resource.password}'" if @new_resource.password
               options += " #{@new_resource.createdb ? 'CREATEDB' : 'NOCREATEDB'}"
               options += " #{@new_resource.createrole ? 'CREATEROLE' : 'NOCREATEROLE'}"

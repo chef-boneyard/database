@@ -5,9 +5,15 @@ connection_info = {
   password: 'ub3rs3kur3'
 }
 
+# loosely coupled prerequisite
+mysql2_chef_gem 'default' do
+  client_version node['mysql']['version']
+  action :install
+end
+
 # Create a mysql_service to test against
 mysql_service 'default' do
-  version node['mysql']['version']
+  version node['mysql']['version'] if node['mysql'] && node['mysql']['version']
   port '3306'
   initial_root_password 'ub3rs3kur3'
   action [:create, :start]

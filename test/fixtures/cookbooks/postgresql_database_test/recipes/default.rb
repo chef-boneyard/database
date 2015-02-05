@@ -9,7 +9,6 @@ connection_info = {
   password: node['postgresql']['password']['postgres']
 }
 
-
 # Create a database to test postgresql_database :drop against
 bash 'create datacarp' do
   code <<-EOF

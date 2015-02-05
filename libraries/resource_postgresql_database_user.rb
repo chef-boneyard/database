@@ -41,7 +41,7 @@ class Chef
         set_or_return(
           :createdb,
           arg,
-          :equal_to => [true, false]
+          equal_to: [true, false]
         )
       end
 
@@ -49,7 +49,7 @@ class Chef
         set_or_return(
           :createrole,
           arg,
-          :equal_to => [true, false]
+          equal_to: [true, false]
         )
       end
 
@@ -57,7 +57,7 @@ class Chef
         set_or_return(
           :login,
           arg,
-          :equal_to => [true, false]
+          equal_to: [true, false]
         )
       end
 
@@ -65,7 +65,7 @@ class Chef
         set_or_return(
           :replication,
           arg,
-          :equal_to => [true, false]
+          equal_to: [true, false]
         )
       end
 
@@ -81,7 +81,7 @@ class Chef
         set_or_return(
           :superuser,
           arg,
-          :equal_to => [true, false]
+          equal_to: [true, false]
         )
       end
     end

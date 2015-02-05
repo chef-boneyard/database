@@ -28,11 +28,6 @@ class Chef
         end
 
         action :create do
-          # install mysql2 gem into Chef's environment
-          mysql2_chef_gem 'default' do
-            client_version node['mysql']['version'] if node['mysql'] && node['mysql']['version']
-          end.run_action(:install)
-
           # test
           schema_present = nil
 
@@ -64,11 +59,6 @@ class Chef
         end
 
         action :drop do
-          # install mysql2 gem into Chef's environment
-          mysql2_chef_gem 'default' do
-            client_version node['mysql']['version']
-          end.run_action(:install)
-
           # test
           schema_present = nil
 
@@ -97,6 +87,16 @@ class Chef
           end
         end
 
+        action :query do
+          begin
+            query_sql = new_resource.sql
+            Chef::Log.debug("Performing query [#{query_sql}]")
+            query_client.query(query_sql)
+          ensure
+            close_query_client
+          end
+        end
+
         private
 
         def test_client
@@ -112,7 +112,7 @@ class Chef
         end
 
         def close_test_client
-          @test_client.close
+          @test_client.close if @test_client
         rescue Mysql2::Error
           @test_client = nil
         end
@@ -130,9 +130,27 @@ class Chef
         end
 
         def close_repair_client
-          @repair_client.close
+          @repair_client.close if @repair_client
         rescue Mysql2::Error
           @repair_client = nil
+        end
+
+        def query_client
+          require 'mysql2'
+          @query_client ||=
+            Mysql2::Client.new(
+            host: new_resource.connection[:host],
+            socket: new_resource.connection[:socket],
+            username: new_resource.connection[:username],
+            password: new_resource.connection[:password],
+            port: new_resource.connection[:port]
+            )
+        end
+
+        def close_query_client
+          @query_client.close
+        rescue Mysql2::Error
+          @query_client = nil
         end
       end
     end

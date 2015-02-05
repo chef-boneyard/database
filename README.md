@@ -16,7 +16,6 @@ Chef version 0.11+
 ### Cookbooks
 The following Chef Software cookbooks are dependencies:
 
-* mysql2_chef_gem
 * postgresql
 
 Resources/Providers
@@ -30,21 +29,19 @@ commands and carry out actions. These gems will need to be installed
 before the providers can operate correctly. Specific notes for each
 RDBS flavor:
 
-- MySQL: leverages the `mysql2` gem, which is automatically installed
-  by an internal `mysql2_chef_gem` resource.
-
+- MySQL: leverages the `mysql2` gem, which can be installed with the
+  `mysql2_chef_gem` resource prior to use (available on the
+  Supermarket). You must depend on the `mysql2_chef_gem` cookbook,
+  then use a `mysql2_chef_gem` resource to install it. The resource
+  allows the user to select MySQL client library versions, as well as
+  optionally select MariaDB libraries.
+      
 - PostgreSQL: leverages the `pg` gem which is installed as part of the
   `postgresql::ruby` recipe. You must declare `include_recipe
   "database::postgresql"` to include this.
 
 - SQL Server: leverages the `tiny_tds` gem which is installed as part
   of the `sql_server::client` recipe.
-
-This cookbook is not in charge of installing the Database Management
-System itself. Therefore, if you want to install MySQL, for instance,
-you should add `include_recipe "mysql::server"` in your recipe, or
-include `mysql::server` in the node run_list.
-
 
 ### database
 Manage databases in a RDBMS. Use the proper shortcut resource
@@ -88,16 +85,27 @@ in the form `/var/run/mysql-<instance name>/mysqld.sock`.
 #### Examples
 ```ruby
 # Create a mysql database
-mysql_database 'oracle_rules' do
+mysql_database 'wordpress-cust01' do
   connection(
     :host     => '127.0.0.1',
     :username => 'root',
-    :password => node['mysql']['server_root_password']
+    :password => node['wordpress-cust01']['mysql']['initial_root_password']
   )
   action :create
 end
 ```
-
+```ruby
+# Create a mysql database on a named mysql instance
+mysql_database 'oracle_rools' do
+  connection(
+    :host     => '127.0.0.1',
+    :username => 'root',
+    :socket   => "/var/run/mysql-#{instance-name}/mysqld.sock"
+    :password => node['mysql']['server_root_password']
+  )
+  action :create
+end       
+```
 ```ruby
 # Create a sql server database
 sql_server_database 'mr_softie' do
@@ -215,7 +223,6 @@ mysql_database 'flush the privileges' do
   sql        'flush privileges'
   action     :query
 end
-
 
 
 # Query a database from a sql script on disk

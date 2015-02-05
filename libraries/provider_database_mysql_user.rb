@@ -17,6 +17,8 @@
 # limitations under the License.
 #
 
+require File.join(File.dirname(__FILE__), 'provider_database_mysql')
+
 class Chef
   class Provider
     class Database
@@ -28,12 +30,6 @@ class Chef
         end
 
         action :create do
-          # install mysql2 gem into Chef's environment
-          mysql2_chef_gem 'default' do
-            client_version node['mysql']['version']
-            action :install
-          end
-          
           # test
           user_present = nil
           begin
@@ -61,12 +57,6 @@ class Chef
         end
 
         action :drop do
-          # install mysql2 gem into Chef's environment
-          mysql2_chef_gem 'default' do
-            client_version node['mysql']['version']
-            action :install
-          end
-          
           # test
           user_present = nil
           begin
@@ -102,7 +92,7 @@ class Chef
             return true if (/(\A\*[0-9A-F]{40}\z)/i).match(new_resource.password)
           end
 
-          db_name = new_resource.database_name ? new_resource.database_name : '*'
+          db_name = new_resource.database_name ? "`#{new_resource.database_name}`" : '*'
           tbl_name = new_resource.table ? new_resource.table : '*'
 
           # Test
@@ -131,10 +121,11 @@ class Chef
             converge_by "Granting privs for '#{new_resource.username}'@'#{new_resource.host}'" do
               begin
                 repair_sql = "GRANT #{new_resource.privileges.join(',')}"
-                repair_sql += " ON `#{db_name}`.#{tbl_name}"
+                repair_sql += " ON #{db_name}.#{tbl_name}"
                 repair_sql += " TO '#{new_resource.username}'@'#{new_resource.host}' IDENTIFIED BY"
                 repair_sql += " '#{new_resource.password}'"
                 repair_sql += ' REQUIRE SSL' if new_resource.require_ssl
+                repair_sql += ' WITH GRANT OPTION' if new_resource.grant_option
 
                 Chef::Log.info("#{new_resource}: granting access with statement [#{repair_sql}]")
                 repair_client.query(repair_sql)
@@ -144,6 +135,15 @@ class Chef
               end
             end
           end
+        end
+
+        def action_revoke
+          revoke_statement = "REVOKE #{@new_resource.privileges.join(', ')} ON #{@new_resource.database_name ? "`#{@new_resource.database_name}`" : '*'}.#{@new_resource.table ? "`#{@new_resource.table}`" : '*'} FROM `#{@new_resource.username}`@`#{@new_resource.host}` "
+          Chef::Log.info("#{@new_resource}: revoking access with statement [#{revoke_statement}]")
+          db.query(revoke_statement)
+          @new_resource.updated_by_last_action(true)
+        ensure
+          close
         end
 
         private
@@ -161,7 +161,7 @@ class Chef
         end
 
         def close_test_client
-          @test_client.close
+          @test_client.close if @test_client
         rescue Mysql2::Error
           @test_client = nil
         end
@@ -179,7 +179,7 @@ class Chef
         end
 
         def close_repair_client
-          @repair_client.close
+          @repair_client.close if @repair_client
         rescue Mysql2::Error
           @repair_client = nil
         end
