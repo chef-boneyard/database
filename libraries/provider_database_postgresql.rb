@@ -22,8 +22,12 @@ require 'chef/provider'
 class Chef
   class Provider
     class Database
-      class Postgresql < Chef::Provider
-        include Chef::Mixin::ShellOut
+      class Postgresql < Chef::Provider::LWRPBase
+        use_inline_resources if defined?(use_inline_resources)
+
+        def whyrun_supported?
+          true
+        end
 
         def load_current_resource
           Gem.clear_paths
@@ -33,7 +37,7 @@ class Chef
           @current_resource
         end
 
-        def action_create
+        action :create do
           unless exists?
             begin
               encoding = @new_resource.encoding
@@ -57,7 +61,7 @@ class Chef
           end
         end
 
-        def action_drop
+        action :drop do
           if exists?
             begin
               Chef::Log.debug("#{@new_resource}: Dropping database #{new_resource.database_name}")
@@ -69,7 +73,7 @@ class Chef
           end
         end
 
-        def action_query
+        action :query do
           if exists?
             begin
               Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
