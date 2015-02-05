@@ -28,12 +28,6 @@ class Chef
         end
 
         action :create do
-          # install mysql2 gem into Chef's environment
-          mysql2_chef_gem 'default' do
-            client_version node['mysql']['version']
-            action :install
-          end
-          
           # test
           user_present = nil
           begin
@@ -61,12 +55,6 @@ class Chef
         end
 
         action :drop do
-          # install mysql2 gem into Chef's environment
-          mysql2_chef_gem 'default' do
-            client_version node['mysql']['version']
-            action :install
-          end
-          
           # test
           user_present = nil
           begin

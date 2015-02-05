@@ -28,11 +28,6 @@ class Chef
         end
 
         action :create do
-          # install mysql2 gem into Chef's environment
-          mysql2_chef_gem 'default' do
-            client_version node['mysql']['version'] if node['mysql'] && node['mysql']['version']
-          end.run_action(:install)
-
           # test
           schema_present = nil
 
@@ -64,11 +59,6 @@ class Chef
         end
 
         action :drop do
-          # install mysql2 gem into Chef's environment
-          mysql2_chef_gem 'default' do
-            client_version node['mysql']['version']
-          end.run_action(:install)
-
           # test
           schema_present = nil
 
