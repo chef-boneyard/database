@@ -1,5 +1,16 @@
 Database cookbook README
 ========================
+
+v4.0.0 (2015-02-05)
+-------------------
+- Decoupled mysql2_chef_gem cookbook.
+  Users must now install it themselves before utilizing mysql_database
+  or mysql_database_user resources.
+- Fixing various MilClass errors in mysql providers
+- Restoring missing :query action for mysql
+- Restoring grant_option support for mysql
+- Adding revoke action for mysql
+
 v3.1.0 (2015-01-30)
 -------------------
 - Add support for postgresql_database_user privileges
