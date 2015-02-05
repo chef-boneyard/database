@@ -21,10 +21,7 @@ suites:
   #
   # database-test
   #
-  - name: mysql-database-test
+  - name: default
     run_list:
     - recipe[mysql_database_test]
-
-  - name: postgresql-database-test
-    run_list:
     - recipe[postgresql_database_test]
