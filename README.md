@@ -437,7 +437,7 @@ end
 # Create a postgresql user with multiple roles
 postgresql_database_user 'disenfranchised' do
   connection postgresql_connection_info
-  password   'super_secret'
+  password   'super_secret_password'
   roles      :superuser => true, :createdb => true
   action     :create
 end
