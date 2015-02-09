@@ -39,6 +39,8 @@ class Chef
               create_sql = "CREATE DATABASE [#{new_resource.database_name}]"
               create_sql += " COLLATE #{new_resource.collation}" if new_resource.collation
               db.execute(create_sql).do
+              db.execute("ALTER DATABASE [#{new_resource.database_name}] SET ANSI_NULL_DEFAULT ON").do if new_resource.ansi_null
+              db.execute("ALTER DATABASE [#{new_resource.database_name}] SET ANSI_NULLS ON").do if new_resource.ansi_null
               @new_resource.updated_by_last_action(true)
             ensure
               close
@@ -62,6 +64,7 @@ class Chef
           if exists?
             begin
               # db.select_db(@new_resource.database_name) if @new_resource.database_name
+              db.execute("USE [#{@new_resource.database_name}]").do if @new_resource.database_name
               Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
               db.execute(@new_resource.sql_query).do
               @new_resource.updated_by_last_action(true)
