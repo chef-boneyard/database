@@ -1,6 +1,10 @@
 Database cookbook README
 ========================
 
+v4.0.2 (2015-02-09)
+-------------------
+- Removing leftover mysql recipe that installs the mysql2_chef_gem.
+
 v4.0.1 (2015-02-05)
 -------------------
 - Fixing merge conflicts with master on 4.0.0 attempted release
