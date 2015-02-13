@@ -42,7 +42,7 @@ class Chef
               options += " #{@new_resource.createdb ? 'CREATEDB' : 'NOCREATEDB'}"
               options += " #{@new_resource.createrole ? 'CREATEROLE' : 'NOCREATEROLE'}"
               options += " #{@new_resource.login ? 'LOGIN' : 'NOLOGIN'}"
-              options += " #{@new_resource.replication ? 'REPLICATION' : 'NOREPLICATION'}"
+              options += " #{@new_resource.replication ? 'REPLICATION' : 'NOREPLICATION'}" if replication_keyword?
               options += " #{@new_resource.superuser ? 'SUPERUSER' : 'NOSUPERUSER'}"
 
               statement = "CREATE USER \"#{@new_resource.username}\""
@@ -88,6 +88,14 @@ class Chef
         end
 
         private
+        def replication_keyword?
+          begin
+            replication_keyword = db('template1').query("select * from pg_get_keywords() where word = 'replication'").num_tuples != 0
+          ensure
+            close
+          end
+          replication_keyword
+        end
 
         def exists?
           begin
