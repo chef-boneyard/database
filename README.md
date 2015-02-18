@@ -579,7 +579,7 @@ Note: with the Open Source Chef Server, the server using the database recipes mu
       ...
     }
 
-This is not required if the Chef Server is Opscode Hosted Chef, instead use the ACL feature to modify access for the node to be able to update the data bag.
+This is not required if the Chef Server is Chef Software Hosted Chef, instead use the ACL feature to modify access for the node to be able to update the data bag.
 
 
 Usage

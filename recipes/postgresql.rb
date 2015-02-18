@@ -1,7 +1,7 @@
 #
 # Author:: Jesse Howarth (<him@jessehowarth.com>)
 #
-# Copyright:: Copyright (c) 2012, Opscode, Inc. (<legal@opscode.com>)
+# Copyright:: Copyright (c) 2012, Chef Software, Inc. (<legal@chef.io>)
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
