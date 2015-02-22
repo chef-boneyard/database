@@ -100,6 +100,16 @@ class Chef
           ret
         end
 
+        # Test if text is psql keyword
+        def keyword?(text)
+          begin
+            result = db('template1').exec_params('select * from pg_get_keywords() where word = $1', [text.downcase]).num_tuples != 0
+          ensure
+            close
+          end
+          result
+        end
+
         #
         # Specifying the database in the connection parameter for the postgres resource is not recommended.
         #
