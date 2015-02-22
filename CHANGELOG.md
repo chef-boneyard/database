@@ -1,6 +1,10 @@
 Database cookbook README
 ========================
 
+v4.0.3 (2015-02-22)
+-------------------
+- Unbreak postgresql_database_resource on older versions of PostgreSQL
+
 v4.0.2 (2015-02-09)
 -------------------
 - Removing leftover mysql recipe that installs the mysql2_chef_gem.
