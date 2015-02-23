@@ -127,7 +127,6 @@ class Chef
                 repair_sql += ' REQUIRE SSL' if new_resource.require_ssl
                 repair_sql += ' WITH GRANT OPTION' if new_resource.grant_option
 
-                Chef::Log.info("#{new_resource}: granting access with statement [#{repair_sql}]")
                 repair_client.query(repair_sql)
                 repair_client.query('FLUSH PRIVILEGES')
               ensure
@@ -140,7 +139,7 @@ class Chef
         def action_revoke
           db_name = new_resource.database_name ? "`#{new_resource.database_name}`" : '*'
           tbl_name = new_resource.table ? new_resource.table : '*'
-          
+
           revoke_statement = "REVOKE #{@new_resource.privileges.join(', ')}"
           revoke_statement += " ON #{db_name}.#{tbl_name}"
           revoke_statement += " FROM `#{@new_resource.username}`@`#{@new_resource.host}` "
