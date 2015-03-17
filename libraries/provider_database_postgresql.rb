@@ -105,11 +105,10 @@ class Chef
           begin
             ret = db('template1').exec('SHOW server_version_num;')
             server_version_int = ret.getvalue(0,0).to_i
-            result = server_version_int > desired_version_int
           ensure
             close
           end
-          result
+          server_version_int > desired_version_int
         end
 
         #
