@@ -1,6 +1,10 @@
 Database cookbook README
 ========================
 
+v4.0.4 (2015-04-07)
+-------------------
+- Ising unescaped db name in field value
+
 v4.0.3 (2015-02-22)
 -------------------
 - Unbreak postgresql_database_resource on older versions of PostgreSQL
