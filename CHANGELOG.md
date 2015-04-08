@@ -1,9 +1,13 @@
 Database cookbook README
 ========================
 
+v4.0.5 (2015-04-08)
+-------------------
+- #137/#138 - Removing log message containing password information
+
 v4.0.4 (2015-04-07)
 -------------------
-- Ising unescaped db name in field value
+- Using unescaped db name in field value
 
 v4.0.3 (2015-02-22)
 -------------------
