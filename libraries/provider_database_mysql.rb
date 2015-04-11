@@ -91,6 +91,7 @@ class Chef
           begin
             query_sql = new_resource.sql
             Chef::Log.debug("Performing query [#{query_sql}]")
+            query_client.select_db(new_resource.connection.fetch(:database, new_resource.database_name))
             query_client.query(query_sql)
           ensure
             close_query_client
