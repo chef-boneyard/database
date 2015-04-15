@@ -100,15 +100,7 @@ class Chef
         private
 
         def test_client
-          require 'mysql2'
-          @test_client ||=
-            Mysql2::Client.new(
-            host: new_resource.connection[:host],
-            socket: new_resource.connection[:socket],
-            username: new_resource.connection[:username],
-            password: new_resource.connection[:password],
-            port: new_resource.connection[:port]
-            )
+          @test_client ||= create_mysql_query_client
         end
 
         def close_test_client
@@ -118,15 +110,7 @@ class Chef
         end
 
         def repair_client
-          require 'mysql2'
-          @repair_client ||=
-            Mysql2::Client.new(
-            host: new_resource.connection[:host],
-            socket: new_resource.connection[:socket],
-            username: new_resource.connection[:username],
-            password: new_resource.connection[:password],
-            port: new_resource.connection[:port]
-            )
+          @repair_client ||= create_mysql_query_client
         end
 
         def close_repair_client
@@ -136,15 +120,19 @@ class Chef
         end
 
         def query_client
+          @query_client ||= create_mysql_query_client
+        end
+
+        def create_mysql_query_client
           require 'mysql2'
-          @query_client ||=
-            Mysql2::Client.new(
+          Mysql2::Client.default_query_options[:connect_flags] |= Mysql2::Client::MULTI_STATEMENTS
+          Mysql2::Client.new(
             host: new_resource.connection[:host],
             socket: new_resource.connection[:socket],
             username: new_resource.connection[:username],
             password: new_resource.connection[:password],
             port: new_resource.connection[:port]
-            )
+          )
         end
 
         def close_query_client
