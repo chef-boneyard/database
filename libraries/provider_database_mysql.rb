@@ -123,6 +123,12 @@ class Chef
           @query_client ||= create_mysql_query_client
         end
 
+        def close_query_client
+          @query_client.close
+        rescue Mysql2::Error
+          @query_client = nil
+        end
+
         def create_mysql_query_client
           require 'mysql2'
           Mysql2::Client.default_query_options[:connect_flags] |= Mysql2::Client::MULTI_STATEMENTS
@@ -135,11 +141,6 @@ class Chef
           )
         end
 
-        def close_query_client
-          @query_client.close
-        rescue Mysql2::Error
-          @query_client = nil
-        end
       end
     end
   end
