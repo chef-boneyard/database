@@ -89,7 +89,7 @@ class Chef
 
         action :query do
           begin
-            query_sql = new_resource.sql
+            query_sql = new_resource.sql_query
             Chef::Log.debug("Performing query [#{query_sql}]")
             query_client.query(query_sql)
           ensure
