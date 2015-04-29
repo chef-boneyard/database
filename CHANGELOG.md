@@ -1,6 +1,10 @@
 Database cookbook README
 ========================
 
+v4.0.6 (2015-04-29)
+-------------------
+- #126 - Use sql_query property instead of sql in the mysql provider for :query action
+
 v4.0.5 (2015-04-08)
 -------------------
 - #137/#138 - Removing log message containing password information
