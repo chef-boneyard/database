@@ -40,12 +40,14 @@ class Chef
               statement = "CREATE USER \"#{@new_resource.username}\""
               statement += " WITH PASSWORD '#{@new_resource.password}'" if @new_resource.password
               db('template1').query(statement)
-              alter_roles
+
               @new_resource.updated_by_last_action(true)
             ensure
               close
             end
           end
+
+          alter_roles
         end
 
         def action_drop
@@ -65,11 +67,13 @@ class Chef
             grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON DATABASE \"#{@new_resource.database_name}\" TO \"#{@new_resource.username}\""
             Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}]")
             db(@new_resource.database_name).query(grant_statement)
-            alter_roles
+
             @new_resource.updated_by_last_action(true)
           ensure
             close
           end
+
+          alter_roles
         end
 
         def action_grant_schema
@@ -94,9 +98,15 @@ class Chef
         end
 
         def alter_roles
-          if @new_resource.roles.any?
-            sql = @new_resource.roles.to_a.map! { |a, b| (b ? "" : "NO") + a.to_s.upcase }.join(" ")
-            db("postgres").query("ALTER ROLE #{@new_resource.username} #{sql}")
+          if @new_resource.roles
+            begin
+              sql = @new_resource.roles.to_a.map! { |a, b| (b ? "" : "NO") + a.to_s.upcase }.join(" ")
+              db("postgres").query("ALTER ROLE #{@new_resource.username} #{sql}")
+
+              @new_resource.updated_by_last_action(true)
+            ensure
+              close
+            end
           end
         end
       end

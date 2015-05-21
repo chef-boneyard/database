@@ -41,7 +41,7 @@ class Chef
         )
       end
 
-      def roles(arg = {})
+      def roles(arg = nil)
         set_or_return(
           :roles,
           arg,
