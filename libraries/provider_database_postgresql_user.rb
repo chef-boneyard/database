@@ -51,12 +51,14 @@ class Chef
               end
 
               db('template1').query(statement)
-              alter_roles
+
               @new_resource.updated_by_last_action(true)
             ensure
               close
             end
           end
+
+          alter_roles
         end
 
         def action_drop
@@ -106,9 +108,15 @@ class Chef
         end
 
         def alter_roles
-          if @new_resource.roles.any?
-            sql = @new_resource.roles.to_a.map! { |a, b| (b ? "" : "NO") + a.to_s.upcase }.join(" ")
-            db("postgres").query("ALTER ROLE #{@new_resource.username} #{sql}")
+          if @new_resource.roles
+            begin
+              sql = @new_resource.roles.to_a.map! { |a, b| (b ? "" : "NO") + a.to_s.upcase }.join(" ")
+              db("postgres").query("ALTER ROLE #{@new_resource.username} #{sql}")
+
+              @new_resource.updated_by_last_action(true)
+            ensure
+              close
+            end
           end
         end
       end
