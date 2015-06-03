@@ -94,20 +94,42 @@ class Chef
 
           db_name = new_resource.database_name ? "`#{new_resource.database_name}`" : '*'
           tbl_name = new_resource.table ? new_resource.table : '*'
+          test_table =  new_resource.database_name ? 'mysql.db' : 'mysql.user'
+          possible_privs = [
+            :select,
+            :insert,
+            :update,
+            :delete,
+            :create,
+            :drop,
+            :references,
+            :index,
+            :alter,
+            :create_tmp_table,
+            :lock_tables,
+            :create_view,
+            :show_view,
+            :create_routine,
+            :alter_routine,
+            :execute,
+            :event,
+            :trigger
+          ]
+          desired_privs = new_resource.privileges == [:all] ? possible_privs : new_resource.privileges
 
           # Test
           incorrect_privs = nil
           begin
-            test_sql = 'SELECT * from mysql.db'
+            test_sql = "SELECT * from #{test_table}"
             test_sql += " WHERE User='#{new_resource.username}'"
             test_sql += " AND Host='#{new_resource.host}'"
-            test_sql += " AND Db='#{new_resource.database_name}'"
+            test_sql += " AND Db='#{new_resource.database_name}'" if new_resource.database_name
             test_sql_results = test_client.query test_sql
 
             incorrect_privs = true if test_sql_results.size == 0
             # These should all by 'Y'
             test_sql_results.each do |r|
-              new_resource.privileges.each do |p|
+              desired_privs.each do |p|
                 key = "#{p.capitalize}_priv"
                 incorrect_privs = true if r[key] != 'Y'
               end
