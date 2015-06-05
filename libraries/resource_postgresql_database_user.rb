@@ -93,6 +93,14 @@ class Chef
           :kind_of => Hash
         )
       end
+
+      def roles(arg = nil)
+        set_or_return(
+          :roles,
+          arg,
+          :kind_of => Hash
+        )
+      end
     end
   end
 end
