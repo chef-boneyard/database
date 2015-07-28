@@ -1,6 +1,10 @@
 Database cookbook README
 ========================
 
+v4.0.7 (2015-07-27)
+-------------------
+- #161 - Fixes multiple issues causing the MySQL database user creation to not be idempotent 
+
 v4.0.6 (2015-04-29)
 -------------------
 - #126 - Use sql_query property instead of sql in the mysql provider for :query action
