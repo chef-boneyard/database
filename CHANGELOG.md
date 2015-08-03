@@ -1,6 +1,11 @@
 Database cookbook README
 ========================
 
+v4.0.8 (2015-08-03)
+-------------------
+- #139 - Use a more reliable method of determining whether the
+   Postgres server accepts the REPLICATION attribute on user creation.
+   
 v4.0.7 (2015-07-27)
 -------------------
 - #161 - Fixes multiple issues causing the MySQL database user creation to not be idempotent 
