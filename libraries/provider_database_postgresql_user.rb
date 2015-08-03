@@ -42,7 +42,7 @@ class Chef
               options += " #{@new_resource.createdb ? 'CREATEDB' : 'NOCREATEDB'}"
               options += " #{@new_resource.createrole ? 'CREATEROLE' : 'NOCREATEROLE'}"
               options += " #{@new_resource.login ? 'LOGIN' : 'NOLOGIN'}"
-              options += " #{@new_resource.replication ? 'REPLICATION' : 'NOREPLICATION'}" if keyword?('REPLICATION')
+              options += " #{@new_resource.replication ? 'REPLICATION' : 'NOREPLICATION'}" if version_greater_than?(90100)
               options += " #{@new_resource.superuser ? 'SUPERUSER' : 'NOSUPERUSER'}"
 
               statement = "CREATE USER \"#{@new_resource.username}\""
