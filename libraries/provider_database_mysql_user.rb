@@ -213,43 +213,6 @@ class Chef
           close
         end
 
-        private
-
-        def test_client
-          require 'mysql2'
-          @test_client ||=
-            Mysql2::Client.new(
-            host: new_resource.connection[:host],
-            socket: new_resource.connection[:socket],
-            username: new_resource.connection[:username],
-            password: new_resource.connection[:password],
-            port: new_resource.connection[:port]
-            )
-        end
-
-        def close_test_client
-          @test_client.close if @test_client
-        rescue Mysql2::Error
-          @test_client = nil
-        end
-
-        def repair_client
-          require 'mysql2'
-          @repair_client ||=
-            Mysql2::Client.new(
-            host: new_resource.connection[:host],
-            socket: new_resource.connection[:socket],
-            username: new_resource.connection[:username],
-            password: new_resource.connection[:password],
-            port: new_resource.connection[:port]
-            )
-        end
-
-        def close_repair_client
-          @repair_client.close if @repair_client
-        rescue Mysql2::Error
-          @repair_client = nil
-        end
       end
     end
   end
