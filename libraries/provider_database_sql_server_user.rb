@@ -86,11 +86,26 @@ class Chef
           if @new_resource.password || (@new_resource.windows_user && !exists?(:logins))
             action_create
           end
+          server_version = db.execute("SELECT SERVERPROPERTY('productversion')").each.first.values.first
           Chef::Application.fatal!('Please provide a database_name, SQL Server does not support global GRANT statements.') unless @new_resource.database_name
           db.execute("USE [#{@new_resource.database_name}]").do
           @new_resource.sql_roles.each do | sql_role, role_action |
-            alter_statement = "ALTER ROLE [#{sql_role}] #{role_action} MEMBER [#{@new_resource.username}]"
-            Chef::Log.info("#{@new_resource} granting access with statement [#{alter_statement}]")
+            case role_action
+            when 'ADD'
+              if server_version < '11.00.0000.00'
+                alter_statement = "EXEC sp_addrolemember '#{sql_role}', '#{@new_resource.username}'"
+              else
+                alter_statement = "ALTER ROLE [#{sql_role}] #{role_action} MEMBER [#{@new_resource.username}]"
+              end
+              Chef::Log.info("#{@new_resource} granting access with statement [#{alter_statement}]")
+            when 'DROP'
+              if server_version < '11.00.0000.00'
+                alter_statement = "EXEC sp_droprolemember '#{sql_role}', '#{@new_resource.username}'"
+              else
+                alter_statement = "ALTER ROLE #{sql_role} #{role_action} MEMBER [#{@new_resource.username}]"
+              end
+              Chef::Log.info("#{@new_resource} revoking role membership with statement [#{alter_statement}]")
+            end
             db.execute(alter_statement).do
           end
           @new_resource.updated_by_last_action(true)
@@ -111,14 +126,14 @@ class Chef
               if server_version < '11.00.0000.00'
                 alter_statement = "EXEC sp_addsrvrolemember '#{@new_resource.username}', '#{sql_sys_role}'"
               else
-                alter_statement = "ALTER SERVER ROLE #{sql_role} #{role_action} MEMBER [#{@new_resource.username}]"
+                alter_statement = "ALTER SERVER ROLE #{sql_sys_role} #{role_action} MEMBER [#{@new_resource.username}]"
               end
               Chef::Log.info("#{@new_resource} granting server role membership with statement [#{alter_statement}]")
             when 'DROP'
               if server_version < '11.00.0000.00'
                 alter_statement = "EXEC sp_dropsrvrolemember '#{@new_resource.username}', '#{sql_sys_role}'"
               else
-                alter_statement = "ALTER SERVER ROLE #{sql_role} #{role_action} MEMBER [#{@new_resource.username}]"
+                alter_statement = "ALTER SERVER ROLE #{sql_sys_role} #{role_action} MEMBER [#{@new_resource.username}]"
               end
               Chef::Log.info("#{@new_resource} revoking server role membership with statement [#{alter_statement}]")
             end
