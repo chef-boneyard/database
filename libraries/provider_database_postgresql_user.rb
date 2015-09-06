@@ -51,11 +51,14 @@ class Chef
               end
 
               db('template1').query(statement)
+
               @new_resource.updated_by_last_action(true)
             ensure
               close
             end
           end
+
+          alter_roles
         end
 
         def action_drop
@@ -70,12 +73,18 @@ class Chef
         end
 
         def action_grant
-          grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON DATABASE \"#{@new_resource.database_name}\" TO \"#{@new_resource.username}\""
-          Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}]")
-          db(@new_resource.database_name).query(grant_statement)
-          @new_resource.updated_by_last_action(true)
-        ensure
-          close
+          begin
+            # FIXME: grants on individual tables
+            grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON DATABASE \"#{@new_resource.database_name}\" TO \"#{@new_resource.username}\""
+            Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}]")
+            db(@new_resource.database_name).query(grant_statement)
+
+            @new_resource.updated_by_last_action(true)
+          ensure
+            close
+          end
+
+          alter_roles
         end
 
         def action_grant_schema
@@ -96,6 +105,19 @@ class Chef
             close
           end
           exists
+        end
+
+        def alter_roles
+          if @new_resource.roles
+            begin
+              sql = @new_resource.roles.to_a.map! { |a, b| (b ? "" : "NO") + a.to_s.upcase }.join(" ")
+              db("postgres").query("ALTER ROLE #{@new_resource.username} #{sql}")
+
+              @new_resource.updated_by_last_action(true)
+            ensure
+              close
+            end
+          end
         end
       end
     end
