@@ -12,6 +12,7 @@ supports 'suse'
 supports 'fedora'
 supports 'redhat'
 supports 'scientific'
+supports 'oracle'
 supports 'amazon'
 
 depends 'postgresql', '>= 1.0.0'
