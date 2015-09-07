@@ -1,5 +1,8 @@
 Database Cookbook
 =================
+[![Build Status](https://travis-ci.org/opscode-cookbooks/database.svg?branch=master)](http://travis-ci.org/opscode-cookbooks/database)
+[![Cookbook Version](https://img.shields.io/cookbook/v/database.svg)](https://supermarket.chef.io/cookbooks/database)
+
 The main highlight of this cookbook is the `database` and
 `database_user` resources for managing databases and database users in
 a RDBMS. Providers for MySQL, PostgreSQL and SQL Server are also
@@ -7,11 +10,13 @@ provided, see usage documentation below.
 
 Requirements
 ------------
-Chef version 0.11+
-
 ### Platforms
-- Debian, Ubuntu
-- Red Hat, CentOS, Scientific, Fedora, Amazon
+- Debian / Ubuntu derivatives
+- RHEL derivatives
+- Fedora
+
+### Chef
+- Chef 11+
 
 ### Cookbooks
 The following Chef Software cookbooks are dependencies:
