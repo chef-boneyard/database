@@ -15,3 +15,6 @@ supports 'scientific'
 supports 'amazon'
 
 depends 'postgresql', '>= 1.0.0'
+
+source_url 'https://github.com/opscode-cookbooks/database' if respond_to?(:source_url)
+issues_url 'https://github.com/opscode-cookbooks/database/issues' if respond_to?(:issues_url)
