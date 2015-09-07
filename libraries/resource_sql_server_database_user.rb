@@ -35,7 +35,7 @@ class Chef
 
     def windows_user(arg = nil)
       set_or_return(
-          :windows_user,
+        :windows_user,
           arg,
           kind_of: [TrueClass, FalseClass],
           default: false
@@ -45,7 +45,7 @@ class Chef
     def sql_roles(arg = nil)
       Chef::Log.debug("Received roles: #{arg.inspect}")
       set_or_return(
-          :sql_roles,
+        :sql_roles,
           arg,
           kind_of: Hash
       )
@@ -54,7 +54,7 @@ class Chef
     def sql_sys_roles(arg = nil)
       Chef::Log.debug("Received Server roles: #{arg.inspect}")
       set_or_return(
-          :sql_sys_roles,
+        :sql_sys_roles,
           arg,
           kind_of: Hash
       )

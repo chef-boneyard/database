@@ -88,7 +88,7 @@ class Chef
           end
           Chef::Application.fatal!('Please provide a database_name, SQL Server does not support global GRANT statements.') unless @new_resource.database_name
           db.execute("USE [#{@new_resource.database_name}]").do
-          @new_resource.sql_roles.each do | sql_role, role_action |
+          @new_resource.sql_roles.each do |sql_role, role_action|
             alter_statement = "ALTER ROLE [#{sql_role}] #{role_action} MEMBER [#{@new_resource.username}]"
             Chef::Log.info("#{@new_resource} granting access with statement [#{alter_statement}]")
             db.execute(alter_statement).do
@@ -105,7 +105,7 @@ class Chef
           server_version = db.execute("SELECT SERVERPROPERTY('productversion')").each.first.values.first
           Chef::Log.info("SQL Server Version: #{server_version.inspect}")
           db.execute('USE [master]').do
-          @new_resource.sql_sys_roles.each do | sql_sys_role, role_action |
+          @new_resource.sql_sys_roles.each do |sql_sys_role, role_action|
             case role_action
             when 'ADD'
               if server_version < '11.00.0000.00'
