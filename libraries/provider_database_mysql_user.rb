@@ -167,8 +167,8 @@ class Chef
             test_sql_results.each do |r|
               desired_privs.each do |p|
                 key = "#{p.capitalize}"
-                       .gsub(' ', '_')
-                       .gsub('Replication_', 'Repl_')
+                      .gsub(' ', '_')
+                      .gsub('Replication_', 'Repl_')
 
                 key = "#{key}_priv"
 
@@ -219,11 +219,11 @@ class Chef
           require 'mysql2'
           @test_client ||=
             Mysql2::Client.new(
-            host: new_resource.connection[:host],
-            socket: new_resource.connection[:socket],
-            username: new_resource.connection[:username],
-            password: new_resource.connection[:password],
-            port: new_resource.connection[:port]
+              host: new_resource.connection[:host],
+              socket: new_resource.connection[:socket],
+              username: new_resource.connection[:username],
+              password: new_resource.connection[:password],
+              port: new_resource.connection[:port]
             )
         end
 
@@ -237,11 +237,11 @@ class Chef
           require 'mysql2'
           @repair_client ||=
             Mysql2::Client.new(
-            host: new_resource.connection[:host],
-            socket: new_resource.connection[:socket],
-            username: new_resource.connection[:username],
-            password: new_resource.connection[:password],
-            port: new_resource.connection[:port]
+              host: new_resource.connection[:host],
+              socket: new_resource.connection[:socket],
+              username: new_resource.connection[:username],
+              password: new_resource.connection[:password],
+              port: new_resource.connection[:port]
             )
         end
 
