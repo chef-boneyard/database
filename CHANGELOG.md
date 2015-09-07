@@ -1,14 +1,33 @@
 Database cookbook README
 ========================
 
+v4.0.9 (2015-09-07)
+-------------------
+- Fix bad attribute name with postgresql_database in the readme
+- Add `flags` attribute to the mysql provider
+- Add `database` attribute to the mysql provider
+- Use the correct database with the mssql provider
+- Updated testing.md and contributing.md to point to documentation in the new community_cookbook_documentation repo
+- Add oracle as a supported platform in the metadata
+- Add source_url and issues_url metadata
+- Add cookbook version and travis badges to the readme
+- Clarify the minimum required Chef version in the readme
+- Add a Travis config
+- Resolve several rubocop and foodcritic warnings
+- Update all platforms in the Kitchen config
+- Update development dependencies to the latest releases
+- Add a maintainers.md and maintainers.toml file
+- Add a chefignore file
+- Update list of ignored files in the gitignore
+
 v4.0.8 (2015-08-03)
 -------------------
 - #139 - Use a more reliable method of determining whether the
    Postgres server accepts the REPLICATION attribute on user creation.
-   
+
 v4.0.7 (2015-07-27)
 -------------------
-- #161 - Fixes multiple issues causing the MySQL database user creation to not be idempotent 
+- #161 - Fixes multiple issues causing the MySQL database user creation to not be idempotent
 
 v4.0.6 (2015-04-29)
 -------------------
