@@ -1,5 +1,6 @@
-Database cookbook README
-========================
+Database cookbook CHANGELOG
+===========================
+This file is used to list changes made in each version of the database cookbook.
 
 v4.0.9 (2015-09-07)
 -------------------
