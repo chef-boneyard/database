@@ -1,6 +1,6 @@
 Database Cookbook
 =================
-[![Build Status](https://travis-ci.org/opscode-cookbooks/database.svg?branch=master)](http://travis-ci.org/opscode-cookbooks/database)
+[![Build Status](https://travis-ci.org/chef-cookbooks/database.svg?branch=master)](http://travis-ci.org/chef-cookbooks/database)
 [![Cookbook Version](https://img.shields.io/cookbook/v/database.svg)](https://supermarket.chef.io/cookbooks/database)
 
 The main highlight of this cookbook is the `database` and
