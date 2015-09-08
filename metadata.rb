@@ -5,17 +5,13 @@ license 'Apache 2.0'
 description 'provides LWRPs for common database tasks'
 version '4.0.9'
 
-supports 'debian'
-supports 'ubuntu'
-supports 'centos'
-supports 'suse'
-supports 'fedora'
-supports 'redhat'
-supports 'scientific'
-supports 'oracle'
+%w(amazon arch centos fedora freebsd oracle redhat scientific suse ubuntu).each do |os|
+  supports os
+end
+
 supports 'amazon'
 
 depends 'postgresql', '>= 1.0.0'
 
-source_url 'https://github.com/opscode-cookbooks/database' if respond_to?(:source_url)
-issues_url 'https://github.com/opscode-cookbooks/database/issues' if respond_to?(:issues_url)
+source_url 'https://github.com/chef-cookbooks/database' if respond_to?(:source_url)
+issues_url 'https://github.com/chef-cookbooks/database/issues' if respond_to?(:issues_url)
