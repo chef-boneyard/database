@@ -94,7 +94,7 @@ class Chef
 
           db_name = new_resource.database_name ? "`#{new_resource.database_name}`" : '*'
           tbl_name = new_resource.table ? new_resource.table : '*'
-          test_table =  new_resource.database_name ? 'mysql.db' : 'mysql.user'
+          test_table = new_resource.database_name ? 'mysql.db' : 'mysql.user'
           possible_global_privs = [
             :select,
             :insert,
@@ -167,7 +167,7 @@ class Chef
             test_sql_results.each do |r|
               desired_privs.each do |p|
                 key = "#{p.capitalize}"
-                      .gsub(' ', '_')
+                      .tr(' ', '_')
                       .gsub('Replication_', 'Repl_')
 
                 key = "#{key}_priv"
