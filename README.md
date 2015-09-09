@@ -61,7 +61,9 @@ depending on your RDBMS: `mysql_database`, `postgresql_database` or
 #### Attribute Parameters
 - database_name: name attribute. Name of the database to interact with
 - connection: hash of connection info. valid keys include `:host`,
-  `:port`, `:username`, and `:password` (only for MySQL DB*)
+  `:port`, `:username`, and `:password`
+    - only for MySQL DB*: `:flags` (see `Mysql2::Client@@default_query_options[:connect_flags]`)
+    - only for PostgreSQL: `:database` (overwrites parameter `database_name`)
 
 - sql: string of sql or a block that executes to a string of sql,
   which will be executed against the database. used by `:query` action
