@@ -1,7 +1,7 @@
 Database Cookbook
 =================
 [![Build Status](https://travis-ci.org/chef-cookbooks/database.svg?branch=master)](http://travis-ci.org/chef-cookbooks/database)
-[![Cookbook Version](https://img.shields.io/cookbook/v/database.svg)](https://supermarket.chef.io/cookbooks/database)
+[![Cookbook Version](http://img.shields.io/cookbook/v/database.svg)](https://supermarket.chef.io/cookbooks/database)
 
 The main highlight of this cookbook is the `database` and
 `database_user` resources for managing databases and database users in
