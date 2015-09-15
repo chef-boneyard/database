@@ -22,7 +22,7 @@ TARGET = File.join(File.dirname(__FILE__), '..', 'MAINTAINERS.md')
 
 begin
   require 'tomlrb'
-  task default: :generate
+  task default: 'maintainers:generate'
 
   namespace :maintainers do
     desc 'Generate MarkDown version of MAINTAINERS file'
@@ -34,9 +34,9 @@ begin
       out << project_lieutenant
       out << all_maintainers
 
-      File.open(TARGET, 'w') { |fn|
+      File.open(TARGET, 'w') do |fn|
         fn.write out
-      }
+      end
     end
   end
 
