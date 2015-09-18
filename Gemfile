@@ -1,9 +1,13 @@
 source 'https://rubygems.org'
 
-group :lint do
-  gem 'foodcritic', '~> 4.0'
-  gem 'rubocop', '~> 0.33'
+group :rake do
   gem 'rake'
+  gem 'tomlrb'
+end
+
+group :lint do
+  gem 'foodcritic', '~> 5.0'
+  gem 'rubocop', '~> 0.33'
 end
 
 group :unit do
@@ -33,7 +37,6 @@ group :development do
   gem 'guard-foodcritic'
   gem 'guard-rspec'
   gem 'guard-rubocop'
-  gem 'rake'
   gem 'fauxhai'
   gem 'pry-nav'
 end
