@@ -164,15 +164,11 @@ class Chef
             test_sql_results = test_client.query test_sql
 
             incorrect_privs = true if test_sql_results.size == 0
-            # These should all by 'Y'
+            # These should all be 'Y'
             test_sql_results.each do |r|
               desired_privs.each do |p|
-                key = "#{p.capitalize}"
-                      .tr(' ', '_')
-                      .gsub('Replication_', 'Repl_')
-
+                key = p.capitalize.tr(' ', '_').gsub('Replication_', 'Repl_')
                 key = "#{key}_priv"
-
                 incorrect_privs = true if r[key] != 'Y'
               end
             end
