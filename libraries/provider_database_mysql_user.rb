@@ -95,6 +95,50 @@ class Chef
           db_name = new_resource.database_name ? "`#{new_resource.database_name}`" : '*'
           tbl_name = new_resource.table ? new_resource.table : '*'
           test_table = new_resource.database_name ? 'mysql.db' : 'mysql.user'
+
+          # Test
+          incorrect_privs = nil
+          begin
+            test_sql = "SELECT * from #{test_table}"
+            test_sql += " WHERE User='#{new_resource.username}'"
+            test_sql += " AND Host='#{new_resource.host}'"
+            test_sql += " AND Db='#{new_resource.database_name}'" if new_resource.database_name
+            test_sql_results = test_client.query test_sql
+
+            incorrect_privs = true if test_sql_results.size == 0
+            # These should all be 'Y'
+            test_sql_results.each do |r|
+              desired_privs.each do |p|
+                key = p.to_s.capitalize.tr(' ', '_').gsub('Replication_', 'Repl_')
+                key = "#{key}_priv"
+                incorrect_privs = true if r[key] != 'Y'
+              end
+            end
+          ensure
+            close_test_client
+          end
+
+          # Repair
+          if incorrect_privs
+            converge_by "Granting privs for '#{new_resource.username}'@'#{new_resource.host}'" do
+              begin
+                repair_sql = "GRANT #{new_resource.privileges.join(',')}"
+                repair_sql += " ON #{db_name}.#{tbl_name}"
+                repair_sql += " TO '#{new_resource.username}'@'#{new_resource.host}' IDENTIFIED BY"
+                repair_sql += " '#{new_resource.password}'"
+                repair_sql += ' REQUIRE SSL' if new_resource.require_ssl
+                repair_sql += ' WITH GRANT OPTION' if new_resource.grant_option
+
+                repair_client.query(repair_sql)
+                repair_client.query('FLUSH PRIVILEGES')
+              ensure
+                close_repair_client
+              end
+            end
+          end
+        end
+
+        def desired_privs
           possible_global_privs = [
             :select,
             :insert,
@@ -145,6 +189,7 @@ class Chef
             :trigger
           ]
 
+          # convert :all to the individual db or global privs
           if new_resource.privileges == [:all] && new_resource.database_name
             desired_privs = possible_db_privs
           elsif new_resource.privileges == [:all]
@@ -152,48 +197,7 @@ class Chef
           else
             desired_privs = new_resource.privileges
           end
-
-          # Test
-          incorrect_privs = nil
-          begin
-            test_sql = "SELECT * from #{test_table}"
-            test_sql += " WHERE User='#{new_resource.username}'"
-            test_sql += " AND Host='#{new_resource.host}'"
-            test_sql += " AND Db='#{new_resource.database_name}'" if new_resource.database_name
-            test_sql += " AND Password=PASSWORD('#{new_resource.password}')"
-            test_sql_results = test_client.query test_sql
-
-            incorrect_privs = true if test_sql_results.size == 0
-            # These should all be 'Y'
-            test_sql_results.each do |r|
-              desired_privs.each do |p|
-                key = p.capitalize.tr(' ', '_').gsub('Replication_', 'Repl_')
-                key = "#{key}_priv"
-                incorrect_privs = true if r[key] != 'Y'
-              end
-            end
-          ensure
-            close_test_client
-          end
-
-          # Repair
-          if incorrect_privs
-            converge_by "Granting privs for '#{new_resource.username}'@'#{new_resource.host}'" do
-              begin
-                repair_sql = "GRANT #{new_resource.privileges.join(',')}"
-                repair_sql += " ON #{db_name}.#{tbl_name}"
-                repair_sql += " TO '#{new_resource.username}'@'#{new_resource.host}' IDENTIFIED BY"
-                repair_sql += " '#{new_resource.password}'"
-                repair_sql += ' REQUIRE SSL' if new_resource.require_ssl
-                repair_sql += ' WITH GRANT OPTION' if new_resource.grant_option
-
-                repair_client.query(repair_sql)
-                repair_client.query('FLUSH PRIVILEGES')
-              ensure
-                close_repair_client
-              end
-            end
-          end
+          desired_privs
         end
 
         def action_revoke
