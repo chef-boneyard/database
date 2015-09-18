@@ -21,7 +21,7 @@ class Chef
   class Provider
     class Database
       class Mysql < Chef::Provider::LWRPBase
-        use_inline_resources if defined?(use_inline_resources)
+        use_inline_resources
 
         def whyrun_supported?
           true
