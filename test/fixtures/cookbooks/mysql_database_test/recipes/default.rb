@@ -69,3 +69,9 @@ mysql_database_user 'fozzie' do
   require_ssl true
   action :grant
 end
+
+mysql_database 'flush repl privileges' do
+  connection connection_info
+  sql 'flush privileges'
+  action :query
+end
