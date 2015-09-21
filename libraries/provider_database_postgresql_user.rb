@@ -37,13 +37,20 @@ class Chef
         def action_create
           unless exists?
             begin
+              # Apply defaults if new resource is not PostgreSQL-specific.
+              if @new_resource.is_a?(Chef::Resource::PostgresqlDatabaseUser)
+                pg_resource = @new_resource
+              else
+                pg_resource = Chef::Resource::PostgresqlDatabaseUser.new(@new_resource.name)
+              end
+
               options = ''
               options += " PASSWORD '#{@new_resource.password}'" if @new_resource.password
-              options += " #{@new_resource.createdb ? 'CREATEDB' : 'NOCREATEDB'}"
-              options += " #{@new_resource.createrole ? 'CREATEROLE' : 'NOCREATEROLE'}"
-              options += " #{@new_resource.login ? 'LOGIN' : 'NOLOGIN'}"
-              options += " #{@new_resource.replication ? 'REPLICATION' : 'NOREPLICATION'}" if version_greater_than?(90_100)
-              options += " #{@new_resource.superuser ? 'SUPERUSER' : 'NOSUPERUSER'}"
+              options += " #{pg_resource.createdb ? 'CREATEDB' : 'NOCREATEDB'}"
+              options += " #{pg_resource.createrole ? 'CREATEROLE' : 'NOCREATEROLE'}"
+              options += " #{pg_resource.login ? 'LOGIN' : 'NOLOGIN'}"
+              options += " #{pg_resource.replication ? 'REPLICATION' : 'NOREPLICATION'}" if version_greater_than?(90_100)
+              options += " #{pg_resource.superuser ? 'SUPERUSER' : 'NOSUPERUSER'}"
 
               statement = "CREATE USER \"#{@new_resource.username}\""
               statement += " WITH #{options}" if options.length > 0
