@@ -70,6 +70,16 @@ mysql_database_user 'fozzie' do
   action :grant
 end
 
+mysql_database_user 'tbltester' do
+  connection mysql_connection_info
+  password 'testingtblprivs'
+  database_name 'mysql'
+  table 'tables_priv'
+  host 'mars'
+  privileges [:select]
+  action :grant
+end
+
 mysql_database 'flush repl privileges' do
   connection connection_info
   sql 'flush privileges'
