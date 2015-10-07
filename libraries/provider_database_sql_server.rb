@@ -102,7 +102,11 @@ class Chef
         end
 
         def close
-          @db.close rescue nil
+          begin
+            @db.close
+          rescue
+            nil
+          end
           @db = nil
         end
       end
