@@ -1,5 +1,6 @@
 Database Cookbook
 =================
+
 [![Build Status](https://travis-ci.org/chef-cookbooks/database.svg?branch=master)](http://travis-ci.org/chef-cookbooks/database)
 [![Cookbook Version](http://img.shields.io/cookbook/v/database.svg)](https://supermarket.chef.io/cookbooks/database)
 
@@ -497,18 +498,15 @@ sql_server_database_user 'foo_user' do
 end
 ```
 
+
 License & Authors
 -----------------
-- Author:: Adam Jacob (<adam@chef.io>)
-- Author:: Joshua Timberman (<joshua@chef.io>)
-- Author:: AJ Christensen (<aj@chef.io>)
-- Author:: Seth Chisamore (<schisamo@chef.io>)
-- Author:: Lamont Granquist (<lamont@chef.io>)
-- Author:: Sean OMeara (<sean@chef.io>)
 
-```text
-Copyright 2009-2015, Chef Software, Inc.
+**Author:** Cookbook Engineering Team (<cookbooks@chef.io>)
 
+**Copyright:** 2009-2015, Chef Software, Inc.
+
+```
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
