@@ -29,3 +29,9 @@ Style/ClassAndModuleChildren:
   Enabled: false
 Style/FileName:
   Enabled: false
+
+## to-do: these should get resolved
+Style/GuardClause:
+  Enabled: false
+Style/MultilineTernaryOperator:
+  Enabled: false
