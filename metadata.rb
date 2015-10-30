@@ -3,6 +3,7 @@ maintainer 'Chef Software, Inc.'
 maintainer_email 'cookbooks@chef.io'
 license 'Apache 2.0'
 description 'provides LWRPs for common database tasks'
+long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version '4.0.9'
 
 %w(amazon arch centos fedora freebsd oracle redhat scientific suse ubuntu).each do |os|
