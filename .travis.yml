@@ -14,9 +14,12 @@ services: docker
 
 env:
   matrix:
-  - INSTANCE=default-ubuntu-1404
-  - INSTANCE=default-ubuntu-1204
-  - INSTANCE=default-centos-71
+  - INSTANCE=mysql-ubuntu-1404
+  - INSTANCE=mysql-ubuntu-1204
+  - INSTANCE=mysql-centos-71
+  - INSTANCE=postgresql-ubuntu-1404
+  - INSTANCE=postgresql-ubuntu-1204
+  - INSTANCE=postgresql-centos-71
 
 # Don't `bundle install`
 install: echo "skip bundle install"
