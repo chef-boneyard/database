@@ -16,4 +16,4 @@
 # limitations under the License.
 #
 
-gem_package 'sqlite3'
+chef_gem 'sqlite3'

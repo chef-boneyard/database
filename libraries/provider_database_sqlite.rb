@@ -33,22 +33,24 @@ class Chef
         end
 
         def action_query
+              require 'pry'
+              binding.pry
           if exists?
             begin
               Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
-              #db.execute("USE [#{@new_resource.database_name}]").do if @new_resource.database_name
-              db.execute(@new_resource.sql_query).do
+              result = db.execute(@new_resource.sql_query)
               @new_resource.updated_by_last_action(true)
             ensure
               close
             end
+            result
           end
         end
 
         private
 
         def exists?
-          ::File.exists( @new_resource.connection )
+          ::File::exists?( @new_resource.connection )
         end
 
         def db
