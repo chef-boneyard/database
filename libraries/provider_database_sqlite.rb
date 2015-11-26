@@ -33,8 +33,6 @@ class Chef
         end
 
         def action_query
-              require 'pry'
-              binding.pry
           if exists?
             begin
               Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
