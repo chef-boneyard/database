@@ -16,4 +16,4 @@
 # limitations under the License.
 #
 
-include_recipe 'postgresql::ruby'
+gem_package 'sqlite3'
