@@ -26,6 +26,16 @@ class Chef
         @resource_name = :sqlite_database
         @provider = Chef::Provider::Database::Sqlite
       end
+
+      def sql(arg = nil, &block)
+        arg ||= block
+        set_or_return(
+          :sql,
+          arg,
+          kind_of: [String, Proc, Array]
+        )
+      end
+
     end
   end
 end

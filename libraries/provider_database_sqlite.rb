@@ -35,10 +35,17 @@ class Chef
         def action_query
           if exists?
             begin
-              Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
-              #db.execute("USE [#{@new_resource.database_name}]").do if @new_resource.database_name
-              db.execute(@new_resource.sql_query).do
-              @new_resource.updated_by_last_action(true)
+              if new_resource.sql_query.is_a?(Array)
+                new_resource.sql_query.each do |sql|
+                  Chef::Log.debug("#{@new_resource}: Performing queries [#{sql}]")
+                  db.execute(sql)
+                end
+                @new_resource.updated_by_last_action(true)
+              else
+                Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
+                db.execute(@new_resource.sql_query)
+                @new_resource.updated_by_last_action(true)
+              end
             ensure
               close
             end
