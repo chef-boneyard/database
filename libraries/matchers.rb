@@ -152,7 +152,11 @@ if defined?(ChefSpec)
   # sqlite server database
   #
   def query_sqlite_database(resource_name)
-    ChefSpec::Matchers::ResourceMatcher.new(:sqllite_database, :query, resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:sqlite_database, :query, resource_name)
+  end
+
+  def drop_sqlite_database(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:sqlite_database, :drop, resource_name)
   end
 
 end
