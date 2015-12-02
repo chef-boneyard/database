@@ -61,6 +61,7 @@ depending on your RDBMS: `mysql_database`, `postgresql_database`,
 - database_name: name attribute. Name of the database to interact with
 - connection: hash of connection info. valid keys include `:host`,
   `:port`, `:username`, and `:password` (only for MySQL DB*),
+  and `:options` (only for SQL Server)
   or for SQLlite a string to the database file on disk.
 
 - sql: string of sql or a block that executes to a string of sql,
@@ -119,7 +120,8 @@ sql_server_database 'mr_softie' do
     :host     => '127.0.0.1',
     :port     => node['sql_server']['port'],
     :username => 'sa',
-    :password => node['sql_server']['server_sa_password']
+    :password => node['sql_server']['server_sa_password'],
+    :options  => { 'ANSI_NULLS' => 'ON', 'QUOTED_IDENTIFIER' => 'OFF' }
   )
   action :create
 end
