@@ -99,8 +99,10 @@ class Chef
               port: @new_resource.connection[:port] || 1433,
               options: @new_resource.connection[:options] || {}
             )
-            @new_resource.connection[:options].each do |key, value|
-              connection.execute("SET #{key} #{value}").do
+            if new_resource.connection[:options]
+              @new_resource.connection[:options].each do |key, value|
+                connection.execute("SET #{key} #{value}").do
+              end
             end
             connection
           end
