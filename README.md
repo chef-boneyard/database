@@ -366,12 +366,16 @@ Manage users and user privileges in a RDBMS. Use the proper shortcut resource de
       action :grant
     end
 
-    # grant all privileges on all tables in foo db
+    # grant all privileges on all tables, sequences and functions in public schema of foo db
     postgresql_database_user 'foo_user' do
       connection postgresql_connection_info
       database_name 'foo'
+      schema_name 'public'
+      tables [:all]
+      sequences [:all]
+      functions [:all]
       privileges [:all]
-      action :grant
+      action [ :grant, :grant_schema, :grant_table, :grant_sequence, :grant_function ]
     end
 
     # grant select,update,insert privileges to all tables in foo db
