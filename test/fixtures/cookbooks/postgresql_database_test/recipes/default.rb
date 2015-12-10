@@ -52,7 +52,15 @@ end
 ## resources we're testing
 postgresql_database 'dataflounder' do
   connection connection_info
-  action :create
+  database_name 'dataflounder'
+  sql <<-EOF
+    CREATE TABLE IF NOT EXISTS person (
+      uid serial PRIMARY KEY,
+      firstname varchar(50)  NULL CHECK (firstname <> ''),
+      lastname varchar(50) NOT NULL CHECK (lastname <> '')
+    );
+  EOF
+  action [:create, :query]
 end
 
 postgresql_database 'datacarp' do
@@ -66,6 +74,15 @@ postgresql_database_user 'animal' do
   superuser true
   login true
   action :create
+end
+
+postgresql_database_user 'human' do
+  connection connection_info
+  password 'money'
+  login true
+  database_name 'dataflounder'
+  schema_name 'public'
+  action [:create, :grant, :grant_schema]
 end
 
 postgresql_database_user 'gonzo' do

@@ -2,6 +2,7 @@ require 'spec_helper'
 
 psql_as_animal = 'env PGPASSWORD=raaaaaaaaaaaaaaaaaaaaaaaaaaaaah psql -h 127.0.0.1 -U animal -d postgres'
 psql_as_krusty = 'env PGPASSWORD=getbacktowork psql -h 127.0.0.1 -U krusty -d postgres'
+psql_as_human = 'env PGPASSWORD=money psql -h 127.0.0.1 -U human -d dataflounder'
 
 describe('postgresql_database_test::default') do
   describe command("#{psql_as_animal} -c 'SELECT * from pg_database;' | grep dataflounder") do
@@ -9,6 +10,11 @@ describe('postgresql_database_test::default') do
   end
 
   describe command("#{psql_as_krusty} -c 'SELECT * from pg_database;' | grep dataflatfish") do
+    its(:exit_status) { should eq 0 }
+  end
+
+  # check grants from normal user on test database and schema
+  describe command("#{psql_as_human} -c '\\dt' | grep person") do
     its(:exit_status) { should eq 0 }
   end
 
