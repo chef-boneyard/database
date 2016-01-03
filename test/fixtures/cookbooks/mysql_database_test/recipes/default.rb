@@ -72,6 +72,7 @@ end
 
 mysql_database 'flush repl privileges' do
   connection connection_info
+  database_name 'databass'
   sql 'flush privileges'
   action :query
 end

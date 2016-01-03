@@ -19,6 +19,16 @@ bash 'create datacarp' do
   action :run
 end
 
+# Create a postgresql database to test database :drop against
+bash 'create datacyprinidae' do
+  code <<-EOF
+  su -c 'createdb datacyprinidae' - postgresql
+  touch /tmp/datacyprinidae
+  EOF
+  not_if 'test -f /tmp/datacyprinidae'
+  action :run
+end
+
 # Create a user to test postgresql_database_user :drop against
 bash 'create piggy' do
   code <<-EOF
@@ -26,6 +36,16 @@ bash 'create piggy' do
   touch /tmp/piggymarker
   EOF
   not_if 'test -f gonzomarker'
+  action :run
+end
+
+# Create a postgresql user to test database_user :drop against
+bash 'create patrick' do
+  code <<-EOF
+  su -c 'createuser -DRS patrick' - postgresql
+  touch /tmp/patrick
+  EOF
+  not_if 'test -f /tmp/patrick'
   action :run
 end
 
@@ -49,6 +69,32 @@ postgresql_database_user 'animal' do
 end
 
 postgresql_database_user 'gonzo' do
+  connection connection_info
+  action :drop
+end
+
+## resources we're testing with abstract resources
+database 'dataflatfish' do
+  provider Chef::Provider::Database::Postgresql
+  connection connection_info
+  action :create
+end
+
+database 'datacyprinidae' do
+  provider Chef::Provider::Database::Postgresql
+  connection connection_info
+  action :drop
+end
+
+database_user 'krusty' do
+  provider Chef::Provider::Database::PostgresqlUser
+  connection connection_info
+  password 'getbacktowork'
+  action :create
+end
+
+database_user 'patrick' do
+  provider Chef::Provider::Database::PostgresqlUser
   connection connection_info
   action :drop
 end

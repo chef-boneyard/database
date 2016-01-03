@@ -150,7 +150,7 @@ class Chef
         end
 
         def close_query_client
-          @query_client.close
+          @query_client.close if @query_client
         rescue Mysql2::Error
           @query_client = nil
         end
