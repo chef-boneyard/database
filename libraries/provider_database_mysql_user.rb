@@ -109,7 +109,7 @@ class Chef
             # These should all be 'Y'
             test_sql_results.each do |r|
               desired_privs.each do |p|
-                key = p.to_s.capitalize.tr(' ', '_').gsub('Replication_', 'Repl_')
+                key = p.to_s.capitalize.tr(' ', '_').gsub('Replication_', 'Repl_').gsub('Create_temporary_tables', 'Create_tmp_table').gsub('Show_databases', 'Show_db')
                 key = "#{key}_priv"
                 incorrect_privs = true if r[key] != 'Y'
               end
@@ -129,6 +129,7 @@ class Chef
                 repair_sql += ' REQUIRE SSL' if new_resource.require_ssl
                 repair_sql += ' WITH GRANT OPTION' if new_resource.grant_option
 
+                Chef::Log.info("#{@new_resource}: granting with sql [#{repair_sql}]")
                 repair_client.query(repair_sql)
                 repair_client.query('FLUSH PRIVILEGES')
               ensure
@@ -137,6 +138,52 @@ class Chef
             end
           end
         end
+
+        action :revoke do
+          db_name = new_resource.database_name ? "`#{new_resource.database_name}`" : '*'
+          tbl_name = new_resource.table ? new_resource.table : '*'
+          test_table = new_resource.database_name ? 'mysql.db' : 'mysql.user'
+
+          privs_to_revoke = []
+          begin
+            test_sql = "SELECT * from #{test_table}"
+            test_sql += " WHERE User='#{new_resource.username}'"
+            test_sql += " AND Host='#{new_resource.host}'"
+            test_sql += " AND Db='#{new_resource.database_name}'" if new_resource.database_name
+            test_sql_results = test_client.query test_sql
+
+            # These should all be 'N'
+            test_sql_results.each do |r|
+              desired_privs.each do |p|
+                key = p.to_s.capitalize.tr(' ', '_').gsub('Replication_', 'Repl_').gsub('Create_temporary_tables', 'Create_tmp_table').gsub('Show_databases', 'Show_db')
+                key = "#{key}_priv"
+                privs_to_revoke << revokify_key(p) if r[key] != 'N'
+              end
+            end
+          ensure
+            close_test_client
+          end
+
+          # Repair
+          if !privs_to_revoke.empty?
+            converge_by "Granting privs for '#{new_resource.username}'@'#{new_resource.host}'" do
+              begin
+                revoke_statement = "REVOKE #{privs_to_revoke.join(',')}"
+                revoke_statement += " ON #{db_name}.#{tbl_name}"
+                revoke_statement += " FROM `#{@new_resource.username}`@`#{@new_resource.host}` "
+
+                Chef::Log.info("#{@new_resource}: revoking access with statement [#{revoke_statement}]")
+                repair_client.query(revoke_statement)
+                repair_client.query('FLUSH PRIVILEGES')
+                @new_resource.updated_by_last_action(true)
+              ensure
+                close_repair_client
+              end
+            end
+          end
+        end
+
+        private
 
         def desired_privs
           possible_global_privs = [
@@ -200,22 +247,6 @@ class Chef
           desired_privs
         end
 
-        def action_revoke
-          db_name = new_resource.database_name ? "`#{new_resource.database_name}`" : '*'
-          tbl_name = new_resource.table ? new_resource.table : '*'
-
-          revoke_statement = "REVOKE #{@new_resource.privileges.join(', ')}"
-          revoke_statement += " ON #{db_name}.#{tbl_name}"
-          revoke_statement += " FROM `#{@new_resource.username}`@`#{@new_resource.host}` "
-          Chef::Log.info("#{@new_resource}: revoking access with statement [#{revoke_statement}]")
-          db.query(revoke_statement)
-          @new_resource.updated_by_last_action(true)
-        ensure
-          close
-        end
-
-        private
-
         def test_client
           require 'mysql2'
           @test_client ||=
@@ -250,6 +281,16 @@ class Chef
           @repair_client.close if @repair_client
         rescue Mysql2::Error
           @repair_client = nil
+        end
+
+        def revokify_key( key )
+          return "" if key.nil?
+
+          # Some keys need to be translated as outlined by the table found here:
+          # https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html
+          result = key.to_s.downcase.tr('_', ' ').gsub('repl ', 'replication ').gsub('create tmp table', 'create temporary tables').gsub('show db', 'show databases')
+          result = result.gsub(/ priv$/, '')
+          result
         end
       end
     end
