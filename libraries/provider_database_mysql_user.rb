@@ -109,7 +109,7 @@ class Chef
             # These should all be 'Y'
             test_sql_results.each do |r|
               desired_privs.each do |p|
-                key = p.to_s.capitalize.tr(' ', '_').gsub('Replication_', 'Repl_')
+                key = p.to_s.capitalize.tr(' ', '_').gsub('Replication_', 'Repl_').gsub('Create_temporary_tables', 'Create_tmp_table').gsub('Show_databases', 'Show_db')
                 key = "#{key}_priv"
                 incorrect_privs = true if r[key] != 'Y'
               end
