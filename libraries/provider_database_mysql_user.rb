@@ -94,24 +94,46 @@ class Chef
 
           db_name = new_resource.database_name ? "`#{new_resource.database_name}`" : '*'
           tbl_name = new_resource.table ? new_resource.table : '*'
-          test_table = new_resource.database_name ? 'mysql.db' : 'mysql.user'
+          if new_resource.table
+            test_table = 'mysql.tables_priv'
+          else
+            test_table = new_resource.database_name ? 'mysql.db' : 'mysql.user'
+          end
 
           # Test
           incorrect_privs = nil
           begin
-            test_sql = "SELECT * from #{test_table}"
-            test_sql += " WHERE User='#{new_resource.username}'"
-            test_sql += " AND Host='#{new_resource.host}'"
-            test_sql += " AND Db='#{new_resource.database_name}'" if new_resource.database_name
-            test_sql_results = test_client.query test_sql
+            if new_resource.table
+              test_sql = "SELECT Table_priv from #{test_table}"
+              test_sql += " WHERE User='#{new_resource.username}'"
+              test_sql += " AND Host='#{new_resource.host}'"
+              test_sql += " AND Db='#{new_resource.database_name}'"
+              test_sql += " AND Table_name='#{new_resource.table}'"
+              test_sql_results = test_client.query test_sql
 
-            incorrect_privs = true if test_sql_results.size == 0
-            # These should all be 'Y'
-            test_sql_results.each do |r|
-              desired_privs.each do |p|
-                key = p.to_s.capitalize.tr(' ', '_').gsub('Replication_', 'Repl_')
-                key = "#{key}_priv"
-                incorrect_privs = true if r[key] != 'Y'
+              incorrect_privs = true if test_sql_results.size == 0
+              # Table privs are a comma delimited string of granted privileges
+              test_sql_results.each do |r|
+                desired_privs.each do |p|
+                  key = p.to_s.capitalize.tr(' ', '_')
+                  incorrect_privs = true unless r['Table_priv'].include? key
+                end
+              end
+            else
+              test_sql = "SELECT * from #{test_table}"
+              test_sql += " WHERE User='#{new_resource.username}'"
+              test_sql += " AND Host='#{new_resource.host}'"
+              test_sql += " AND Db='#{new_resource.database_name}'" if new_resource.database_name
+              test_sql_results = test_client.query test_sql
+
+              incorrect_privs = true if test_sql_results.size == 0
+              # These should all be 'Y'
+              test_sql_results.each do |r|
+                desired_privs.each do |p|
+                  key = p.to_s.capitalize.tr(' ', '_').gsub('Replication_', 'Repl_').gsub('temporary_tables', 'tmp_table')
+                  key = "#{key}_priv"
+                  incorrect_privs = true if r[key] != 'Y'
+                end
               end
             end
           ensure
@@ -188,9 +210,25 @@ class Chef
             :event,
             :trigger
           ]
+          possible_table_privs = [
+             :select,
+             :insert,
+             :update,
+             :delete,
+             :create,
+             :drop,
+             :references,
+             :index,
+             :alter,
+             :create_view,
+             :show_view,
+             :triger
+          ]
 
-          # convert :all to the individual db or global privs
-          if new_resource.privileges == [:all] && new_resource.database_name
+          # convert :all to the individual table, db or global privs
+          if new_resource.privileges == [:all] && new_resource.table
+            desired_privs = possible_table_privs
+          elsif new_resource.privileges == [:all] && new_resource.database_name
             desired_privs = possible_db_privs
           elsif new_resource.privileges == [:all]
             desired_privs = possible_global_privs
