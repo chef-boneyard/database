@@ -165,7 +165,7 @@ class Chef
           end
 
           # Repair
-          if !privs_to_revoke.empty?
+          unless privs_to_revoke.empty?
             converge_by "Granting privs for '#{new_resource.username}'@'#{new_resource.host}'" do
               begin
                 revoke_statement = "REVOKE #{privs_to_revoke.join(',')}"
@@ -283,8 +283,8 @@ class Chef
           @repair_client = nil
         end
 
-        def revokify_key( key )
-          return "" if key.nil?
+        def revokify_key(key)
+          return '' if key.nil?
 
           # Some keys need to be translated as outlined by the table found here:
           # https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html
