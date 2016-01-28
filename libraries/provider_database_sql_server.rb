@@ -36,9 +36,6 @@ class Chef
           unless exists?
             begin
               Chef::Application.fatal!("Please provide database_files.") unless @new_resource.database_files
-              @new_resource.database_files.each { |file|
-                Chef::Application.fatal!("Database file could not be found: #{file}.") unless ::File.exists?(file)
-              }
               Chef::Log.debug("#{@new_resource}: Attaching database #{new_resource.database_name}")
               create_sql = "CREATE DATABASE [#{new_resource.database_name}] ON"
               create_sql += ' (FILENAME=\'' + @new_resource.database_files.join('\'), (\'') + '\')'
