@@ -38,7 +38,7 @@ class Chef
               Chef::Application.fatal!("Please provide database_files.") unless @new_resource.database_files
               Chef::Log.debug("#{@new_resource}: Attaching database #{new_resource.database_name}")
               create_sql = "CREATE DATABASE [#{new_resource.database_name}] ON"
-              create_sql += ' (FILENAME=\'' + @new_resource.database_files.join('\'), (\'') + '\')'
+              create_sql += ' (FILENAME=\'' + @new_resource.database_files.join('\'), (FILENAME=\'') + '\')'
               create_sql += ' FOR ATTACH'
               create_sql += " COLLATE #{new_resource.collation}" if new_resource.collation
               db.execute(create_sql).do
