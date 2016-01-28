@@ -26,6 +26,7 @@ class Chef
         super
         @resource_name = :sql_server_database
         @allowed_actions.push(:attach)
+        @database_files = nil
         @provider = Chef::Provider::Database::SqlServer
       end
 
