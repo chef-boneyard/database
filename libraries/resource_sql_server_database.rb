@@ -25,7 +25,16 @@ class Chef
       def initialize(name, run_context = nil)
         super
         @resource_name = :sql_server_database
+        @allowed_actions.push(:attach)
         @provider = Chef::Provider::Database::SqlServer
+      end
+
+      def database_files(arg = nil)
+        set_or_return(
+          :database_files,
+          arg,
+          kind_of: Array
+        )
       end
     end
   end

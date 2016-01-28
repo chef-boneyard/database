@@ -32,6 +32,26 @@ class Chef
           @current_resource
         end
 
+        def action_attach
+          unless exists?
+            begin
+              Chef::Application.fatal!("Please provide database_files.") unless @new_resource.database_files
+              @new_resource.database_files.each { |file|
+                Chef::Application.fatal!("Database file could not be found: #{file}.") unless ::File.exists(file)
+              }
+              Chef::Log.debug("#{@new_resource}: Attaching database #{new_resource.database_name}")
+              create_sql = "CREATE DATABASE [#{new_resource.database_name}] ON"
+              create_sql = '(FILENAME=\'' + @new_resource.database_files.join('\'), (\'') + '\')'
+              create_sql += " FOR ATTACH"
+              create_sql += " COLLATE #{new_resource.collation}" if new_resource.collation
+              db.execute(create_sql).do
+              @new_resource.updated_by_last_action(true)
+            ensure
+              close
+            end
+          end
+        end
+
         def action_create
           unless exists?
             begin
