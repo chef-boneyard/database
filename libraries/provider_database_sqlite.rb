@@ -52,10 +52,22 @@ class Chef
           end
         end
 
+        def action_drop
+          if exists?
+            begin
+              Chef::Log.debug("#{@new_resource}: Dropping database #{new_resource.connection}")
+              ::File.unlink(@new_resource.connection)
+              @new_resource.updated_by_last_action(true)
+            ensure
+              close
+            end
+          end
+        end
+
         private
 
         def exists?
-          ::File.exists( @new_resource.connection )
+          ::File::exists?( @new_resource.connection )
         end
 
         def db
@@ -65,7 +77,6 @@ class Chef
         end
 
         def close
-          @db.close rescue nil
           @db = nil
         end
       end

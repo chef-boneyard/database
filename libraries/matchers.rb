@@ -3,7 +3,7 @@
 # Cookbook Name:: database
 # Library:: matchers
 #
-# Copyright:: 2014-2015 Chef Software, Inc.
+# Copyright 2014, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -152,7 +152,11 @@ if defined?(ChefSpec)
   # sqlite server database
   #
   def query_sqlite_database(resource_name)
-    ChefSpec::Matchers::ResourceMatcher.new(:sqllite_database, :query, resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:sqlite_database, :query, resource_name)
+  end
+
+  def drop_sqlite_database(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:sqlite_database, :drop, resource_name)
   end
 
 end
