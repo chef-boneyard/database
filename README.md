@@ -49,10 +49,14 @@ RDBS flavor:
 - SQL Server: leverages the `tiny_tds` gem which is installed as part
   of the `sql_server::client` recipe.
 
+- SQLite: leverages the `sqlite3` gem which is installed as part of the
+  `database::sqlite` recipe. You must declare `include_recipe
+  "database::sqlite"` to include this.
+
 ### database
 Manage databases in a RDBMS. Use the proper shortcut resource
-depending on your RDBMS: `mysql_database`, `postgresql_database` or
-`sql_server_database`.
+depending on your RDBMS: `mysql_database`, `postgresql_database`,
+`sql_server_database` or `sqlite_database`.
 
 #### Actions
 - :create: create a named database
@@ -61,6 +65,7 @@ depending on your RDBMS: `mysql_database`, `postgresql_database` or
 
 #### Attribute Parameters
 - database_name: name attribute. Name of the database to interact with
+  or for SQLlite a string to the database file on disk.
 - connection: hash of connection info. valid keys include `:host`,
   `:port`, `:username`, and `:password`
     - only for MySQL DB*: `:flags` (see `Mysql2::Client@@default_query_options[:connect_flags]`)
@@ -89,6 +94,7 @@ in the form `/var/run/mysql-<instance name>/mysqld.sock`.
 - `Chef::Provider::Database::Mysql`: shortcut resource `mysql_database`
 - `Chef::Provider::Database::Postgresql`: shortcut resource `postgresql_database`
 - `Chef::Provider::Database::SqlServer`: shortcut resource `sql_server_database`
+- `Chef::Provider::Database::Sqlite`: shortcut resource `sqlite_database`
 
 #### Examples
 ```ruby
@@ -121,7 +127,8 @@ sql_server_database 'mr_softie' do
     :host     => '127.0.0.1',
     :port     => node['sql_server']['port'],
     :username => 'sa',
-    :password => node['sql_server']['server_sa_password']
+    :password => node['sql_server']['server_sa_password'],
+    :options  => { 'ANSI_NULLS' => 'ON', 'QUOTED_IDENTIFIER' => 'OFF' }
   )
   action :create
 end
@@ -248,6 +255,22 @@ postgresql_database 'vacuum databases' do
   database_name 'template1'
   sql 'VACUUM FULL VERBOSE ANALYZE'
   action :query
+end
+```
+
+```ruby
+# Create, Insert, Query a SQLite database
+# Note that inserting anything in to the database will create it automaticly.
+sqlite_database 'mr_softie' do
+  connection '/path/to/database.db3'
+  sql "sql command"
+  action :query
+end
+
+# Delete the database, will remove the file
+sqlite_database 'mr_softie' do
+  connection '/path/to/database.db3'
+  action :drop
 end
 ```
 

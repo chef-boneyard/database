@@ -139,13 +139,13 @@ class Chef
           require 'mysql2'
           @query_client ||=
             Mysql2::Client.new(
-              host: new_resource.connection[:host],
-              socket: new_resource.connection[:socket],
-              username: new_resource.connection[:username],
-              password: new_resource.connection[:password],
-              port: new_resource.connection[:port],
-              flags: new_resource.connection[:flags],
-              database: new_resource.database_name
+            host: new_resource.connection[:host],
+            socket: new_resource.connection[:socket],
+            username: new_resource.connection[:username],
+            password: new_resource.connection[:password],
+            port: new_resource.connection[:port],
+            database: new_resource.connection[:database],
+            flags: new_resource.connection[:flags]
             )
         end
 
