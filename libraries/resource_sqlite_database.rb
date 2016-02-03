@@ -35,7 +35,6 @@ class Chef
           kind_of: [String, Proc, Array]
         )
       end
-
     end
   end
 end

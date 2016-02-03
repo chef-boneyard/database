@@ -40,12 +40,11 @@ class Chef
                   Chef::Log.debug("#{@new_resource}: Performing queries [#{sql}]")
                   db.execute(sql)
                 end
-                @new_resource.updated_by_last_action(true)
               else
                 Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
                 db.execute(@new_resource.sql_query)
-                @new_resource.updated_by_last_action(true)
               end
+              @new_resource.updated_by_last_action(true)
             ensure
               close
             end
@@ -67,12 +66,12 @@ class Chef
         private
 
         def exists?
-          ::File::exists?( @new_resource.connection )
+          ::File.exist?(@new_resource.connection)
         end
 
         def db
           @db ||= begin
-            ::SQLite3::Database.new( @new_resource.connection )
+            ::SQLite3::Database.new(@new_resource.connection)
           end
         end
 
