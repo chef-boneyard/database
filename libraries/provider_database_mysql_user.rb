@@ -89,7 +89,7 @@ class Chef
         action :grant do
           # gratuitous function
           def ishash?
-            return true if (/(\A\*[0-9A-F]{40}\z)/i).match(new_resource.password)
+            return true if new_resource.password =~ /(\A\*[0-9A-F]{40}\z)/i
           end
 
           db_name = new_resource.database_name ? "`#{new_resource.database_name}`" : '*'
@@ -238,13 +238,12 @@ class Chef
 
           # convert :all to the individual db or global privs
           if new_resource.privileges == [:all] && new_resource.database_name
-            desired_privs = possible_db_privs
+            possible_db_privs
           elsif new_resource.privileges == [:all]
-            desired_privs = possible_global_privs
+            possible_global_privs
           else
-            desired_privs = new_resource.privileges
+            new_resource.privileges
           end
-          desired_privs
         end
 
         def test_client
