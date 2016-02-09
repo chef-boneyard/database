@@ -125,7 +125,11 @@ class Chef
                 repair_sql = "GRANT #{new_resource.privileges.join(',')}"
                 repair_sql += " ON #{db_name}.#{tbl_name}"
                 repair_sql += " TO '#{new_resource.username}'@'#{new_resource.host}' IDENTIFIED BY"
-                repair_sql += " '#{new_resource.password}'"
+                if new_resource.password.is_a?(MysqlPassword)
+                  repair_sql += " PASSWORD '#{new_resource.password}'"
+                else
+                  repair_sql += " '#{new_resource.password}'"
+                end
                 repair_sql += ' REQUIRE SSL' if new_resource.require_ssl
                 repair_sql += ' WITH GRANT OPTION' if new_resource.grant_option
 
