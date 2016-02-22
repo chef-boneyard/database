@@ -23,7 +23,7 @@ Metrics/AbcSize:
   Enabled: false
 PerceivedComplexity:
   Enabled: false
-SingleSpaceBeforeFirstArg:
+Style/SpaceBeforeFirstArg:
   Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false

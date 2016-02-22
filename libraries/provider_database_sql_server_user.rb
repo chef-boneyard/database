@@ -106,11 +106,11 @@ class Chef
           Chef::Log.info("SQL Server Version: #{server_version.inspect}")
           db.execute('USE [master]').do
           @new_resource.sql_sys_roles.each do |sql_sys_role, role_action|
-            if server_version < '11.00.0000.00'
-              alter_statement = "EXEC sp_#{role_action.downcase}srvrolemember '#{@new_resource.username}', '#{sql_sys_role}'"
-            else
-              alter_statement = "ALTER SERVER ROLE #{sql_sys_role} #{role_action} MEMBER [#{@new_resource.username}]"
-            end
+            alter_statement = if server_version < '11.00.0000.00'
+                                "EXEC sp_#{role_action.downcase}srvrolemember '#{@new_resource.username}', '#{sql_sys_role}'"
+                              else
+                                "ALTER SERVER ROLE #{sql_sys_role} #{role_action} MEMBER [#{@new_resource.username}]"
+                              end
             Chef::Log.info("#{@new_resource} granting server role membership with statement [#{alter_statement}]")
             db.execute(alter_statement).do
           end

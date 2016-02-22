@@ -89,7 +89,7 @@ class Chef
         action :grant do
           # gratuitous function
           def ishash?
-            return true if (/(\A\*[0-9A-F]{40}\z)/i).match(new_resource.password)
+            return true if /(\A\*[0-9A-F]{40}\z)/i =~ new_resource.password
           end
 
           db_name = new_resource.database_name ? "`#{new_resource.database_name}`" : '*'
@@ -105,7 +105,7 @@ class Chef
             test_sql += " AND Db='#{new_resource.database_name}'" if new_resource.database_name
             test_sql_results = test_client.query test_sql
 
-            incorrect_privs = true if test_sql_results.size == 0
+            incorrect_privs = true if test_sql_results.size == 0 # rubocop:disable Style/ZeroLengthPredicate
             # These should all be 'Y'
             test_sql_results.each do |r|
               desired_privs.each do |p|
@@ -237,13 +237,13 @@ class Chef
           ]
 
           # convert :all to the individual db or global privs
-          if new_resource.privileges == [:all] && new_resource.database_name
-            desired_privs = possible_db_privs
-          elsif new_resource.privileges == [:all]
-            desired_privs = possible_global_privs
-          else
-            desired_privs = new_resource.privileges
-          end
+          desired_privs = if new_resource.privileges == [:all] && new_resource.database_name
+                            possible_db_privs
+                          elsif new_resource.privileges == [:all]
+                            possible_global_privs
+                          else
+                            new_resource.privileges
+                          end
           desired_privs
         end
 
