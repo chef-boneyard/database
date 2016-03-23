@@ -53,9 +53,9 @@ depending on your RDBMS: `mysql_database`, `postgresql_database` or
 `sql_server_database`.
 
 #### Actions
-- :create: create a named database
-- :drop: drop a named database
-- :query: execute an arbitrary query against a named database
+- `:create`: create a named database
+- `:drop`: drop a named database
+- `:query`: execute an arbitrary query against a named database
 
 #### Attribute Parameters
 - database_name: name attribute. Name of the database to interact with
@@ -253,9 +253,9 @@ end
 Manage users and user privileges in a RDBMS. Use the proper shortcut resource depending on your RDBMS: `mysql_database_user`, `postgresql_database_user`, or `sql_server_database_user`.
 
 #### Actions
-- :create: create a user
-- :drop: drop a user
-- :grant: manipulate user privileges on database objects
+- `:create`: create a user
+- `:drop`: drop a user
+- `:grant`: manipulate user privileges on database objects
 
 #### Attribute Parameters
 - username: name attribute. Name of the database user
