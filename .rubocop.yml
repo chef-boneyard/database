@@ -31,3 +31,5 @@ PerceivedComplexity:
   Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false
+Style/MultilineTernaryOperator:
+  Enabled: false

@@ -108,18 +108,18 @@ class Chef
           @new_resource.sql_sys_roles.each do |sql_sys_role, role_action|
             case role_action
             when 'ADD'
-              if server_version < '11.00.0000.00'
-                alter_statement = "EXEC sp_addsrvrolemember '#{@new_resource.username}', '#{sql_sys_role}'"
-              else
-                alter_statement = "ALTER SERVER ROLE #{sql_role} #{role_action} MEMBER [#{@new_resource.username}]"
-              end
+              alter_statement = if server_version < '11.00.0000.00'
+                                  "EXEC sp_addsrvrolemember '#{@new_resource.username}', '#{sql_sys_role}'"
+                                else
+                                  "ALTER SERVER ROLE #{sql_role} #{role_action} MEMBER [#{@new_resource.username}]"
+                                end
               Chef::Log.info("#{@new_resource} granting server role membership with statement [#{alter_statement}]")
             when 'DROP'
-              if server_version < '11.00.0000.00'
-                alter_statement = "EXEC sp_dropsrvrolemember '#{@new_resource.username}', '#{sql_sys_role}'"
-              else
-                alter_statement = "ALTER SERVER ROLE #{sql_role} #{role_action} MEMBER [#{@new_resource.username}]"
-              end
+              alter_statement = if server_version < '11.00.0000.00'
+                                  "EXEC sp_dropsrvrolemember '#{@new_resource.username}', '#{sql_sys_role}'"
+                                else
+                                  "ALTER SERVER ROLE #{sql_role} #{role_action} MEMBER [#{@new_resource.username}]"
+                                end
               Chef::Log.info("#{@new_resource} revoking server role membership with statement [#{alter_statement}]")
             end
             db.execute(alter_statement).do

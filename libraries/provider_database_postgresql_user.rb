@@ -55,7 +55,7 @@ class Chef
               options += " #{Chef::Resource::PostgresqlDatabaseUser::SUPERUSER_DEFAULT ? 'SUPERUSER' : 'NOSUPERUSER'}" unless @new_resource.respond_to?(:superuser)
 
               statement = "CREATE USER \"#{@new_resource.username}\""
-              statement += " WITH #{options}" if options.length > 0
+              statement += " WITH #{options}" unless options.empty?
 
               db('template1').query(statement)
               @new_resource.updated_by_last_action(true)
