@@ -15,23 +15,19 @@ Encoding:
   Enabled: false
 Style/FileName:
   Enabled: false
+Style/Alias:
+  Enabled: false
+Style/SpaceBeforeFirstArg:
+  Enabled: false
 LineLength:
   Enabled: false
 MethodLength:
   Enabled: false
 Metrics/AbcSize:
   Enabled: false
+Metrics/ModuleLength:
+  Enabled: false
 PerceivedComplexity:
   Enabled: false
-SingleSpaceBeforeFirstArg:
-  Enabled: false
 Style/ClassAndModuleChildren:
-  Enabled: false
-Style/FileName:
-  Enabled: false
-
-## to-do: these should get resolved
-Style/GuardClause:
-  Enabled: false
-Style/MultilineTernaryOperator:
   Enabled: false
