@@ -2,6 +2,23 @@
 
 This file is used to list changes made in each version of the database cookbook.
 
+## v5.0.0 (2016-03-23)
+
+- Removed Chef 10 compatibility checks
+- Resolved the following error in the sql_server_user provider: undefined local variable or method `sql_role`
+- Added a timeout attribute to the database provider on sql_server, which defaults to 120 seconds
+- Fixed the :revoke action for the database_user provider on mysql
+- Removed duplicate documentation from the readme
+- Updated the mysql_user provider to compare passwords so passwords can be updated
+- Updated documentation for the connection hash in the database provider
+- Removed duplicate amazon supports property from the metadata
+- Removed documentation for ebs recipes that are no longer part of this cookbook
+- Updated testing deps and removed the large number of Guard deps
+- Fixed intgration tests to be in the correct location so they run as expected
+- Added .foodcritic file to ignore FC023
+- Removed the cloud testing Kitchen file and Gem dependencies
+- Added integration testing with Kitchen Docker in Travis CI
+
 ## v4.0.9 (2015-09-07)
 
 - Fix bad attribute name with postgresql_database in the readme
