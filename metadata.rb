@@ -10,8 +10,6 @@ version '4.0.9'
   supports os
 end
 
-supports 'amazon'
-
 depends 'postgresql', '>= 1.0.0'
 
 source_url 'https://github.com/chef-cookbooks/database' if respond_to?(:source_url)
