@@ -20,8 +20,6 @@ Requirements
 - Chef 11+
 
 ### Cookbooks
-The following Chef Software cookbooks are dependencies:
-
 * postgresql
 
 Resources/Providers
