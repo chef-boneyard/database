@@ -1,7 +1,7 @@
 #
 # Author:: Seth Chisamore (<schisamo@chef.io>)
 # Author:: Sean OMeara (<sean@chef.io>)
-# Copyright:: Copyright (c) 2011 Chef Software, Inc.
+# Copyright:: 2011-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,7 @@ class Chef
   class Provider
     class Database
       class Mysql < Chef::Provider::LWRPBase
-        use_inline_resources if defined?(use_inline_resources)
+        use_inline_resources
 
         def whyrun_supported?
           true
@@ -103,11 +103,11 @@ class Chef
           require 'mysql2'
           @test_client ||=
             Mysql2::Client.new(
-            host: new_resource.connection[:host],
-            socket: new_resource.connection[:socket],
-            username: new_resource.connection[:username],
-            password: new_resource.connection[:password],
-            port: new_resource.connection[:port]
+              host: new_resource.connection[:host],
+              socket: new_resource.connection[:socket],
+              username: new_resource.connection[:username],
+              password: new_resource.connection[:password],
+              port: new_resource.connection[:port]
             )
         end
 
@@ -121,11 +121,11 @@ class Chef
           require 'mysql2'
           @repair_client ||=
             Mysql2::Client.new(
-            host: new_resource.connection[:host],
-            socket: new_resource.connection[:socket],
-            username: new_resource.connection[:username],
-            password: new_resource.connection[:password],
-            port: new_resource.connection[:port]
+              host: new_resource.connection[:host],
+              socket: new_resource.connection[:socket],
+              username: new_resource.connection[:username],
+              password: new_resource.connection[:password],
+              port: new_resource.connection[:port]
             )
         end
 
@@ -139,16 +139,18 @@ class Chef
           require 'mysql2'
           @query_client ||=
             Mysql2::Client.new(
-            host: new_resource.connection[:host],
-            socket: new_resource.connection[:socket],
-            username: new_resource.connection[:username],
-            password: new_resource.connection[:password],
-            port: new_resource.connection[:port]
+              host: new_resource.connection[:host],
+              socket: new_resource.connection[:socket],
+              username: new_resource.connection[:username],
+              password: new_resource.connection[:password],
+              port: new_resource.connection[:port],
+              flags: new_resource.connection[:flags],
+              database: new_resource.database_name
             )
         end
 
         def close_query_client
-          @query_client.close
+          @query_client.close if @query_client
         rescue Mysql2::Error
           @query_client = nil
         end

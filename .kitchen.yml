@@ -1,4 +1,3 @@
----
 driver:
   name: vagrant
 
@@ -6,22 +5,26 @@ provisioner:
   name: chef_zero
 
 platforms:
-  - name: centos-5.10
-  - name: centos-6.5
-  - name: centos-7.0
-  - name: debian-7.4
-    run_list:
-      - recipe[apt]
-  - name: fedora-20
+  - name: centos-6.7
+  - name: centos-7.1
+  - name: debian-7.8
+    run_list: apt::default
+  - name: debian-8.1
+    run_list: apt::default
+  - name: fedora-21
+  - name: fedora-22
+  - name: ubuntu-12.04
+    run_list: apt::default
   - name: ubuntu-14.04
-    run_list:
-      - recipe[apt]
+    run_list: apt::default
 
 suites:
   #
   # database-test
   #
-  - name: default
+  - name: mysql
     run_list:
     - recipe[mysql_database_test]
+  - name: postgresql
+    run_list:
     - recipe[postgresql_database_test]

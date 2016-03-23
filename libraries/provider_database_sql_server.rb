@@ -1,6 +1,6 @@
 #
 # Author:: Seth Chisamore (<schisamo@chef.io>)
-# Copyright:: Copyright (c) 2011 Chef Software, Inc.
+# Copyright:: 2011-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -61,8 +61,8 @@ class Chef
         def action_query
           if exists?
             begin
-              # db.select_db(@new_resource.database_name) if @new_resource.database_name
               Chef::Log.debug("#{@new_resource}: Performing query [#{new_resource.sql_query}]")
+              db.execute("USE [#{@new_resource.database_name}]").do if @new_resource.database_name
               db.execute(@new_resource.sql_query).do
               @new_resource.updated_by_last_action(true)
             ensure
@@ -103,7 +103,11 @@ class Chef
         end
 
         def close
-          @db.close rescue nil
+          begin
+            @db.close
+          rescue
+            nil
+          end
           @db = nil
         end
       end

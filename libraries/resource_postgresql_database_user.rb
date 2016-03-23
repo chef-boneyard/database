@@ -2,7 +2,7 @@
 # Author:: Seth Chisamore (<schisamo@chef.io>)
 # Author:: Lamont Granquist (<lamont@chef.io>)
 # Author:: Marco Betti (<m.betti@gmail.com>)
-# Copyright:: Copyright (c) 2011 Chef Software, Inc.
+# Copyright:: 2011-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,15 +24,21 @@ require File.join(File.dirname(__FILE__), 'provider_database_postgresql_user')
 class Chef
   class Resource
     class PostgresqlDatabaseUser < Chef::Resource::DatabaseUser
+      CREATE_DB_DEFAULT = false
+      CREATE_ROLE_DEFAULT = false
+      LOGIN_DEFAULT = true
+      REPLICATION_DEFAULT = false
+      SUPERUSER_DEFAULT = false
+
       def initialize(name, run_context = nil)
         super
         @resource_name = :postgresql_database_user
         @provider = Chef::Provider::Database::PostgresqlUser
-        @createdb = false
-        @createrole = false
-        @login = true
-        @replication = false
-        @superuser = false
+        @createdb = CREATE_DB_DEFAULT
+        @createrole = CREATE_ROLE_DEFAULT
+        @login = LOGIN_DEFAULT
+        @replication = REPLICATION_DEFAULT
+        @superuser = SUPERUSER_DEFAULT
         @schema_name = nil
         @allowed_actions.push(:create, :drop, :grant, :grant_schema)
       end

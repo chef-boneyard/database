@@ -1,5 +1,9 @@
 Database Cookbook
 =================
+
+[![Build Status](https://travis-ci.org/chef-cookbooks/database.svg?branch=master)](http://travis-ci.org/chef-cookbooks/database)
+[![Cookbook Version](http://img.shields.io/cookbook/v/database.svg)](https://supermarket.chef.io/cookbooks/database)
+
 The main highlight of this cookbook is the `database` and
 `database_user` resources for managing databases and database users in
 a RDBMS. Providers for MySQL, PostgreSQL and SQL Server are also
@@ -7,11 +11,13 @@ provided, see usage documentation below.
 
 Requirements
 ------------
-Chef version 0.11+
-
 ### Platforms
-- Debian, Ubuntu
-- Red Hat, CentOS, Scientific, Fedora, Amazon
+- Debian / Ubuntu derivatives
+- RHEL derivatives
+- Fedora
+
+### Chef
+- Chef 11+
 
 ### Cookbooks
 The following Chef Software cookbooks are dependencies:
@@ -35,7 +41,7 @@ RDBS flavor:
   then use a `mysql2_chef_gem` resource to install it. The resource
   allows the user to select MySQL client library versions, as well as
   optionally select MariaDB libraries.
-      
+
 - PostgreSQL: leverages the `pg` gem which is installed as part of the
   `postgresql::ruby` recipe. You must declare `include_recipe
   "database::postgresql"` to include this.
@@ -56,7 +62,9 @@ depending on your RDBMS: `mysql_database`, `postgresql_database` or
 #### Attribute Parameters
 - database_name: name attribute. Name of the database to interact with
 - connection: hash of connection info. valid keys include `:host`,
-  `:port`, `:username`, and `:password` (only for MySQL DB*)
+  `:port`, `:username`, and `:password`
+    - only for MySQL DB*: `:flags` (see `Mysql2::Client@@default_query_options[:connect_flags]`)
+    - only for PostgreSQL: `:database` (overwrites parameter `database_name`)
 
 - sql: string of sql or a block that executes to a string of sql,
   which will be executed against the database. used by `:query` action
@@ -104,7 +112,7 @@ mysql_database 'oracle_rools' do
     :password => node['mysql']['server_root_password']
   )
   action :create
-end       
+end
 ```
 ```ruby
 # Create a sql server database
@@ -404,16 +412,12 @@ sql_server_connection_info = {
   :password => node['sql_server']['server_sa_password']
 }
 
-
-
 # Create a mysql user but grant no privileges
 mysql_database_user 'disenfranchised' do
   connection mysql_connection_info
   password   'super_secret'
   action     :create
 end
-
-
 
 # Do the same but pass the provider to the database resource
 database_user 'disenfranchised' do
@@ -423,16 +427,12 @@ database_user 'disenfranchised' do
   action     :create
 end
 
-
-
 # Create a postgresql user but grant no privileges
 postgresql_database_user 'disenfranchised' do
   connection postgresql_connection_info
   password   'super_secret'
   action     :create
 end
-
-
 
 # Do the same but pass the provider to the database resource
 database_user 'disenfranchised' do
@@ -442,8 +442,6 @@ database_user 'disenfranchised' do
   action     :create
 end
 
-
-
 # Create a sql server user but grant no privileges
 sql_server_database_user 'disenfranchised' do
   connection sql_server_connection_info
@@ -451,15 +449,11 @@ sql_server_database_user 'disenfranchised' do
   action     :create
 end
 
-
-
 # Drop a mysql user
 mysql_database_user 'foo_user' do
   connection mysql_connection_info
   action     :drop
 end
-
-
 
 # Bulk drop sql server users
 %w(disenfranchised foo_user).each do |user|
@@ -468,8 +462,6 @@ end
     action     :drop
   end
 end
-
-
 
 # Grant SELECT, UPDATE, and INSERT privileges to all tables in foo db from all hosts
 mysql_database_user 'foo_user' do
@@ -481,16 +473,12 @@ mysql_database_user 'foo_user' do
   action        :grant
 end
 
-
-
 # Grant all privileges on all databases/tables from 127.0.0.1
 mysql_database_user 'super_user' do
   connection mysql_connection_info
   password   'super_secret'
   action     :grant
 end
-
-
 
 # Grant all privileges on all tables in foo db
 postgresql_database_user 'foo_user' do
@@ -511,128 +499,14 @@ end
 ```
 
 
-Recipes
--------
-### ebs_volume
-*Note*: This recipe does not currently work on RHEL platforms due to the xfs cookbook not supporting RHEL yet.
-
-Loads the aws information from the data bag. Searches the applications data bag for the database master or slave role and checks that role is applied to the node. Loads the EBS information and the master information from data bags. Uses the aws cookbook LWRP, `aws_ebs_volume` to manage the volume.
-
-On a master node:
-- if we have an ebs volume already as stored in a data bag, attach it
-- if we don't have the ebs information then create a new one and attach it
-- store the volume information in a data bag via a ruby block
-
-On a slave node:
-- use the master volume information to generate a snapshot
-- create the new volume from the snapshot and attach it
-
-Also on a master node, generate some configuration for running a snapshot via `chef-solo` from cron.
-
-On a new filesystem volume, create as XFS, then mount it in `/mnt`, and also bind-mount it to the mysql data directory (default `/var/lib/mysql`).
-
-### master
-This recipe no longer loads AWS specific information, and the database position for replication is no longer stored in a databag because the client might not have permission to write to the databag item. This may be handled in a different way at a future date.
-
-Searches the apps databag for applications, and for each one it will check that the specified database master role is set in both the databag and applied to the node's run list. Then, retrieves the passwords for `root`, `repl` and `debian` users and saves them to the node attributes. If the passwords are not found in the databag, it prints a message that they'll be generated by the mysql cookbook.
-
-Then it adds the application databag database settings to a hash, to use later.
-
-Then it will iterate over the databases and create them with the `mysql_database` resource while adding privileges for application specific database users using the `mysql_database_user` resource.
-
-### slave
-_TODO_: Retrieve the master status from a data bag, then start replication using a ruby block. The replication status needs to be handled in some other way for now since the master recipe above doesn't actually set it in the databag anymore.
-
-### snapshot
-Run via Chef Solo. Retrieves the db snapshot configuration from the specified JSON file. Uses the `mysql_database` resource to lock and unlock tables, and does a filesystem freeze and EBS snapshot.
-
-
-Deprecated Recipes
-------------------
-The following recipe is considered deprecated. It is kept for reference purposes.
-
-### ebs_backup
-Older style of doing mysql snapshot and replication using Adam Jacob's [ec2_mysql](http://github.com/adamhjk/ec2_mysql) script and library.
-
-
-Data Bags
----------
-This cookbook uses the apps data bag item for the specified application; see the `application` cookbook's README.md. It also creates data bag items in a bag named 'aws' for storing volume information. In order to interact with EC2, it expects aws to have a main item:
-
-```javascript
-{
-  "id": "main",
-  "ec2_private_key": "private key as a string",
-  "ec2_cert": "certificate as a string",
-  "aws_account_id": "",
-  "aws_secret_access_key": "",
-  "aws_access_key_id": ""
-}
-```
-
-Note: with the Open Source Chef Server, the server using the database recipes must be an admin client or it will not be able to create data bag items. You can modify whether the client is admin by editing it with knife.
-
-    knife client edit <client_name>
-    {
-      ...
-      "admin": true
-      ...
-    }
-
-This is not required if the Chef Server is Chef Software Hosted Chef, instead use the ACL feature to modify access for the node to be able to update the data bag.
-
-
-Usage
------
-Aside from the application data bag (see the README in the application cookbook), create a role for the database master. Use a `role.rb` in your chef-repo, or create the role directly with knife.
-
-```javascript
-{
-  "name": "my_app_database_master",
-  "chef_type": "role",
-  "json_class": "Chef::Role",
-  "default_attributes": {},
-  "description": "",
-  "run_list": [
-    "recipe[mysql::server]",
-    "recipe[database::master]"
-  ],
-  "override_attributes": {}
-}
-```
-
-Create a `production` environment. This is also used in the `application` cookbook.
-
-```javascript
-{
-  "name": "production",
-  "description": "",
-  "cookbook_versions": {},
-  "json_class": "Chef::Environment",
-  "chef_type": "environment",
-  "default_attributes": {},
-  "override_attributes": {}
-}
-```
-
-The cookbook `my_app_database` is recommended to set up any
-application specific database resources such as configuration
-templates, trending monitors, etc. It is not required, but you would
-need to create it separately in `site-cookbooks`. Add it to the
-`my_app_database_master` role.
-
 License & Authors
 -----------------
-- Author:: Adam Jacob (<adam@chef.io>)
-- Author:: Joshua Timberman (<joshua@chef.io>)
-- Author:: AJ Christensen (<aj@chef.io>)
-- Author:: Seth Chisamore (<schisamo@chef.io>)
-- Author:: Lamont Granquist (<lamont@chef.io>)
-- Author:: Sean OMeara (<sean@chef.io>)
 
-```text
-Copyright 2009-2015, Chef Software, Inc.
+**Author:** Cookbook Engineering Team (<cookbooks@chef.io>)
 
+**Copyright:** 2009-2015, Chef Software, Inc.
+
+```
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
