@@ -237,6 +237,15 @@ class Chef
           ]
 
           # convert :all to the individual db or global privs
+<<<<<<< HEAD
+          if new_resource.privileges == [:all] && new_resource.database_name
+            possible_db_privs
+          elsif new_resource.privileges == [:all]
+            possible_global_privs
+          else
+            new_resource.privileges
+          end
+=======
           desired_privs = if new_resource.privileges == [:all] && new_resource.database_name
                             possible_db_privs
                           elsif new_resource.privileges == [:all]
@@ -245,6 +254,7 @@ class Chef
                             new_resource.privileges
                           end
           desired_privs
+>>>>>>> 5.0.0
         end
 
         def test_client
