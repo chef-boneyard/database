@@ -260,14 +260,14 @@ end
 # Create, Insert, Query a SQLite database
 # Note that inserting anything in to the database will create it automaticly.
 sqlite_database 'mr_softie' do
-  connection '/path/to/database.db3'
+  database_name '/path/to/database.db3'
   sql "sql command"
   action :query
 end
 
 # Delete the database, will remove the file
 sqlite_database 'mr_softie' do
-  connection '/path/to/database.db3'
+  database_name '/path/to/database.db3'
   action :drop
 end
 ```
