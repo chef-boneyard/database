@@ -16,6 +16,19 @@
 # limitations under the License.
 #
 
+# Install required packages
+case node['platform_family']
+when 'rhel', 'fedora'
+  packages = ['gcc', 'sqlite-devel', 'sqlite']
+when 'debian', 'ubuntu'
+  packages = ['gcc', 'libsqlite3-dev', 'sqlite3']
+end
+
+packages.each do |package_name|
+  package package_name
+end
+
+# Install required gem (will be compiled)
 chef_gem 'sqlite3' do
-  compile_time true
+  compile_time false
 end
