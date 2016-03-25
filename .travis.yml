@@ -20,6 +20,10 @@ env:
   - INSTANCE=postgresql-ubuntu-1204
   - INSTANCE=postgresql-centos-6
   - INSTANCE=postgresql-centos-7
+  - INSTANCE=sqlite-ubuntu-1404
+  - INSTANCE=sqlite-ubuntu-1204
+  - INSTANCE=sqlite-centos-6
+  - INSTANCE=sqlite-centos-7
 
 # Don't `bundle install`
 install: echo "skip bundle install"
