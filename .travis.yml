@@ -14,10 +14,12 @@ env:
   matrix:
   - INSTANCE=mysql-ubuntu-1404
   - INSTANCE=mysql-ubuntu-1204
-  - INSTANCE=mysql-centos-71
+  - INSTANCE=mysql-centos-6
+  - INSTANCE=mysql-centos-7
   - INSTANCE=postgresql-ubuntu-1404
   - INSTANCE=postgresql-ubuntu-1204
-  - INSTANCE=postgresql-centos-71
+  - INSTANCE=postgresql-centos-6
+  - INSTANCE=postgresql-centos-7
 
 # Don't `bundle install`
 install: echo "skip bundle install"
@@ -33,6 +35,6 @@ script:
   - /opt/chefdk/embedded/bin/rubocop --version
   - /opt/chefdk/embedded/bin/rubocop
   - /opt/chefdk/embedded/bin/foodcritic --version
-  - /opt/chefdk/embedded/bin/foodcritic . --exclude spec
+  - /opt/chefdk/embedded/bin/foodcritic . --exclude spec -f any
   - /opt/chefdk/embedded/bin/rspec
   - KITCHEN_LOCAL_YAML=.kitchen.docker.yml /opt/chefdk/embedded/bin/kitchen verify ${INSTANCE}

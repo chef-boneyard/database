@@ -97,6 +97,7 @@ class Chef
               username: @new_resource.connection[:username],
               password: @new_resource.connection[:password],
               port: @new_resource.connection[:port] || 1433,
+              timeout: @new_resource.connection[:timeout] || 120,
               options: @new_resource.connection[:options] || {}
             )
             if new_resource.connection.include?(:options)
