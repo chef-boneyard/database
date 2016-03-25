@@ -32,11 +32,18 @@ class Chef
           @current_resource
         end
 
+        def action_create
+          unless exists?
+            ::File.open(@new_resource.database_name, 'w') {}
+            @new_resource.updated_by_last_action(true)
+          end
+        end
+
         def action_query
           if exists?
             begin
-              if new_resource.sql_query.is_a?(Array)
-                new_resource.sql_query.each do |sql|
+              if @new_resource.sql_query.is_a?(Array)
+                @new_resource.sql_query.each do |sql|
                   Chef::Log.debug("#{@new_resource}: Performing queries [#{sql}]")
                   db.execute(sql)
                 end
@@ -54,8 +61,8 @@ class Chef
         def action_drop
           if exists?
             begin
-              Chef::Log.debug("#{@new_resource}: Dropping database #{new_resource.connection}")
-              ::File.unlink(@new_resource.connection)
+              Chef::Log.debug("#{@new_resource}: Dropping database #{new_resource.database_name}")
+              ::File.unlink(@new_resource.database_name)
               @new_resource.updated_by_last_action(true)
             ensure
               close
@@ -66,12 +73,12 @@ class Chef
         private
 
         def exists?
-          ::File.exist?(@new_resource.connection)
+          ::File.exist?(@new_resource.database_name)
         end
 
         def db
           @db ||= begin
-            ::SQLite3::Database.new(@new_resource.connection)
+            ::SQLite3::Database.new(@new_resource.database_name)
           end
         end
 

@@ -67,7 +67,7 @@ depending on your RDBMS: `mysql_database`, `postgresql_database`,
   `:port`, `:username`, and `:password`
     - only for MySQL DB*: `:flags` (see `Mysql2::Client@@default_query_options[:connect_flags]`)
     - only for PostgreSQL: `:database` (overwrites parameter `database_name`)
-    - only for SQLlite: connection is a string to the database file on disk.
+    - not used for SQLlite
 
 - sql: string of sql or a block that executes to a string of sql,
   which will be executed against the database. used by `:query` action

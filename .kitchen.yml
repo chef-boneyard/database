@@ -30,3 +30,6 @@ suites:
   - name: postgresql
     run_list:
     - recipe[postgresql_database_test]
+  - name: sqlite
+    run_list:
+    - recipe[sqlite_database_test]
