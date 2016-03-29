@@ -27,6 +27,15 @@ class Chef
         @resource_name = :mysql_database_user
         @provider = Chef::Provider::Database::MysqlUser
       end
+
+      def password(arg = nil)
+        set_or_return(
+          :password,
+          arg,
+          kind_of: [String, MysqlPassword]
+        )
+      end
+
     end
   end
 end

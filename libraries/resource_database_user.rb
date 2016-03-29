@@ -61,14 +61,6 @@ class Chef
         )
       end
 
-      def password(arg = nil)
-        set_or_return(
-          :password,
-          arg,
-          kind_of: String
-        )
-      end
-
       def table(arg = nil)
         set_or_return(
           :table,
