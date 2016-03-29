@@ -19,9 +19,9 @@
 # Install required packages
 case node['platform_family']
 when 'rhel', 'fedora'
-  packages = ['gcc', 'sqlite-devel', 'sqlite']
+  packages = ['gcc', 'make', 'sqlite-devel', 'sqlite']
 when 'debian', 'ubuntu'
-  packages = ['gcc', 'libsqlite3-dev', 'sqlite3']
+  packages = ['gcc', 'make', 'libsqlite3-dev', 'sqlite3']
 end
 
 packages.each do |package_name|
