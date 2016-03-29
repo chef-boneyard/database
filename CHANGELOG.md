@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the database cookbook.
 
+## v5.0.1 (2016-03-29)
+
+- Resolve error in the user provider under MySQL due to a Rubocop fix 
+
 ## v5.0.0 (2016-03-23)
 
 - Removed Chef 10 compatibility checks
