@@ -148,4 +148,15 @@ if defined?(ChefSpec)
   def alter_roles_sql_server_database_user(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:sql_server_database_user, :alter_roles, resource_name)
   end
+
+  # sqlite server database
+  #
+  def query_sqlite_database(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:sqlite_database, :query, resource_name)
+  end
+
+  def drop_sqlite_database(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:sqlite_database, :drop, resource_name)
+  end
+
 end

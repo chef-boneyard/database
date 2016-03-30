@@ -92,13 +92,20 @@ class Chef
 
         def db
           @db ||= begin
-            ::TinyTds::Client.new(
+            connection = ::TinyTds::Client.new(
               host: @new_resource.connection[:host],
               username: @new_resource.connection[:username],
               password: @new_resource.connection[:password],
               port: @new_resource.connection[:port] || 1433,
-              timeout: @new_resource.connection[:timeout] || 120
+              timeout: @new_resource.connection[:timeout] || 120,
+              options: @new_resource.connection[:options] || {}
             )
+            if new_resource.connection.include?(:options)
+              @new_resource.connection[:options].each do |key, value|
+                connection.execute("SET #{key} #{value}").do
+              end
+            end
+            connection
           end
         end
 
