@@ -131,11 +131,11 @@ class Chef
                 repair_sql = "GRANT #{new_resource.privileges.join(',')}"
                 repair_sql += " ON #{db_name}.#{tbl_name}"
                 repair_sql += " TO '#{new_resource.username}'@'#{new_resource.host}' IDENTIFIED BY"
-                if new_resource.password.is_a?(MysqlPassword)
-                  repair_sql += " PASSWORD '#{new_resource.password}'"
-                else
-                  repair_sql += " '#{new_resource.password}'"
-                end
+                repair_sql += if new_resource.password.is_a?(MysqlPassword)
+                                " PASSWORD '#{new_resource.password}'"
+                              else
+                                " '#{new_resource.password}'"
+                              end
                 repair_sql += ' REQUIRE SSL' if new_resource.require_ssl
                 repair_sql += ' WITH GRANT OPTION' if new_resource.grant_option
 
@@ -308,22 +308,22 @@ class Chef
 
         def test_user_password
           if database_has_password_column(test_client)
-            test_sql = 'SELECT User,Host,Password FROM mysql.user ' +
+            test_sql = 'SELECT User,Host,Password FROM mysql.user ' \
                        "WHERE User='#{new_resource.username}' AND Host='#{new_resource.host}' "
-            if new_resource.password.is_a? MysqlPassword
-              test_sql += "AND Password='#{new_resource.password}'"
-            else
-              test_sql += "AND Password=PASSWORD('#{new_resource.password}')"
-            end
+            test_sql += if new_resource.password.is_a? MysqlPassword
+                          "AND Password='#{new_resource.password}'"
+                        else
+                          "AND Password=PASSWORD('#{new_resource.password}')"
+                        end
           else
-            test_sql = 'SELECT User,Host,authentication_string FROM mysql.user ' +
-                       "WHERE User='#{new_resource.username}' AND Host='#{new_resource.host}' " +
-                       "AND plugin=mysql_native_password "
-            if new_resource.password.is_a? MysqlPassword
-              test_sql += "AND authentication_string='#{new_resource.password}'"
-            else
-              test_sql += "AND authentication_string=PASSWORD('#{new_resource.password}')"
-            end
+            test_sql = 'SELECT User,Host,authentication_string FROM mysql.user ' \
+                       "WHERE User='#{new_resource.username}' AND Host='#{new_resource.host}' " \
+                       'AND plugin=mysql_native_password '
+            test_sql += if new_resource.password.is_a? MysqlPassword
+                          "AND authentication_string='#{new_resource.password}'"
+                        else
+                          "AND authentication_string=PASSWORD('#{new_resource.password}')"
+                        end
           end
           test_client.query(test_sql).size > 0
         end
@@ -333,20 +333,20 @@ class Chef
             begin
               if database_has_password_column(repair_client)
                 repair_sql = "SET PASSWORD FOR '#{new_resource.username}'@'#{new_resource.host}' = "
-                if new_resource.password.is_a? MysqlPassword
-                  repair_sql += "'#{new_resource.password}'"
-                else
-                  repair_sql += " PASSWORD('#{new_resource.password}')"
-                end
+                repair_sql += if new_resource.password.is_a? MysqlPassword
+                                "'#{new_resource.password}'"
+                              else
+                                " PASSWORD('#{new_resource.password}')"
+                              end
               else
                 # "ALTER USER is now the preferred statement for assigning passwords."
                 # http://dev.mysql.com/doc/refman/5.7/en/set-password.html
                 repair_sql = "ALTER USER '#{new_resource.username}'@'#{new_resource.host}' "
-                if new_resource.password.is_a? MysqlPassword
-                  repair_sql += "IDENTIFIED WITH mysql_native_password AS '#{new_resource.password}'"
-                else
-                  repair_sql += "IDENTIFIED BY '#{new_resource.password}'"
-                end
+                repair_sql += if new_resource.password.is_a? MysqlPassword
+                                "IDENTIFIED WITH mysql_native_password AS '#{new_resource.password}'"
+                              else
+                                "IDENTIFIED BY '#{new_resource.password}'"
+                              end
               end
               repair_client.query(repair_sql)
             ensure

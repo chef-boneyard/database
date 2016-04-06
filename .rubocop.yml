@@ -1,7 +1,7 @@
 AllCops:
   Exclude:
     - vendor/**/*
-    - Guardfile
+    - test/**/*
 
 AlignParameters:
   Enabled: false
@@ -32,4 +32,6 @@ PerceivedComplexity:
 Style/ClassAndModuleChildren:
   Enabled: false
 Style/MultilineTernaryOperator:
+  Enabled: false
+Style/ZeroLengthPredicate:
   Enabled: false

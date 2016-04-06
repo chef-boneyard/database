@@ -20,7 +20,6 @@
 require File.join(File.dirname(__FILE__), 'resource_mysql_database_user')
 
 class MysqlPassword
-
   # Initializes an object of the MysqlPassword type
   # @param [String] hashed_password mysql native hashed password
   # @return [MysqlPassword]
@@ -35,7 +34,6 @@ class MysqlPassword
   end
 
   module Helpers
-
     # helper method wrappers the string into a MysqlPassword object
     # @param [String] hashed_password mysql native hashed password
     # @return [MysqlPassword] object

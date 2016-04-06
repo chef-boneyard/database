@@ -35,7 +35,6 @@ class Chef
           kind_of: [String, MysqlPassword]
         )
       end
-
     end
   end
 end
