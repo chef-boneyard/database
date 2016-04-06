@@ -2,9 +2,16 @@
 
 This file is used to list changes made in each version of the database cookbook.
 
+## v5.1.0 (2016-04-06)
+
+- Added a new resource for Sqlite DBs. See the readme for details
+- Updated :create and :grant action in the mysql_database_user provider to update the user password if it changes
+- Added the ability to pass options to the sql_server connection
+- Added a mysql_hashed_password method to the mysql_database_user's password property to allow passing hashed passwords to the resource. See the readme for an example
+
 ## v5.0.1 (2016-03-29)
 
-- Resolve error in the user provider under MySQL due to a Rubocop fix 
+- Resolve error in the user provider under MySQL due to a Rubocop fix
 
 ## v5.0.0 (2016-03-23)
 
