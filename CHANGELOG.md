@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the database cookbook.
 
+## v5.1.1 (2016-04-07)
+
+- Fixed password resource not functioning on Postgresql
+- Removed unused templates leftover from the DB -> EBS backup recipes
+- Add better logging when the providers are used and the gems are not present
+
 ## v5.1.0 (2016-04-06)
 
 - Added a new resource for Sqlite DBs. See the readme for details
