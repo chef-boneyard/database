@@ -26,7 +26,12 @@ class Chef
 
         def load_current_resource
           Gem.clear_paths
-          require 'sqlite3'
+          begin
+            require 'sqlite3'
+          rescue LoadError
+            Chef::Log.fatal('Could not load the required sqlite3 gem. Make sure to include the database::sqlite recipe on your runlist')
+            raise
+          end
           @current_resource = Chef::Resource::Database.new(@new_resource.name)
           @current_resource.database_name(@new_resource.database_name)
           @current_resource
