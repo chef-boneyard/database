@@ -109,7 +109,7 @@ class Chef
             test_sql += " AND Db='#{new_resource.database_name}'" if new_resource.database_name
             test_sql_results = test_client.query test_sql
 
-            incorrect_privs = true if test_sql_results.size == 0 # rubocop: disable Style/ZeroLengthPredicate
+            incorrect_privs = true if test_sql_results.size == 0
             # These should all be 'Y'
             test_sql_results.each do |r|
               desired_privs.each do |p|
