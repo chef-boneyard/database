@@ -24,11 +24,11 @@ require File.join(File.dirname(__FILE__), 'provider_database_postgresql_user')
 class Chef
   class Resource
     class PostgresqlDatabaseUser < Chef::Resource::DatabaseUser
-      CREATE_DB_DEFAULT = false
-      CREATE_ROLE_DEFAULT = false
-      LOGIN_DEFAULT = true
-      REPLICATION_DEFAULT = false
-      SUPERUSER_DEFAULT = false
+      CREATE_DB_DEFAULT = false unless defined?(CREATE_DB_DEFAULT)
+      CREATE_ROLE_DEFAULT = false unless defined?(CREATE_ROLE_DEFAULT)
+      LOGIN_DEFAULT = true unless defined?(LOGIN_DEFAULT)
+      REPLICATION_DEFAULT = false unless defined?(REPLICATION_DEFAULT)
+      SUPERUSER_DEFAULT = false unless defined?(SUPERUSER_DEFAULT)
 
       def initialize(name, run_context = nil)
         super
