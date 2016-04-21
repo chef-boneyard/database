@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the database cookbook.
 
+## v5.1.2 (2016-04-21)
+
+- Fix for Unknown column 'mysql_native_password' error
+- Fix 'already initialized constant' warnings while testing
+
 ## v5.1.1 (2016-04-07)
 
 - Fixed password resource not functioning on Postgresql
