@@ -65,7 +65,9 @@ depending on your RDBMS: `mysql_database`, `postgresql_database`,
 - database_name: name attribute. Name of the database to interact with
 - connection: hash of connection info. valid keys include `:host`,
   `:port`, `:username`, and `:password`
-    - only for MySQL DB*: `:flags` (see `Mysql2::Client@@default_query_options[:connect_flags]`)
+    - only for MySQL DB*:
+      - `:flags` (see `Mysql2::Client@@default_query_options[:connect_flags]`)
+      - `:default_file`, `:default_group` (see https://github.com/brianmario/mysql2#reading-a-mysql-config-file)
     - only for PostgreSQL: `:database` (overwrites parameter `database_name`)
     - not used for SQLlite
 

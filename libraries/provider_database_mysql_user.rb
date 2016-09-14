@@ -268,7 +268,9 @@ class Chef
               socket: new_resource.connection[:socket],
               username: new_resource.connection[:username],
               password: new_resource.connection[:password],
-              port: new_resource.connection[:port]
+              port: new_resource.connection[:port],
+              default_file: new_resource.connection[:default_file],
+              default_group: new_resource.connection[:default_group]
             )
         end
 
@@ -286,7 +288,9 @@ class Chef
               socket: new_resource.connection[:socket],
               username: new_resource.connection[:username],
               password: new_resource.connection[:password],
-              port: new_resource.connection[:port]
+              port: new_resource.connection[:port],
+              default_file: new_resource.connection[:default_file],
+              default_group: new_resource.connection[:default_group]
             )
         end
 
