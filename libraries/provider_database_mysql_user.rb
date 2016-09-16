@@ -49,7 +49,14 @@ class Chef
             converge_by "Creating user '#{new_resource.username}'@'#{new_resource.host}'" do
               begin
                 repair_sql = "CREATE USER '#{new_resource.username}'@'#{new_resource.host}'"
-                repair_sql += " IDENTIFIED BY '#{new_resource.password}'" if new_resource.password
+                if new_resource.password
+                  repair_sql += ' IDENTIFIED BY '
+                  repair_sql += if new_resource.password.is_a?(MysqlPassword)
+                                  " PASSWORD '#{new_resource.password}'"
+                                else
+                                  " '#{new_resource.password}'"
+                                end
+                end
                 repair_client.query(repair_sql)
               ensure
                 close_repair_client
