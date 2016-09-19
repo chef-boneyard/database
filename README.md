@@ -347,6 +347,14 @@ postgresql_database_user 'disenfranchised' do
   action     :create
 end
 
+# The same as above but utilizing hashed password string instead of
+# plain text one
+postgresql_database_user 'disenfranchised' do
+  connection    postgresql_connection_info
+  password      hashed_password('md5eacdbf8d9847a76978bd515fae200a2a')
+  action        :grant
+end
+
 # Do the same but pass the provider to the database resource
 database_user 'disenfranchised' do
   connection postgresql_connection_info
@@ -386,11 +394,11 @@ mysql_database_user 'foo_user' do
   action        :grant
 end
 
-# The same as above but utilizing hased password string instead of
+# The same as above but utilizing hashed password string instead of
 # plain text one
 mysql_database_user 'foo_user' do
   connection    mysql_connection_info
-  password      mysql_hashed_password('*664E8D709A6EBADFC68361EBE82CF77F10211E52')
+  password      hashed_password('*664E8D709A6EBADFC68361EBE82CF77F10211E52')
   database_name 'foo'
   host          '%'
   privileges    [:select,:update,:insert]

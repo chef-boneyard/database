@@ -108,7 +108,7 @@ end
 
 mysql_database_user 'statler' do
   connection connection_info
-  password mysql_hashed_password('*2027D9391E714343187E07ACB41AE8925F30737E'); # 'l33t'
+  password hashed_password('*2027D9391E714343187E07ACB41AE8925F30737E'); # 'l33t'
   action :create
 end
 
@@ -125,7 +125,7 @@ end
 mysql_database_user 'moozie' do
   connection connection_info
   database_name 'databass'
-  password mysql_hashed_password('*F798E7C0681068BAE3242AA2297D2360DBBDA62B')
+  password hashed_password('*F798E7C0681068BAE3242AA2297D2360DBBDA62B')
   host '127.0.0.1'
   privileges [:select, :update, :insert]
   require_ssl false
