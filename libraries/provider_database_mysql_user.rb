@@ -49,7 +49,14 @@ class Chef
             converge_by "Creating user '#{new_resource.username}'@'#{new_resource.host}'" do
               begin
                 repair_sql = "CREATE USER '#{new_resource.username}'@'#{new_resource.host}'"
-                repair_sql += " IDENTIFIED BY '#{new_resource.password}'" if new_resource.password
+                if new_resource.password
+                  repair_sql += ' IDENTIFIED BY '
+                  repair_sql += if new_resource.password.is_a?(HashedPassword)
+                                  " PASSWORD '#{new_resource.password}'"
+                                else
+                                  " '#{new_resource.password}'"
+                                end
+                end
                 repair_client.query(repair_sql)
               ensure
                 close_repair_client
@@ -109,7 +116,7 @@ class Chef
             test_sql += " AND Db='#{new_resource.database_name}'" if new_resource.database_name
             test_sql_results = test_client.query test_sql
 
-            incorrect_privs = true if test_sql_results.empty?
+            incorrect_privs = true if test_sql_results.size == 0
             # These should all be 'Y'
             test_sql_results.each do |r|
               desired_privs.each do |p|
@@ -131,7 +138,7 @@ class Chef
                 repair_sql = "GRANT #{new_resource.privileges.join(',')}"
                 repair_sql += " ON #{db_name}.#{tbl_name}"
                 repair_sql += " TO '#{new_resource.username}'@'#{new_resource.host}' IDENTIFIED BY"
-                repair_sql += if new_resource.password.is_a?(MysqlPassword)
+                repair_sql += if new_resource.password.is_a?(HashedPassword)
                                 " PASSWORD '#{new_resource.password}'"
                               else
                                 " '#{new_resource.password}'"
@@ -268,7 +275,9 @@ class Chef
               socket: new_resource.connection[:socket],
               username: new_resource.connection[:username],
               password: new_resource.connection[:password],
-              port: new_resource.connection[:port]
+              port: new_resource.connection[:port],
+              default_file: new_resource.connection[:default_file],
+              default_group: new_resource.connection[:default_group]
             )
         end
 
@@ -286,7 +295,9 @@ class Chef
               socket: new_resource.connection[:socket],
               username: new_resource.connection[:username],
               password: new_resource.connection[:password],
-              port: new_resource.connection[:port]
+              port: new_resource.connection[:port],
+              default_file: new_resource.connection[:default_file],
+              default_group: new_resource.connection[:default_group]
             )
         end
 
@@ -310,7 +321,7 @@ class Chef
           if database_has_password_column(test_client)
             test_sql = 'SELECT User,Host,Password FROM mysql.user ' \
                        "WHERE User='#{new_resource.username}' AND Host='#{new_resource.host}' "
-            test_sql += if new_resource.password.is_a? MysqlPassword
+            test_sql += if new_resource.password.is_a? HashedPassword
                           "AND Password='#{new_resource.password}'"
                         else
                           "AND Password=PASSWORD('#{new_resource.password}')"
@@ -319,13 +330,13 @@ class Chef
             test_sql = 'SELECT User,Host,authentication_string FROM mysql.user ' \
                        "WHERE User='#{new_resource.username}' AND Host='#{new_resource.host}' " \
                        "AND plugin='mysql_native_password' "
-            test_sql += if new_resource.password.is_a? MysqlPassword
+            test_sql += if new_resource.password.is_a? HashedPassword
                           "AND authentication_string='#{new_resource.password}'"
                         else
                           "AND authentication_string=PASSWORD('#{new_resource.password}')"
                         end
           end
-          !test_client.query(test_sql).empty?
+          test_client.query(test_sql).size > 0
         end
 
         def update_user_password
@@ -333,7 +344,7 @@ class Chef
             begin
               if database_has_password_column(repair_client)
                 repair_sql = "SET PASSWORD FOR '#{new_resource.username}'@'#{new_resource.host}' = "
-                repair_sql += if new_resource.password.is_a? MysqlPassword
+                repair_sql += if new_resource.password.is_a? HashedPassword
                                 "'#{new_resource.password}'"
                               else
                                 " PASSWORD('#{new_resource.password}')"
@@ -342,7 +353,7 @@ class Chef
                 # "ALTER USER is now the preferred statement for assigning passwords."
                 # http://dev.mysql.com/doc/refman/5.7/en/set-password.html
                 repair_sql = "ALTER USER '#{new_resource.username}'@'#{new_resource.host}' "
-                repair_sql += if new_resource.password.is_a? MysqlPassword
+                repair_sql += if new_resource.password.is_a? HashedPassword
                                 "IDENTIFIED WITH mysql_native_password AS '#{new_resource.password}'"
                               else
                                 "IDENTIFIED BY '#{new_resource.password}'"
@@ -356,7 +367,7 @@ class Chef
         end
 
         def database_has_password_column(client)
-          !client.query('SHOW COLUMNS FROM mysql.user WHERE Field="Password"').empty?
+          client.query('SHOW COLUMNS FROM mysql.user WHERE Field="Password"').size > 0
         end
       end
     end

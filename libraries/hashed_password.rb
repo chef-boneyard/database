@@ -1,7 +1,7 @@
 #
 # Author:: Maksim Horbul (<max@gorbul.net>)
 # Cookbook Name:: database
-# Library:: mysql_password
+# Library:: hashed_password
 #
 # Copyright:: 2016 Eligible, Inc.
 #
@@ -18,8 +18,9 @@
 # limitations under the License.
 
 require File.join(File.dirname(__FILE__), 'resource_mysql_database_user')
+require File.join(File.dirname(__FILE__), 'resource_postgresql_database_user')
 
-class MysqlPassword
+class HashedPassword
   # Initializes an object of the MysqlPassword type
   # @param [String] hashed_password mysql native hashed password
   # @return [MysqlPassword]
@@ -37,10 +38,13 @@ class MysqlPassword
     # helper method wrappers the string into a MysqlPassword object
     # @param [String] hashed_password mysql native hashed password
     # @return [MysqlPassword] object
-    def mysql_hashed_password(hashed_password)
-      MysqlPassword.new hashed_password
+    def hashed_password(hashed_password)
+      HashedPassword.new hashed_password
     end
+    # For backward compatibility, because method was renamed
+    alias_method :mysql_hashed_password, :hashed_password
   end
 end
 
-::Chef::Resource::MysqlDatabaseUser.send(:include, MysqlPassword::Helpers)
+::Chef::Resource::MysqlDatabaseUser.send(:include, HashedPassword::Helpers)
+::Chef::Resource::PostgresqlDatabaseUser.send(:include, HashedPassword::Helpers)

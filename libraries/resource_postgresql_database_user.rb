@@ -67,6 +67,14 @@ class Chef
         )
       end
 
+      def password(arg = nil)
+        set_or_return(
+          :password,
+          arg,
+          kind_of: [String, HashedPassword]
+        )
+      end
+
       def replication(arg = nil)
         set_or_return(
           :replication,
