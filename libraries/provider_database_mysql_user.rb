@@ -1,6 +1,6 @@
 #
 # Author:: Seth Chisamore (<schisamo@chef.io>)
-# Author:: Sean OMeara (<sean@chef.io>)
+# Author:: Sean OMeara (<sean@sean.io>)
 # Copyright:: 2011-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
