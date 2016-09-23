@@ -24,9 +24,7 @@ when 'debian', 'ubuntu'
   packages = ['gcc', 'make', 'libsqlite3-dev', 'sqlite3']
 end
 
-packages.each do |package_name|
-  package package_name
-end
+package packages
 
 # Install required gem (will be compiled)
 chef_gem 'sqlite3' do
