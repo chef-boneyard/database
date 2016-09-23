@@ -1,6 +1,5 @@
-# rubocop todo
+# rubocop todo and an exclusion for a bug it introduces
 #
-
 Lint/AmbiguousRegexpLiteral:
   Exclude:
     - 'test/integration/mysql/serverspec/mysql_spec.rb'
@@ -8,3 +7,8 @@ Lint/AmbiguousRegexpLiteral:
 Style/MultilineTernaryOperator:
   Exclude:
     - 'libraries/provider_database_postgresql.rb'
+
+# rubocop will introduce a bug if you allow it to fix this            
+Style/ZeroLengthPredicate:
+  Exclude:
+    - 'libraries/provider_database_mysql_user.rb'
