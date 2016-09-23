@@ -2,6 +2,15 @@
 
 This file is used to list changes made in each version of the database cookbook.
 
+## 6.0.0 (2016-09-22)
+- Update maintainers wording and format [skip-ci]
+- Support reading of options from my.cnf for MySQL
+- Fix hashed_password for CREATE USER
+- Generalize MysqlPassword to HashedPassword and add it to PostreSQL
+- Fix again undefined method `empty?' for Mysql2::Result
+- Exclude the Rubocop rule that breaks the cookbook
+- Require Chef 12.1 or later
+
 ## v5.1.2 (2016-04-21)
 
 - Fix for Unknown column 'mysql_native_password' error
