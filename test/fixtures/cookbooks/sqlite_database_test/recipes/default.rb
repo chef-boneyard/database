@@ -1,3 +1,5 @@
+apt_update 'update'
+
 # Load sqlite gem
 include_recipe 'database::sqlite'
 

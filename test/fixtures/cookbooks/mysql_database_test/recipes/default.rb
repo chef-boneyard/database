@@ -1,3 +1,5 @@
+apt_update 'update'
+
 # point at localhost. hard code creds.
 connection_info = {
   host: '127.0.0.1',
