@@ -1,102 +1,78 @@
-Database Cookbook
-=================
+# Database Cookbook
 
-[![Build Status](https://travis-ci.org/chef-cookbooks/database.svg?branch=master)](http://travis-ci.org/chef-cookbooks/database)
-[![Cookbook Version](http://img.shields.io/cookbook/v/database.svg)](https://supermarket.chef.io/cookbooks/database)
+[![Build Status](https://travis-ci.org/chef-cookbooks/database.svg?branch=master)](http://travis-ci.org/chef-cookbooks/database) [![Cookbook Version](http://img.shields.io/cookbook/v/database.svg)](https://supermarket.chef.io/cookbooks/database)
 
-The main highlight of this cookbook is the `database` and
-`database_user` resources for managing databases and database users in
-a RDBMS. Providers for MySQL, PostgreSQL and SQL Server are also
-provided, see usage documentation below.
+The main highlight of this cookbook is the `database` and `database_user` resources for managing databases and database users in a RDBMS. Providers for MySQL, PostgreSQL and SQL Server are also provided, see usage documentation below.
 
-Requirements
-------------
+## Requirements
+
 ### Platforms
+
 - Debian / Ubuntu derivatives
 - RHEL derivatives
 - Fedora
 
 ### Chef
+
 - Chef 12.1+
 
 ### Cookbooks
-* postgresql
 
-Resources/Providers
--------------------
-These resources aim to expose an abstraction layer for interacting
-with different RDBMS in a general way. Currently the cookbook ships
-with providers for MySQL, PostgreSQL and SQL Server. Please see
-specific usage in the __Example__ sections below. The providers use
-specific Ruby gems installed under Chef's Ruby environment to execute
-commands and carry out actions. These gems will need to be installed
-before the providers can operate correctly. Specific notes for each
-RDBS flavor:
+- postgresql
 
-- MySQL: leverages the `mysql2` gem, which can be installed with the
-  `mysql2_chef_gem` resource prior to use (available on the
-  Supermarket). You must depend on the `mysql2_chef_gem` cookbook,
-  then use a `mysql2_chef_gem` resource to install it. The resource
-  allows the user to select MySQL client library versions, as well as
-  optionally select MariaDB libraries.
+## Resources/Providers
 
-- PostgreSQL: leverages the `pg` gem which is installed as part of the
-  `postgresql::ruby` recipe. You must declare `include_recipe
-  "database::postgresql"` to include this.
+These resources aim to expose an abstraction layer for interacting with different RDBMS in a general way. Currently the cookbook ships with providers for MySQL, PostgreSQL and SQL Server. Please see specific usage in the **Example** sections below. The providers use specific Ruby gems installed under Chef's Ruby environment to execute commands and carry out actions. These gems will need to be installed before the providers can operate correctly. Specific notes for each RDBS flavor:
 
-- SQL Server: leverages the `tiny_tds` gem which is installed as part
-  of the `sql_server::client` recipe.
+- MySQL: leverages the `mysql2` gem, which can be installed with the `mysql2_chef_gem` resource prior to use (available on the Supermarket). You must depend on the `mysql2_chef_gem` cookbook, then use a `mysql2_chef_gem` resource to install it. The resource allows the user to select MySQL client library versions, as well as optionally select MariaDB libraries.
 
-- SQLite: leverages the `sqlite3` gem which is installed as part of the
-  `database::sqlite` recipe. You must declare `include_recipe
-  "database::sqlite"` to include this.
+- PostgreSQL: leverages the `pg` gem which is installed as part of the `postgresql::ruby` recipe. You must declare `include_recipe "database::postgresql"` to include this.
+
+- SQL Server: leverages the `tiny_tds` gem which is installed as part of the `sql_server::client` recipe.
+
+- SQLite: leverages the `sqlite3` gem which is installed as part of the `database::sqlite` recipe. You must declare `include_recipe "database::sqlite"` to include this.
 
 ### database
-Manage databases in a RDBMS. Use the proper shortcut resource
-depending on your RDBMS: `mysql_database`, `postgresql_database`,
-`sql_server_database` or `sqlite_database`.
+
+Manage databases in a RDBMS. Use the proper shortcut resource depending on your RDBMS: `mysql_database`, `postgresql_database`, `sql_server_database` or `sqlite_database`.
 
 #### Actions
+
 - `:create`: create a named database
 - `:drop`: drop a named database
 - `:query`: execute an arbitrary query against a named database
 
 #### Attribute Parameters
+
 - database_name: name attribute. Name of the database to interact with
-- connection: hash of connection info. valid keys include `:host`,
-  `:port`, `:username`, and `:password`
-    - only for MySQL DB*:
-      - `:flags` (see `Mysql2::Client@@default_query_options[:connect_flags]`)
-      - `:default_file`, `:default_group` (see https://github.com/brianmario/mysql2#reading-a-mysql-config-file)
-    - only for PostgreSQL: `:database` (overwrites parameter `database_name`)
-    - not used for SQLlite
+- connection: hash of connection info. valid keys include `:host`, `:port`, `:username`, and `:password`
 
-- sql: string of sql or a block that executes to a string of sql,
-  which will be executed against the database. used by `:query` action
-  only
+  - only for MySQL DB*:
 
-\* The database cookbook uses the `mysql2` gem.
+    - `:flags` (see `Mysql2::Client@@default_query_options[:connect_flags]`)
+    - `:default_file`, `:default_group` (see <https://github.com/brianmario/mysql2#reading-a-mysql-config-file>)
 
-> "The value of host may be either a host name or an IP address. If
-  host is NULL or the string "127.0.0.1", a connection to the local
-  host is assumed. For Windows, the client connects using a
-  shared-memory connection, if the server has shared-memory
-  connections enabled. Otherwise, TCP/IP is used. For a host value of
-  "." on Windows, the client connects using a named pipe, if the
-  server has named-pipe connections enabled. If named-pipe connections
-  are not enabled, an error occurs."
+  - only for PostgreSQL: `:database` (overwrites parameter `database_name`)
 
-If you specify a `:socket` key and are using the mysql_service
-resource to set up the MySQL service, you'll need to specify the path
-in the form `/var/run/mysql-<instance name>/mysqld.sock`.
+  - not used for SQLlite
+
+- sql: string of sql or a block that executes to a string of sql, which will be executed against the database. used by `:query` action only
+
+- The database cookbook uses the `mysql2` gem.
+
+> "The value of host may be either a host name or an IP address. If host is NULL or the string "127.0.0.1", a connection to the local host is assumed. For Windows, the client connects using a shared-memory connection, if the server has shared-memory connections enabled. Otherwise, TCP/IP is used. For a host value of "." on Windows, the client connects using a named pipe, if the server has named-pipe connections enabled. If named-pipe connections are not enabled, an error occurs."
+
+If you specify a `:socket` key and are using the mysql_service resource to set up the MySQL service, you'll need to specify the path in the form `/var/run/mysql-<instance name>/mysqld.sock`.
 
 #### Providers
+
 - `Chef::Provider::Database::Mysql`: shortcut resource `mysql_database`
 - `Chef::Provider::Database::Postgresql`: shortcut resource `postgresql_database`
 - `Chef::Provider::Database::SqlServer`: shortcut resource `sql_server_database`
 - `Chef::Provider::Database::Sqlite`: shortcut resource `sqlite_database`
 
 #### Examples
+
 ```ruby
 # Create a mysql database
 mysql_database 'wordpress-cust01' do
@@ -108,6 +84,7 @@ mysql_database 'wordpress-cust01' do
   action :create
 end
 ```
+
 ```ruby
 # Create a mysql database on a named mysql instance
 mysql_database 'oracle_rools' do
@@ -120,6 +97,7 @@ mysql_database 'oracle_rools' do
   action :create
 end
 ```
+
 ```ruby
 # Create a sql server database
 sql_server_database 'mr_softie' do
@@ -275,28 +253,28 @@ end
 ```
 
 ### database_user
+
 Manage users and user privileges in a RDBMS. Use the proper shortcut resource depending on your RDBMS: `mysql_database_user`, `postgresql_database_user`, or `sql_server_database_user`.
 
 #### Actions
+
 - `:create`: create a user
 - `:drop`: drop a user
 - `:grant`: manipulate user privileges on database objects
 
 #### Attribute Parameters
+
 - username: name attribute. Name of the database user
 - password: password for the user account
 - database_name: Name of the database to interact with
-- connection: hash of connection info. valid keys include :host,
-  :port, :username, :password
-- privileges: array of database privileges to grant user. used by the
-  :grant action. default is :all
-- host: host where user connections are allowed from. used by MySQL
-  provider only. default is '127.0.0.1'
-- table: table to grant privileges on. used by :grant action and MySQL
-  provider only. default is '*' (all tables)
+- connection: hash of connection info. valid keys include :host, :port, :username, :password
+- privileges: array of database privileges to grant user. used by the :grant action. default is :all
+- host: host where user connections are allowed from. used by MySQL provider only. default is '127.0.0.1'
+- table: table to grant privileges on. used by :grant action and MySQL provider only. default is '*' (all tables)
 - require_ssl: true or false to force SSL connections to be used for user
 
 #### Providers
+
 - `Chef::Provider::Database::MysqlUser`: shortcut resource `mysql_database_user`
 - `Chef::Provider::Database::PostgresqlUser`: shortcut resource `postgresql_database_user`
 - `Chef::Provider::Database::SqlServerUser`: shortcut resource`sql_server_database_user`
@@ -430,11 +408,9 @@ sql_server_database_user 'foo_user' do
 end
 ```
 
+## License & Authors
 
-License & Authors
------------------
-
-**Author:** Cookbook Engineering Team (<cookbooks@chef.io>)
+**Author:** Cookbook Engineering Team ([cookbooks@chef.io](mailto:cookbooks@chef.io))
 
 **Copyright:** 2009-2016, Chef Software, Inc.
 
