@@ -1,10 +1,11 @@
 require 'spec_helper'
 
-describe 'mysql_database_test::default recipe on Ubuntu 14.04' do
-  let(:chef_run) do
-    ChefSpec::ServerRunner.new do |node|
-      node.automatic[:lsb][:codename] = 'trusty'
-    end.converge('mysql_database_test::default')
+describe 'postgresql_database_test on ubuntu 16.04' do
+  let(:runner) { ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '16.04') }
+  let(:chef_run) { runner.converge('postgresql_database_test::default') }
+
+  before do
+    stub_command('test -f /var/run/activemq.pid')
   end
 
   it 'converges successfully' do
@@ -12,11 +13,25 @@ describe 'mysql_database_test::default recipe on Ubuntu 14.04' do
   end
 end
 
-describe 'postgresql_database_test::default recipe on Ubuntu 14.04' do
-  let(:chef_run) do
-    ChefSpec::ServerRunner.new do |node|
-      node.automatic[:lsb][:codename] = 'trusty'
-    end.converge('postgresql_database_test::default')
+describe 'mysql_database_test on ubuntu 16.04' do
+  let(:runner) { ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '16.04') }
+  let(:chef_run) { runner.converge('mysql_database_test::default') }
+
+  before do
+    stub_command('test -f /var/run/activemq.pid')
+  end
+
+  it 'converges successfully' do
+    expect { :chef_run }.to_not raise_error
+  end
+end
+
+describe 'sqlite_database_test on ubuntu 16.04' do
+  let(:runner) { ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '16.04') }
+  let(:chef_run) { runner.converge('sqlite_database_test::default') }
+
+  before do
+    stub_command('test -f /var/run/activemq.pid')
   end
 
   it 'converges successfully' do
