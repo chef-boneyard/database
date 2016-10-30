@@ -144,6 +144,7 @@ class Chef
                                 " '#{new_resource.password}'"
                               end
                 repair_sql += ' REQUIRE SSL' if new_resource.require_ssl
+                repair_sql += ' REQUIRE X509' if new_resource.require_x509
                 repair_sql += ' WITH GRANT OPTION' if new_resource.grant_option
 
                 Chef::Log.info("#{@new_resource}: granting with sql [#{repair_sql}]")

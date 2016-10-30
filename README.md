@@ -272,6 +272,7 @@ Manage users and user privileges in a RDBMS. Use the proper shortcut resource de
 - host: host where user connections are allowed from. used by MySQL provider only. default is '127.0.0.1'
 - table: table to grant privileges on. used by :grant action and MySQL provider only. default is '*' (all tables)
 - require_ssl: true or false to force SSL connections to be used for user
+- require_x509: true or false to force SSL with client certificate verification
 
 #### Providers
 
