@@ -21,6 +21,8 @@
 if defined?(ChefSpec)
   # database
   #
+  ChefSpec.define_matcher :database
+
   def create_database(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:database, :create, resource_name)
   end
@@ -35,6 +37,8 @@ if defined?(ChefSpec)
 
   # database user
   #
+  ChefSpec.define_matcher :database_user
+
   def create_database_user(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:database_user, :create, resource_name)
   end
@@ -49,6 +53,8 @@ if defined?(ChefSpec)
 
   # mysql database
   #
+  ChefSpec.define_matcher :mysql_database
+
   def create_mysql_database(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:mysql_database, :create, resource_name)
   end
@@ -63,6 +69,8 @@ if defined?(ChefSpec)
 
   # mysql database user
   #
+  ChefSpec.define_matcher :mysql_database_user
+
   def create_mysql_database_user(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:mysql_database_user, :create, resource_name)
   end
@@ -77,6 +85,8 @@ if defined?(ChefSpec)
 
   # postgresql database
   #
+  ChefSpec.define_matcher :postgresql_database
+
   def create_postgresql_database(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:postgresql_database, :create, resource_name)
   end
@@ -91,6 +101,8 @@ if defined?(ChefSpec)
 
   # postgresql database schema
   #
+  ChefSpec.define_matcher :postgresql_database_schema
+
   def create_postgresql_database_schema(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:postgresql_database_schema, :create, resource_name)
   end
@@ -101,6 +113,8 @@ if defined?(ChefSpec)
 
   # postgresql database user
   #
+  ChefSpec.define_matcher :postgresql_database_user
+
   def create_postgresql_database_user(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:postgresql_database_user, :create, resource_name)
   end
@@ -119,6 +133,8 @@ if defined?(ChefSpec)
 
   # sql server database
   #
+  ChefSpec.define_matcher :sql_server_database
+
   def create_sql_server_database(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:sql_server_database, :create, resource_name)
   end
@@ -133,6 +149,8 @@ if defined?(ChefSpec)
 
   # sql server database user
   #
+  ChefSpec.define_matcher :sql_server_database_user
+
   def create_sql_server_database_user(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:sql_server_database_user, :create, resource_name)
   end
@@ -151,6 +169,8 @@ if defined?(ChefSpec)
 
   # sqlite server database
   #
+  ChefSpec.define_matcher :sqlite_database
+
   def create_sqlite_database(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:sqlite_database, :create, resource_name)
   end
