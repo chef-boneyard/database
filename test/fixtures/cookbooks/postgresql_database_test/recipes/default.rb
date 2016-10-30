@@ -1,3 +1,5 @@
+apt_update 'update'
+
 include_recipe 'postgresql::server'
 include_recipe 'postgresql::ruby'
 
