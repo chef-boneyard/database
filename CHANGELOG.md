@@ -2,6 +2,16 @@
 
 This file is used to list changes made in each version of the database cookbook.
 
+## 6.1.0 (2016-11-01)
+- Add require_x509 option for mysql grants
+- Define custom matcher helpers for notification testing, fixes #200
+- Add support for PostgreSQL extended grants
+- Use multipackage to speed up the installs
+- Remove arch from the metadata
+- Improve specs
+- Remove yum/apt in the Berksfile
+- Add opensuse and opensuseleap to the metadata
+
 ## 6.0.0 (2016-09-22)
 - Update maintainers wording and format [skip-ci]
 - Support reading of options from my.cnf for MySQL
