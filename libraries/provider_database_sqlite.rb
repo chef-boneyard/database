@@ -29,8 +29,22 @@ class Chef
           begin
             require 'sqlite3'
           rescue LoadError
-            Chef::Log.fatal('Could not load the required sqlite3 gem. Make sure to include the database::sqlite recipe on your runlist')
-            raise
+            Chef::Log.info('Could not load the required sqlite3 gem. Installing now')
+
+            case node['platform_family']
+            when 'rhel', 'fedora'
+              package ['gcc', 'make', 'sqlite-devel', 'sqlite']
+            when 'debian', 'ubuntu'
+              package ['gcc', 'make', 'libsqlite3-dev', 'sqlite3']
+            end
+
+            # Install required gem (will be compiled)
+            chef_gem 'sqlite3' do
+              compile_time false
+            end
+
+            require 'sqlite3'
+
           end
           @current_resource = Chef::Resource::Database.new(@new_resource.name)
           @current_resource.database_name(@new_resource.database_name)

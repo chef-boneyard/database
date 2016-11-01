@@ -29,8 +29,14 @@ class Chef
           begin
             require 'tiny_tds'
           rescue LoadError
-            Chef::Log.fatal('Could not load the required tiny_tds gem. Make sure to install this in your wrapper cookbook')
-            raise
+            Chef::Log.info('Could not load the required tiny_tds gem. Installing now')
+
+            # Install required gem (will be compiled)
+            chef_gem 'tiny_tds' do
+              compile_time true
+            end
+
+            require 'tiny_tds'
           end
           @current_resource = Chef::Resource::DatabaseUser.new(@new_resource.name)
           @current_resource.username(@new_resource.name)
