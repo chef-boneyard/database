@@ -3,7 +3,7 @@
 # Cookbook Name:: database
 # Library:: matchers
 #
-# Copyright:: 2014-2015 Chef Software, Inc.
+# Copyright:: 2014-2016 Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -139,11 +139,11 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:sql_server_database, :create, resource_name)
   end
 
-  def drop_database(resource_name)
+  def drop_sql_server_database(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:sql_server_database, :drop, resource_name)
   end
 
-  def query_database(resource_name)
+  def query_sql_server_database(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:sql_server_database, :query, resource_name)
   end
 
