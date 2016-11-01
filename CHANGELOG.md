@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the database cookbook.
 
+## 6.1.1 (2016-11-01)
+- Fix incorrectly named matchers
+
 ## 6.1.0 (2016-11-01)
 - Add require_x509 option for mysql grants
 - Define custom matcher helpers for notification testing, fixes #200
