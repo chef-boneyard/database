@@ -99,6 +99,51 @@ class Chef
           close
         end
 
+        def action_grant_table
+          grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON "
+          grant_statement << if @new_resource.tables.include?(:all)
+                               "ALL TABLES IN SCHEMA \"#{@new_resource.schema_name}\""
+                             else
+                               "TABLE #{@new_resource.tables.join(', ')}"
+                             end
+          grant_statement << " TO \"#{@new_resource.username}\""
+          Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}]")
+          db(@new_resource.database_name).query(grant_statement)
+          @new_resource.updated_by_last_action(true)
+        ensure
+          close
+        end
+
+        def action_grant_sequence
+          grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON "
+          grant_statement << if @new_resource.sequences.include?(:all)
+                               "ALL SEQUENCES IN SCHEMA \"#{@new_resource.schema_name}\""
+                             else
+                               "SEQUENCE #{@new_resource.sequences.join(', ')}"
+                             end
+          grant_statement << " TO \"#{@new_resource.username}\""
+          Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}]")
+          db(@new_resource.database_name).query(grant_statement)
+          @new_resource.updated_by_last_action(true)
+        ensure
+          close
+        end
+
+        def action_grant_function
+          grant_statement = "GRANT #{@new_resource.privileges.join(', ')} ON "
+          grant_statement << if @new_resource.functions.include?(:all)
+                               "ALL FUNCTIONS IN SCHEMA \"#{@new_resource.schema_name}\""
+                             else
+                               "FUNCTION #{@new_resource.functions.join(', ')}"
+                             end
+          grant_statement << " TO \"#{@new_resource.username}\""
+          Chef::Log.info("#{@new_resource}: granting access with statement [#{grant_statement}]")
+          db(@new_resource.database_name).query(grant_statement)
+          @new_resource.updated_by_last_action(true)
+        ensure
+          close
+        end
+
         private
 
         def exists?
