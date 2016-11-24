@@ -147,7 +147,8 @@ class Chef
                 repair_sql += ' REQUIRE X509' if new_resource.require_x509
                 repair_sql += ' WITH GRANT OPTION' if new_resource.grant_option
 
-                Chef::Log.info("#{@new_resource}: granting with sql [#{repair_sql}]")
+                redacted_sql = redact_password(repair_sql, new_resource.password)
+                Chef::Log.debug("#{@new_resource}: granting with sql [#{redacted_sql}]")
                 repair_client.query(repair_sql)
                 repair_client.query('FLUSH PRIVILEGES')
               ensure
@@ -187,13 +188,13 @@ class Chef
 
           # Repair
           unless privs_to_revoke.empty?
-            converge_by "Granting privs for '#{new_resource.username}'@'#{new_resource.host}'" do
+            converge_by "Revoking privs for '#{new_resource.username}'@'#{new_resource.host}'" do
               begin
                 revoke_statement = "REVOKE #{privs_to_revoke.join(',')}"
                 revoke_statement += " ON #{db_name}.#{tbl_name}"
                 revoke_statement += " FROM `#{@new_resource.username}`@`#{@new_resource.host}` "
 
-                Chef::Log.info("#{@new_resource}: revoking access with statement [#{revoke_statement}]")
+                Chef::Log.debug("#{@new_resource}: revoking access with statement [#{revoke_statement}]")
                 repair_client.query(revoke_statement)
                 repair_client.query('FLUSH PRIVILEGES')
                 @new_resource.updated_by_last_action(true)
@@ -369,6 +370,14 @@ class Chef
 
         def database_has_password_column(client)
           client.query('SHOW COLUMNS FROM mysql.user WHERE Field="Password"').size > 0
+        end
+
+        def redact_password(query, password)
+          if password.nil? or password == ''
+            query
+          else
+            query.gsub(password, 'REDACTED')
+          end
         end
       end
     end
