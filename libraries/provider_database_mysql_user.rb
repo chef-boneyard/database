@@ -373,7 +373,7 @@ class Chef
         end
 
         def redact_password(query, password)
-          if password.nil? or password == ''
+          if password.nil? || password == ''
             query
           else
             query.gsub(password, 'REDACTED')
