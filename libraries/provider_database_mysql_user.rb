@@ -116,7 +116,7 @@ class Chef
             test_sql += " AND Db='#{new_resource.database_name}'" if new_resource.database_name
             test_sql_results = test_client.query test_sql
 
-            incorrect_privs = true if test_sql_results.size == 0
+            incorrect_privs = true if test_sql_results.size.zero?
             # These should all be 'Y'
             test_sql_results.each do |r|
               desired_privs.each do |p|
@@ -234,7 +234,7 @@ class Chef
             :super,
             :repl_slave,
             :repl_client,
-            :create_user
+            :create_user,
           ]
           possible_db_privs = [
             :select,
@@ -254,7 +254,7 @@ class Chef
             :alter_routine,
             :execute,
             :event,
-            :trigger
+            :trigger,
           ]
 
           # convert :all to the individual db or global privs

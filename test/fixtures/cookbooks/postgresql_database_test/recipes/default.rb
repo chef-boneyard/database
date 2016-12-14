@@ -8,7 +8,7 @@ connection_info = {
   host: '127.0.0.1',
   port: '5432',
   username: 'postgres',
-  password: node['postgresql']['password']['postgres']
+  password: node['postgresql']['password']['postgres'],
 }
 
 # Create a database to test postgresql_database :drop against

@@ -4,7 +4,7 @@ apt_update 'update'
 connection_info = {
   host: '127.0.0.1',
   username: 'root',
-  password: 'ub3rs3kur3'
+  password: 'ub3rs3kur3',
 }
 
 # loosely coupled prerequisite
