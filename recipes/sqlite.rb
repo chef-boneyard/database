@@ -16,17 +16,4 @@
 # limitations under the License.
 #
 
-# Install required packages
-case node['platform_family']
-when 'rhel', 'fedora'
-  packages = ['gcc', 'make', 'sqlite-devel', 'sqlite']
-when 'debian', 'ubuntu'
-  packages = ['gcc', 'make', 'libsqlite3-dev', 'sqlite3']
-end
-
-package packages
-
-# Install required gem (will be compiled)
-chef_gem 'sqlite3' do
-  compile_time false
-end
+Chef::Log.warn('The sqlite recipe has been deprecated. The gem will now be automatically installed as needed.')
