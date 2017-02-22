@@ -4,6 +4,10 @@
 
 The main highlight of this cookbook is the `database` and `database_user` resources for managing databases and database users in a RDBMS. Providers for MySQL, PostgreSQL and SQL Server are also provided, see usage documentation below.
 
+## DEPRECATION
+
+This cookbook has been deprecated. The original intent was to abstract database implementation details away from the end user. In hindsight this was a mistake as it is difficult / impossible to make a generic interface for databases that works accross all systems. Instead we plan to move the individual providers into their respective cookbooks (mysql, postgresql, sqlite, sql_server) where they can fully utilize the feature set of the underlying DB systems.
+
 ## Requirements
 
 ### Platforms
