@@ -98,6 +98,12 @@ class Chef
         end
 
         action :grant do
+          # install mysql2 gem into Chef's environment
+          mysql2_chef_gem 'default' do
+            client_version node['mysql']['version']
+            action :install
+          end
+
           # gratuitous function
           def ishash?
             return true if /(\A\*[0-9A-F]{40}\z)/i =~ new_resource.password
